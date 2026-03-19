@@ -1,0 +1,166 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Users table - stores LINE user information and player preferences
+model User {
+  id                 String    @id @default(uuid())
+  lineUserId         String    @unique @map("line_user_id")
+  displayName        String    @map("display_name")
+  email              String?
+  position1          String    @map("position_1")
+  position2          String?   @map("position_2")
+  position3          String?   @map("position_3")
+  rating             Decimal   @default(5.00) @db.Decimal(3, 2)
+  totalMatches       Int       @default(0) @map("total_matches")
+  totalPlayedMinutes Int       @default(0) @map("total_played_minutes")
+  createdAt          DateTime  @default(now()) @map("created_at")
+  updatedAt          DateTime  @default(now()) @updatedAt @map("updated_at")
+
+  // Relations
+  adminGroups        Group[]           @relation("GroupAdmin")
+  memberships        GroupMember[]
+  registrations      Registration[]
+  teamAssignments    TeamAssignment[]
+  restLogs           UserRestLog[]
+
+  @@map("users")
+}
+
+// Groups table - football groups managed by admins
+model Group {
+  id              String    @id @default(uuid())
+  name            String
+  country         String?
+  adminUserId     String?   @unique @map("admin_user_id")
+  defaultGameType String?   @map("default_game_type") @db.VarChar(10)
+  tactics         Json      @default("{}")
+  createdAt       DateTime  @default(now()) @map("created_at")
+  updatedAt       DateTime  @default(now()) @updatedAt @map("updated_at")
+
+  // Relations
+  admin           User?     @relation("GroupAdmin", fields: [adminUserId], references: [id], onDelete: SetNull)
+  members         GroupMember[]
+  events          Event[]
+
+  @@map("groups")
+}
+
+// Group Members table - junction table for user-group relationships
+model GroupMember {
+  id        String   @id @default(uuid())
+  groupId   String   @map("group_id")
+  userId    String   @map("user_id")
+  role      String   @default("member") @db.VarChar(20)
+  joinedAt  DateTime @default(now()) @map("joined_at")
+
+  // Relations
+  group     Group    @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([groupId, userId])
+  @@map("group_members")
+}
+
+// Events table - scheduled football matches
+model Event {
+  id                    String    @id @default(uuid())
+  groupId               String    @map("group_id")
+  title                 String?
+  eventDate             DateTime  @map("event_date") @db.Date
+  startTime             String    @map("start_time") @db.Time
+  totalDurationMinutes  Int       @default(90) @map("total_duration_minutes")
+  minutesPerMatch       Int       @default(20) @map("minutes_per_match")
+  teamsCount            Int       @default(2) @map("teams_count")
+  gameType              String?   @map("game_type") @db.VarChar(10)
+  maxPlayers            Int?      @map("max_players")
+  status                String    @default("open") @db.VarChar(20)
+  registrationDeadline  DateTime? @map("registration_deadline")
+  createdAt             DateTime  @default(now()) @map("created_at")
+  updatedAt             DateTime  @default(now()) @updatedAt @map("updated_at")
+
+  // Relations
+  group                 Group              @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  registrations         Registration[]
+  teamAssignments       TeamAssignment[]
+  lineups               Lineup[]
+  restLogs              UserRestLog[]
+
+  @@index([groupId])
+  @@index([eventDate])
+  @@map("events")
+}
+
+// Registrations table - user registrations for events
+model Registration {
+  id            String    @id @default(uuid())
+  eventId       String    @map("event_id")
+  userId        String    @map("user_id")
+  status        String    @default("registered") @db.VarChar(20)
+  registeredAt  DateTime  @default(now()) @map("registered_at")
+  notes         String?   @db.Text
+
+  // Relations
+  event         Event     @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([eventId, userId])
+  @@index([eventId])
+  @@index([userId])
+  @@map("registrations")
+}
+
+// Team Assignments table - stores team compositions for events
+model TeamAssignment {
+  id           String   @id @default(uuid())
+  eventId      String   @map("event_id")
+  teamNumber   Int      @map("team_number")
+  playerIds    String[] @default([]) @map("player_ids")
+  substitutes  String[] @default([]) @map("substitutes")
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  // Relations
+  event        Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  players      User[]   @relation("TeamPlayers")
+
+  @@index([eventId])
+  @@map("team_assignments")
+}
+
+// Lineups table - detailed position assignments for each team
+model Lineup {
+  id                  String   @id @default(uuid())
+  eventId             String   @map("event_id")
+  teamNumber          Int      @map("team_number")
+  positionAssignments Json     @map("position_assignments")
+  createdAt           DateTime @default(now()) @map("created_at")
+
+  // Relations
+  event               Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+
+  @@index([eventId])
+  @@map("lineups")
+}
+
+// User Rest Logs table - tracks player rest/rotation for fairness
+model UserRestLog {
+  id         String   @id @default(uuid())
+  userId     String   @map("user_id")
+  eventId    String   @map("event_id")
+  wasResting Boolean  @default(false) @map("was_resting")
+  restReason String?   @map("rest_reason")
+  loggedAt   DateTime @default(now()) @map("logged_at")
+
+  // Relations
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  event      Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([eventId])
+  @@map("user_rest_logs")
+}
