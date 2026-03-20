@@ -239,7 +239,19 @@ export const noEventsMessage = (): string => {
 
 /** Lineup generated message */
 export const lineupGeneratedMessage = (lineup: Lineup, teams: TeamAssignment[]): string => {
-  let message = `⚽ *รายชื่อทีม*\n\n`;
+  let message = `⚽ *รายชื่อทีม & ตำแหน่ง*\n\n`;
+
+  // Get position assignments from lineup
+  const positionMap: Record<string, string[]> = (lineup as any).positionAssignments || {};
+
+  // Create player ID to position mapping
+  const playerPositions: Record<string, string> = {};
+  Object.keys(positionMap).forEach((position) => {
+    const playerIds = positionMap[position] || [];
+    playerIds.forEach((playerId: string) => {
+      playerPositions[playerId] = position;
+    });
+  });
 
   // Group players by team
   const teamPlayers: { [key: number]: string[] } = {};
@@ -253,12 +265,15 @@ export const lineupGeneratedMessage = (lineup: Lineup, teams: TeamAssignment[]):
   });
 
   // Generate message for each team
-  for (let i = 1; i <= (lineup as any).teamsCount || 2; i++) {
+  const teamsCount = (lineup as any).teamsCount || 2;
+  for (let i = 1; i <= teamsCount; i++) {
     message += `🏟️ *ทีม ${i}:*\n`;
     const players = teamPlayers[i] || [];
     if (players.length > 0) {
       players.forEach((player: string, idx: number) => {
-        message += `${idx + 1}. ${player}\n`;
+        const position = playerPositions[player];
+        const positionThai = position ? getPositionThai(position) : '';
+        message += `${idx + 1}. ${player} ${positionThai ? `(${positionThai})` : ''}\n`;
       });
     } else {
       message += `ยังไม่มีผู้เล่น\n`;
@@ -436,14 +451,119 @@ export const noLineupMessage = (): string => {
 รายชื่อทีมยังไม่ถูกสร้าง กรุณารอแอดมินจัดทีมก่อนครับ`;
 };
 
-/** Lineup message */
-export const lineupMessage = (event: Event): string => {
-  return `⚽ *รายชื่อทีม*
+/** Lineup message with positions */
+export const lineupMessage = (
+  event: Event,
+  teamAssignments?: any[],
+  lineups?: any[],
+  userId?: string
+): string => {
+  if (!lineups || lineups.length === 0) {
+    return `⚽ *รายชื่อทีม*
 
 📋 รายชื่อสำหรับ ${event.title || 'แมตซ์ฟุตบอล'}:
 
 ใช้คำสั่ง !teams เพื่อดูทีมของคุณครับ`;
+  }
+
+  let message = `⚽ *รายชื่อทีม & ตำแหน่ง*\n\n`;
+  message += `📅 ${event.title || 'แมตซ์ฟุตบอล'}\n`;
+  message += `⏰ เวลา: ${event.startTime}\n`;
+  message += `⏱️ ระยะเวลา: ${event.totalDurationMinutes} นาที\n\n`;
+
+  // Get position assignments from lineups
+  const positionMap: Record<number, Record<string, string>> = {};
+  lineups.forEach((lineup: any) => {
+    if (!positionMap[lineup.teamNumber]) {
+      positionMap[lineup.teamNumber] = {};
+    }
+    const assignments = lineup.positionAssignments || {};
+    Object.keys(assignments).forEach((position) => {
+      const playerIds = assignments[position] || [];
+      playerIds.forEach((playerId: string) => {
+        positionMap[lineup.teamNumber][playerId] = position;
+      });
+    });
+  });
+
+  // Get player names from teamAssignments
+  const playerNames: Record<string, string> = {};
+  if (teamAssignments) {
+    teamAssignments.forEach((team: any) => {
+      if (team.playerIds) {
+        team.playerIds.forEach((playerId: string, idx: number) => {
+          playerNames[playerId] = `ผู้เล่น${idx + 1}`;
+        });
+      }
+    });
+  }
+
+  // Generate message for each team
+  const teamsCount = lineups.length || 2;
+  for (let i = 1; i <= teamsCount; i++) {
+    const lineup = lineups.find((l: any) => l.teamNumber === i);
+    if (!lineup) continue;
+
+    const assignments = lineup.positionAssignments || {};
+    const positions = Object.keys(assignments);
+
+    message += `🏟️ *ทีม ${i}:*\n`;
+
+    if (positions.length > 0) {
+      positions.forEach((position) => {
+        const playerIds = assignments[position] || [];
+        if (playerIds.length > 0) {
+          const playerId = playerIds[0];
+          const positionThai = getPositionThai(position);
+          message += `• ${positionThai}: ${playerNames[playerId] || 'ผู้เล่น'}\n`;
+        }
+      });
+    } else {
+      message += `ยังไม่มีผู้เล่น\n`;
+    }
+
+    // Show substitutes
+    if (teamAssignments) {
+      const team = teamAssignments.find((t: any) => t.teamNumber === i);
+      if (team && team.substitutes && team.substitutes.length > 0) {
+        message += `\n🔄 *ตัวสำรอง:*\n`;
+        team.substitutes.forEach((subId: string, idx: number) => {
+          message += `${idx + 1}. ${playerNames[subId] || 'ผู้เล่น'}\n`;
+        });
+      }
+    }
+
+    message += '\n';
+  }
+
+  return message;
 };
+
+/** Get Thai position name */
+function getPositionThai(position: string): string {
+  const positions: Record<string, string> = {
+    'GK': 'ผู้รักษาประตู',
+    'CB': 'กองหลังกลาง',
+    'LB': 'แบ็คซ้าย',
+    'RB': 'แบ็คขวา',
+    'LWB': 'วิงแบ็คซ้าย',
+    'RWB': 'วิงแบ็คขวา',
+    'CDM': 'กองกลางตัวรับ',
+    'CM': 'กองกลาง',
+    'CAM': 'กองกลางตัวรุก',
+    'LM': 'วิงซ้าย',
+    'RM': 'วิงขวา',
+    'LW': 'ปีกซ้าย',
+    'RW': 'ปีกขวา',
+    'CF': 'กองหน้าตัวเป้า',
+    'ST': 'กองหน้า',
+    'DC': 'เซ็นเตอร์แบ็ค',
+    'DEF': 'กองหลัง',
+    'MID': 'กองกลาง',
+    'FWD': 'กองหน้า',
+  };
+  return positions[position] || position;
+}
 
 /** Schedule message */
 export const scheduleMessage = (events: Event[]): string => {
