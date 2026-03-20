@@ -279,11 +279,7 @@ async function handlePostbackEvent(event: LineWebhookEvent): Promise<void> {
 async function handleWebhookEvent(event: LineWebhookEvent): Promise<void> {
   const { type, source } = event;
   
-  // Only handle events from users (not from groups/rooms for now)
-  if (source.type !== 'user') {
-    console.log(`Skipping event from ${source.type}`);
-    return;
-  }
+  console.log(`Processing event: ${type} from ${source.type}`);
   
   switch (type) {
     case 'follow':
