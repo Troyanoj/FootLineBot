@@ -164,3 +164,28 @@ model UserRestLog {
   @@index([eventId])
   @@map("user_rest_logs")
 }
+
+// Recurring Events table - stores recurring event schedules
+model RecurringEvent {
+  id                  String   @id @default(uuid())
+  groupId             String   @map("group_id")
+  dayOfWeek           Int      @map("day_of_week") // 0=Sunday, 1=Monday, ..., 6=Saturday
+  startTime           String   @map("start_time") // HH:mm format
+  totalDurationMinutes Int     @map("total_duration_minutes") @default(90)
+  minutesPerMatch     Int      @map("minutes_per_match") @default(20)
+  teamsCount          Int      @map("teams_count") @default(2)
+  gameType            String   @map("game_type") @db.VarChar(10) @default("7")
+  isActive            Boolean  @map("is_active") @default(true)
+  lastGeneratedDate   DateTime? @map("last_generated_date")
+  title               String?  @map("title")
+  createdAt           DateTime @default(now()) @map("created_at")
+  updatedAt           DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  group               Group    @relation(fields: [groupId], references: [id], onDelete: Cascade)
+
+  @@unique([groupId, dayOfWeek, startTime])
+  @@index([groupId])
+  @@index([isActive])
+  @@map("recurring_events")
+}

@@ -198,6 +198,8 @@ async function handleMessageEvent(event: LineWebhookEvent): Promise<void> {
     'cerrar',
     'borrar_evento',
     'expulsar',
+    'recurrente',
+    'recurring',
     // Thai aliases
     'กลยุทธ์',
     'จัดทีม',
