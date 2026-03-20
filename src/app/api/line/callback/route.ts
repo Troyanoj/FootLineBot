@@ -317,6 +317,10 @@ async function handleWebhookEvent(event: LineWebhookEvent): Promise<void> {
 
 export async function POST(request: NextRequest): Promise<NextResponse> {
   try {
+    // Log all headers for debugging
+    console.log('=== LINE Webhook Called ===');
+    console.log('Headers:', JSON.stringify(Object.fromEntries(request.headers.entries())));
+    
     // Get signature from header
     const signature = request.headers.get('x-line-signature');
     if (!signature) {
@@ -329,6 +333,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     
     // Get raw body for signature validation
     const rawBody = await request.text();
+    console.log('Raw body:', rawBody);
     
     // Validate signature
     const isValid = validateSignature(rawBody, signature);
