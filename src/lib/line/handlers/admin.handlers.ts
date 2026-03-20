@@ -243,36 +243,64 @@ Este cambio afecta a los nuevos eventos creados.`,
 }
 
 /**
- * Handle !tactica command
- * Manage tactics for the group
- * Format: !tactica [agregar|quitar] [tactica]
+ * Handle !tactica / !กลยุทธ์ command
+ * Manage tactics/formations for the group
+ * Format: !tactica [add|remove] [formation]
+ * Thai: !กลยุทธ์ [เพิ่ม|ลบ] [formation]
  */
 export async function handleTactica(
   context: AdminHandlerContext,
   args: string[]
 ): Promise<HandlerResult> {
   try {
+    // Check if action is in Thai or Spanish/English
+    const thaiActions: Record<string, string> = {
+      'เพิ่ม': 'add',
+      'ลบ': 'remove',
+      'เอาออก': 'remove',
+    };
+    
+    const spanishActions: Record<string, string> = {
+      'agregar': 'add',
+      'quitar': 'remove',
+      'add': 'add',
+      'remove': 'remove',
+    };
+    
     if (args.length < 2) {
       return {
         success: false,
-        message: `⚠️ *Formato incorrecto*
+        message: `⚠️ *รูปแบบไม่ถูกต้อง*
 
-Usa: !tactica [agregar|quitar] [táctica]
+ใช้: !กลยุทธ์ [เพิ่ม|ลบ] [การจัดวาง]
+หรือ: !tactica [add|remove] [formation]
 
-Ejemplos:
-• !tactica agregar 4-3-3
-• !tactica agregar posesión
-• !tactica quitar 4-3-3`,
+ตัวอย่าง:
+• !กลยุทธ์ เพิ่ม 4-3-3
+• !กลยุทธ์ เพิ่ม 3-2-1
+• !กลยุทธ์ ลบ 4-3-3
+
+*การจัดวางที่ใช้ได้:*
+• ฟุตบอล 7 คน: 3-2-1, 2-3-1, 2-2-2, 3-1-2
+• ฟุตบอล 5 คน: 2-2, 1-2-1, 1-1-2, 2-1-1
+• ฟุตบอล 11 คน: 4-4-2, 4-3-3, 3-5-2, 5-3-2, 4-2-3-1, 3-4-3`,
       };
     }
     
-    const action = args[0].toLowerCase();
+    let action = args[0].toLowerCase();
+    // Convert Thai action to English
+    if (thaiActions[action]) {
+      action = thaiActions[action];
+    } else if (spanishActions[action]) {
+      action = spanishActions[action];
+    }
+    
     const tactica = args.slice(1).join(' ');
     
-    if (!['agregar', 'quitar', 'add', 'remove'].includes(action)) {
+    if (!['add', 'remove'].includes(action)) {
       return {
         success: false,
-        message: '⚠️ Acción inválida. Usa: agregar o quitar',
+        message: '⚠️ *การดำเนินการไม่ถูกต้อง* ใช้: เพิ่ม หรือ ลบ (add หรือ remove)',
       };
     }
     
@@ -293,13 +321,13 @@ Ejemplos:
     let newTactics: Record<string, boolean>;
     let actionText: string;
     
-    if (action === 'agregar' || action === 'add') {
+    if (action === 'add') {
       newTactics = { ...currentTactics, [tactica]: true };
-      actionText = 'agregada';
+      actionText = 'เพิ่มแล้ว';
     } else {
       newTactics = { ...currentTactics };
       delete newTactics[tactica];
-      actionText = 'eliminada';
+      actionText = 'ลบแล้ว';
     }
     
     await groupService.update(group.id, {
@@ -308,13 +336,13 @@ Ejemplos:
     
     return {
       success: true,
-      message: `✅ *Táctica ${actionText}*
+      message: `✅ *${actionText}*
 
-Táctica: ${tactica}
-Grupo: ${group.name}
+📋 *การจัดวาง:* ${tactica}
+👥 *กลุ่ม:* ${group.name}
 
-*Tácticas disponibles:*
-${Object.keys(newTactics).map((t) => `• ${t}`).join('\n') || 'Sin tácticas'}`,
+*การจัดวางที่ใช้ได้:*
+${Object.keys(newTactics).map((t) => `• ${t}`).join('\n') || 'ยังไม่มีการจัดวาง'}`,
     };
   } catch (error) {
     console.error('Error in handleTactica:', error);
@@ -427,11 +455,7 @@ export async function handleCerrar(context: AdminHandlerContext): Promise<Handle
     
     return {
       success: true,
-      message: msg.registrationClosedMessage({
-        ...currentEvent,
-        status: 'closed',
-        maxPlayers: count,
-      } as Event),
+      message: msg.registrationClosedMessage(),
     };
   } catch (error) {
     console.error('Error in handleCerrar:', error);
@@ -564,21 +588,27 @@ export async function handleAdminCommand(
   
   switch (normalizedCommand) {
     case 'crear_evento':
+    case 'สร้าง':
       return handleCrearEvento(context, args);
     
     case 'configurar':
+    case 'ตั้งค่า':
       return handleConfigurar(context, args);
     
     case 'tactica':
+    case 'กลยุทธ์':
+    case 'จัดทีม':
       return handleTactica(context, args);
     
     case 'generar':
       return handleGenerar(context);
     
     case 'cerrar':
+    case 'ปิด':
       return handleCerrar(context);
     
     case 'borrar_evento':
+    case 'ลบ':
       return handleBorrarEvento(context, args[0]);
     
     case 'expulsar':
@@ -587,7 +617,7 @@ export async function handleAdminCommand(
     default:
       return {
         success: false,
-        message: msg.invalidCommandMessage(),
+        message: msg.invalidCommandMessage(normalizedCommand),
       };
   }
 }

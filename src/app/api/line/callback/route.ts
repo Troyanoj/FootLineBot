@@ -198,6 +198,13 @@ async function handleMessageEvent(event: LineWebhookEvent): Promise<void> {
     'cerrar',
     'borrar_evento',
     'expulsar',
+    // Thai aliases
+    'กลยุทธ์',
+    'จัดทีม',
+    'สร้าง',
+    'ตั้งค่า',
+    'ปิด',
+    'ลบ',
   ];
   
   let result: HandlerResult;
