@@ -47,6 +47,7 @@ model Group {
   admin           User?     @relation("GroupAdmin", fields: [adminUserId], references: [id], onDelete: SetNull)
   members         GroupMember[]
   events          Event[]
+  recurringEvents RecurringEvent[]
 
   @@map("groups")
 }
