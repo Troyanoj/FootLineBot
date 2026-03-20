@@ -38,7 +38,10 @@ export const welcomeMessage = (displayName: string): string => {
 
 💡 *เคล็ดลับ:*
 - ใช้ !help หรือ !ช่วย เพื่อดูคำสั่งทั้งหมด
-- ติดต่อแอดมินกลุ่มสำหรับข้อมูลเพิ่มเติม`;
+- ติดต่อแอดมินกลุ่มสำหรับข้อมูลเพิ่มเติม
+
+📖 *คู่มือการใช้งาน:*
+https://app-omega-sand-14.vercel.app/help`;
 };
 
 /** Help message */
