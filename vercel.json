@@ -42,10 +42,6 @@
       "destination": "/api/$1"
     }
   ],
-  "env": {
-    "NEXT_PUBLIC_APP_URL": "@app-url",
-    "NEXT_PUBLIC_LINE_CHANNEL_ID": "@line-channel-id"
-  },
   "buildCommand": "npm run build",
   "installCommand": "npm install"
 }

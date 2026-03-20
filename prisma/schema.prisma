@@ -26,7 +26,7 @@ model User {
   adminGroups        Group[]           @relation("GroupAdmin")
   memberships        GroupMember[]
   registrations      Registration[]
-  teamAssignments    TeamAssignment[]
+  teamAssignments    TeamAssignment[]  @relation("TeamPlayers")
   restLogs           UserRestLog[]
 
   @@map("users")
@@ -73,7 +73,7 @@ model Event {
   groupId               String    @map("group_id")
   title                 String?
   eventDate             DateTime  @map("event_date") @db.Date
-  startTime             String    @map("start_time") @db.Time
+  startTime             DateTime  @map("start_time") @db.Time(6)
   totalDurationMinutes  Int       @default(90) @map("total_duration_minutes")
   minutesPerMatch       Int       @default(20) @map("minutes_per_match")
   teamsCount            Int       @default(2) @map("teams_count")

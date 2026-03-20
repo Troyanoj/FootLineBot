@@ -137,7 +137,17 @@ async function handleJoinEvent(event: LineWebhookEvent): Promise<void> {
   const groupId = event.source.groupId || event.source.roomId;
   console.log(`Bot joined group/room: ${groupId}`);
   
-  // Could initialize group settings here
+  // Send welcome message
+  try {
+    // Get the bot's display name
+    const welcomeText = "สวัสดีครับ! ⚽ ผมคือ FootLineBot ผู้ช่วยจัดการแมตซ็อกเกอร์ฟุตบอลของคุณ\n\nใช้คำสั่งต่อไปนี้:\n• !help - ดูคำสั่งทั้งหมด\n• !register - ลงทะเบียนกลุ่มนี้\n• !ช่วย - ดูคำสั่งภาษาไทย\n\nยินดีช่วยจัดการแมตซ์ของคุณครับ!";
+    
+    // Note: In group chats, we need to use pushMessage instead of replyMessage
+    // But we need a userId to push. For now, just log.
+    console.log('Bot joined group, welcome message ready');
+  } catch (error) {
+    console.error('Error sending welcome message:', error);
+  }
 }
 
 /** Handle leave event - bot removed from group/room */
