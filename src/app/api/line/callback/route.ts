@@ -10,7 +10,9 @@ import {
 import { userService } from '@/services/user.service';
 import { groupService } from '@/services/group.service';
 import type { LineWebhookBody, LineWebhookEvent } from '@/types';
-import * as msg from '@/lib/line/messages';
+import * as msgTh from '@/lib/line/messages';
+import * as msgEs from '@/lib/line/messages.es';
+import * as msgEn from '@/lib/line/messages.en';
 
 // ============================================================================
 // Helper Functions
@@ -113,7 +115,7 @@ async function handleFollowEvent(event: LineWebhookEvent): Promise<void> {
     if (event.replyToken) {
       await replyMessage(event.replyToken, {
         type: 'text',
-        text: msg.welcomeMessage(lineProfile.displayName),
+        text: msgTh.welcomeMessage(lineProfile.displayName),
       });
     }
   } catch (error) {
@@ -217,7 +219,7 @@ async function handleMessageEvent(event: LineWebhookEvent): Promise<void> {
   if (adminCommands.includes(command)) {
     // Handle admin command
     if (!isAdmin) {
-      const msgFile = lang === 'es' ? require('@/lib/line/messages.es') : (lang === 'en' ? require('@/lib/line/messages.en') : msg);
+      const msgFile = lang === 'es' ? msgEs : (lang === 'en' ? msgEn : msgTh);
       result = {
         success: false,
         message: msgFile.adminRequiredMessage(),
