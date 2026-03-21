@@ -1,258 +1,125 @@
-import { Metadata } from 'next';
+'use client';
+
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { useSearchParams } from 'next/navigation';
 
-export const metadata: Metadata = {
-  title: 'Privacy Policy | FootLineBot',
-  description: 'Privacy Policy for FootLineBot',
-};
+const LANGS = ['en', 'es', 'th'] as const;
+type Lang = (typeof LANGS)[number];
 
-const translations = {
+const UI: Record<Lang, any> = {
   en: {
-    title: 'Privacy Policy',
-    lastUpdated: 'Last updated: March 2024',
-    intro: 'This Privacy Policy describes how FootLineBot collects, uses, and discloses information.',
-    collection: 'Information We Collect',
-    collectionDesc: 'We collect the following types of information:',
-    collectionList: [
-      'LINE User ID and Display Name',
-      'Player position preferences',
-      'Group membership information',
-      'Event registration data',
-      'Team assignment data',
-    ],
-    use: 'How We Use Your Information',
-    useList: [
-      'To provide and maintain our service',
-      'To manage your registration for events',
-      'To generate balanced team formations',
-      'To communicate with you about events and updates',
-      'To improve and optimize our service',
-    ],
-    sharing: 'Information Sharing',
-    sharingDesc: 'We do not sell, trade, or otherwise transfer your personal information to outside parties. We may share information with:',
-    sharingList: [
-      'Group administrators (for group management purposes)',
-      'Service providers who assist in our operations',
-      'Legal authorities when required by law',
-    ],
-    security: 'Data Security',
-    securityDesc: 'We implement appropriate security measures to protect your personal information. However, no method of transmission over the Internet is 100% secure.',
-    retention: 'Data Retention',
-    retentionDesc: 'We retain your personal information for as long as your account is active or as needed to provide you services.',
-    children: "Children's Privacy",
-    childrenDesc: 'Our service is not intended for children under 13. We do not knowingly collect personal information from children under 13.',
-    rights: 'Your Rights',
-    rightsList: [
-      'Access your personal information',
-      'Correct inaccurate data',
-      'Request deletion of your data',
-      'Opt-out of communications',
-    ],
-    line: 'LINE Platform',
-    lineDesc: 'Our service uses the LINE platform. Please review LINE\'s Privacy Policy for information about how LINE handles your data.',
-    changes: 'Changes to This Policy',
-    changesDesc: 'We may update this privacy policy from time to time. We will notify you of any changes by posting the new policy on this page.',
-    contact: 'Contact Us',
-    contactDesc: 'If you have any questions about this Privacy Policy, please contact the bot administrator.',
-    backToHome: 'Back to Home',
+    hero: 'Privacy Policy',
+    subtitle: 'How we handle and protect your data',
+    lastUpdate: 'Last updated: March 2024',
+    sections: [
+      { t: 'Data Collection', d: 'We collect your LINE User ID, Display Name, and football preferences (positions, rating).' },
+      { t: 'Purpose', d: 'Your data is used solely to manage matches, generate lineups, and track your stats within your groups.' },
+      { t: 'Third Parties', d: 'We do not share your data with third parties. Your info is only visible to group members and admins.' },
+      { t: 'Security', d: 'We use secure database connections and encryption to keep your data safe.' }
+    ]
   },
   es: {
-    title: 'Política de Privacidad',
-    lastUpdated: 'Última actualización: Marzo 2024',
-    intro: 'Esta Política de Privacidad describe cómo FootLineBot recopila, usa y divulga información.',
-    collection: 'Información que Recopilamos',
-    collectionDesc: 'Recopilamos los siguientes tipos de información:',
-    collectionList: [
-      'ID de Usuario de LINE y Nombre para Mostrar',
-      'Preferencias de posición del jugador',
-      'Información de membresía de grupo',
-      'Datos de registro de eventos',
-      'Datos de asignación de equipos',
-    ],
-    use: 'Cómo Usamos Su Información',
-    useList: [
-      'Para proporcionar y mantener nuestro servicio',
-      'Para gestionar su registro en eventos',
-      'Para generar formaciones de equipos equilibradas',
-      'Para comunicarle sobre eventos y actualizaciones',
-      'Para mejorar y optimizar nuestro servicio',
-    ],
-    sharing: 'Compartir Información',
-    sharingDesc: 'No vendemos, intercambiamos ni transferimos su información personal a terceros. Podemos compartir información con:',
-    sharingList: [
-      'Administradores de grupo (para propósitos de gestión)',
-      'Proveedores de servicios que nos asisten en operaciones',
-      'Autoridades legales cuando sea requerido por ley',
-    ],
-    security: 'Seguridad de Datos',
-    securityDesc: 'Implementamos medidas de seguridad apropiadas para proteger su información personal. Sin embargo, ningún método de transmisión por Internet es 100% seguro.',
-    retention: 'Retención de Datos',
-    retentionDesc: 'Retenemos su información personal mientras su cuenta esté activa o según sea necesario para proporcionarle servicios.',
-    children: 'Privacidad de Niños',
-    childrenDesc: 'Nuestro servicio no está destinado a niños menores de 13 años. No recopilamos knowingly información personal de niños menores de 13 años.',
-    rights: 'Sus Derechos',
-    rightsList: [
-      'Acceder a su información personal',
-      'Corregir datos inexactos',
-      'Solicitar eliminación de sus datos',
-      'Opt-out de comunicaciones',
-    ],
-    line: 'Plataforma LINE',
-    lineDesc: 'Nuestro servicio utiliza la plataforma LINE. Por favor revise la Política de Privacidad de LINE para información sobre cómo LINE maneja sus datos.',
-    changes: 'Cambios a Esta Política',
-    changesDesc: 'Podemos actualizar esta política de privacidad de vez en cuando. Le notificaremos cualquier cambio publicando la nueva política en esta página.',
-    contact: 'Contáctenos',
-    contactDesc: 'Si tiene alguna pregunta sobre esta Política de Privacidad, por favor contacte al administrador del bot.',
-    backToHome: 'Volver al Inicio',
+    hero: 'Política de Privacidad',
+    subtitle: 'Cómo manejamos y protegemos tus datos',
+    lastUpdate: 'Última actualización: Marzo 2024',
+    sections: [
+      { t: 'Recolección de Datos', d: 'Recopilamos tu LINE ID, nombre de usuario y preferencias de fútbol (posiciones, nivel).' },
+      { t: 'Propósito', d: 'Tus datos se usan exclusivamente para gestionar partidos, generar alineaciones y seguir tus estadísticas.' },
+      { t: 'Terceros', d: 'No compartimos tus datos con terceros. Tu información solo es visible para miembros y admins del grupo.' },
+      { t: 'Seguridad', d: 'Usamos conexiones de base de datos seguras y encriptación para mantener tus datos a salvo.' }
+    ]
   },
   th: {
-    title: 'นโยบายความเป็นส่วนตัว',
-    lastUpdated: 'อัปเดตล่าสุด: มีนาคม 2567',
-    intro: 'นโยบายความเป็นส่วนตัวนี้อธิบายวิธีที่ FootLineBot เก็บรวบรวม ใช้ และเปิดเผยข้อมูล',
-    collection: 'ข้อมูลที่เราเก็บรวบรวม',
-    collectionDesc: 'เราเก็บรวบรวมประเภทข้อมูลดังต่อไปนี้:',
-    collectionList: [
-      'LINE User ID และชื่อที่แสดง',
-      'ความชอบตำแหน่งของผู้เล่น',
-      'ข้อมูลการเป็นสมาชิกกลุ่ม',
-      'ข้อมูลการลงทะเบียนอีเวนต์',
-      'ข้อมูลการจัดทีม',
-    ],
-    use: 'วิธีที่เราใช้ข้อมูลของคุณ',
-    useList: [
-      'เพื่อให้บริการและดูแลบริการของเรา',
-      'เพื่อจัดการการลงทะเบียนของคุณสำหรับอีเวนต์',
-      'เพื่อสร้างการจัดทีมที่สมดุล',
-      'เพื่อสื่อสารกับคุณเกี่ยวกับอีเวนต์และการอัปเดต',
-      'เพื่อปรับปรุงและเพิ่มประสิทธิภาพบริการของเรา',
-    ],
-    sharing: 'การแบ่งปันข้อมูล',
-    sharingDesc: 'เราไม่ขาย แลกเปลี่ยน หรือโอนข้อมูลส่วนบุคคลของคุณไปยังบุคคลที่สาม เราอาจแบ่งปันข้อมูลกับ:',
-    sharingList: [
-      'ผู้ดูแลกลุ่ม (เพื่อวัตถุประสงค์ในการจัดการกลุ่ม)',
-      'ผู้ให้บริการที่ช่วยเหลือในการดำเนินงานของเรา',
-      'หน่วยงานทางกฎหมายเมื่อกฎหมายกำหนด',
-    ],
-    security: 'ความปลอดภัยของข้อมูล',
-    securityDesc: 'เราใช้มาตรการรักษาความปลอดภัยที่เหมาะสมเพื่อปกป้องข้อมูลส่วนบุคคลของคุณ อย่างไรก็ตาม ไม่มีวิธีการส่งผ่านอินเทอร์เน็ตใดที่ปลอดภัย 100%',
-    retention: 'การเก็บรักษาข้อมูล',
-    retentionDesc: 'เราเก็บรักษาข้อมูลส่วนบุคคลของคุณตราบเท่าที่บัญชีของคุณยังใช้งานอยู่หรือตามที่จำเป็นเพื่อให้บริการแก่คุณ',
-    children: 'ความเป็นส่วนตัวของเด็ก',
-    childrenDesc: 'บริการของเราไม่ได้มีไว้สำหรับเด็กอายุต่ำกว่า 13 ปี เราไม่ได้เก็บรวบรวมข้อมูลส่วนบุคคลจากเด็กอายุต่ำกว่า 13 ปีโดยเจตนา',
-    rights: 'สิทธิ์ของคุณ',
-    rightsList: [
-      'เข้าถึงข้อมูลส่วนบุคคลของคุณ',
-      'แก้ไขข้อมูลที่ไม่ถูกต้อง',
-      'ขอให้ลบข้อมูลของคุณ',
-      'ปฏิเสธการสื่อสาร',
-    ],
-    line: 'แพลตฟอร์ม LINE',
-    lineDesc: 'บริการของเราใช้แพลตฟอร์ม LINE โปรดดูนโยบายความเป็นส่วนตัวของ LINE สำหรับข้อมูลเกี่ยวกับวิธีที่ LINE จัดการข้อมูลของคุณ',
-    changes: 'การเปลี่ยนแปลงนโยบายนี้',
-    changesDesc: 'เราอาจอัปเดตนโยบายความเป็นส่วนตัวนี้เป็นครั้งคราว เราจะแจ้งให้คุณทราบเกี่ยวกับการเปลี่ยนแปลงโดยโพสต์นโยบายใหม่บนหน้านี้',
-    contact: 'ติดต่อเรา',
-    contactDesc: 'หากคุณมีคำถามเกี่ยวกับนโยบายความเป็นส่วนตัวนี้ โปรดติดต่อผู้ดูแลบอท',
-    backToHome: 'กลับไปหน้าหลัก',
-  },
+    hero: 'นโยบายความเป็นส่วนตัว',
+    subtitle: 'วิธีที่เราจัดการและปกป้องข้อมูลของคุณ',
+    lastUpdate: 'อัปเดตล่าสุด: มีนาคม 2567',
+    sections: [
+      { t: 'การเก็บข้อมูล', d: 'เราเก็บรวบรวม LINE User ID ชื่อที่แสดง และความชอบส่วนตัว (ตำแหน่ง ระดับฝีมือ)' },
+      { t: 'วัตถุประสงค์', d: 'ข้อมูลของคุณใช้เพื่อจัดการแข่งขัน สร้างรายชื่อทีม และติดตามสถิติภายในกลุ่มของคุณเท่านั้น' },
+      { t: 'บุคคลที่สาม', d: 'เราไม่แบ่งปันข้อมูลของคุณกับบุคคลที่สาม ข้อมูลของคุณจะเห็นได้เฉพาะสมาชิกกลุ่มและแอดมินเท่านั้น' },
+      { t: 'ความปลอดภัย', d: 'เราใช้การเชื่อมต่อฐานข้อมูลที่ปลอดภัยและการเข้ารหัสเพื่อรักษาข้อมูลของคุณให้ปลอดภัย' }
+    ]
+  }
 };
 
-type Lang = 'en' | 'es' | 'th';
+export default function PrivacyPage() {
+  const searchParams = useSearchParams();
+  const [lang, setLang] = useState<Lang>('en');
 
-export default function PrivacyPage({ searchParams }: { searchParams: { lang?: string } }) {
-  const lang = (searchParams.lang as Lang) || 'en';
-  const t = translations[lang] || translations.en;
+  useEffect(() => {
+    const l = searchParams.get('lang') as Lang;
+    if (l && LANGS.includes(l)) {
+      setLang(l);
+    }
+  }, [searchParams]);
+
+  const ui = UI[lang];
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-green-50 to-white">
-      <div className="max-w-4xl mx-auto px-4 py-12">
-        <h1 className="text-4xl font-bold text-green-800 mb-2">{t.title}</h1>
-        <p className="text-gray-500 mb-8">{t.lastUpdated}</p>
+    <>
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Inter', sans-serif; background: #0a0e1a; color: #e2e8f0; min-height: 100vh; }
 
-        {/* Language Selector */}
-        <div className="mb-8 flex gap-2">
-          <Link href="/privacy?lang=en" className={`px-4 py-2 rounded-full ${lang === 'en' ? 'bg-green-600 text-white' : 'bg-gray-200 text-gray-700'}`}>English</Link>
-          <Link href="/privacy?lang=es" className={`px-4 py-2 rounded-full ${lang === 'es' ? 'bg-green-600 text-white' : 'bg-gray-200 text-gray-700'}`}>Español</Link>
-          <Link href="/privacy?lang=th" className={`px-4 py-2 rounded-full ${lang === 'th' ? 'bg-green-600 text-white' : 'bg-gray-200 text-gray-700'}`}>ภาษาไทย</Link>
+        .hero {
+          background: linear-gradient(135deg, #1a2744 0%, #0f1e40 50%, #0a1628 100%);
+          border-bottom: 1px solid rgba(66, 153, 225, 0.15);
+          padding: 4rem 1.5rem 3rem;
+          text-align: center;
+        }
+        .hero h1 {
+          font-size: clamp(2rem, 6vw, 3.5rem);
+          font-weight: 900;
+          color: #fff;
+          margin-bottom: 0.8rem;
+          letter-spacing: -0.03em;
+        }
+        .hero .subtitle { font-size: 1rem; color: #64748b; margin-bottom: 1rem; }
+        .hero .update { font-size: 0.75rem; color: #4a5568; text-transform: uppercase; letter-spacing: 0.05em; }
+
+        .container { max-width: 800px; margin: 0 auto; padding: 3rem 1.5rem; }
+
+        .section-card {
+          background: rgba(255,255,255,0.02);
+          border: 1px solid rgba(255,255,255,0.06);
+          border-radius: 12px;
+          padding: 1.5rem;
+          margin-bottom: 1.5rem;
+        }
+        .sec-title { font-size: 1.1rem; font-weight: 700; color: #63b3ed; margin-bottom: 0.75rem; }
+        .sec-desc { font-size: 0.95rem; color: #94a3b8; line-height: 1.6; }
+
+        .nav-home { text-align: center; margin-top: 2rem; }
+        .nav-home a { color: #4a5568; text-decoration: none; font-size: 0.9rem; transition: color 0.2s; }
+        .nav-home a:hover { color: #63b3ed; }
+        
+        .footer { text-align: center; padding: 2rem; color: #1e293b; font-size: 0.8rem; }
+      `}</style>
+
+      <title>FootLine Bot – Privacy</title>
+
+      <header className="hero">
+        <h1>{ui.hero}</h1>
+        <p className="subtitle">{ui.subtitle}</p>
+        <p className="update">{ui.lastUpdate}</p>
+      </header>
+
+      <main className="container">
+        {ui.sections.map((s: any, i: number) => (
+          <div key={i} className="section-card">
+            <div className="sec-title">{s.t}</div>
+            <div className="sec-desc">{s.d}</div>
+          </div>
+        ))}
+
+        <div className="nav-home">
+          <Link href={`/?lang=${lang}`}>← Back to Home</Link>
         </div>
+      </main>
 
-        <div className="prose max-w-none space-y-8">
-          <section>
-            <p className="text-lg text-gray-700">{t.intro}</p>
-          </section>
-
-          <section className="bg-white rounded-lg shadow-md p-6">
-            <h2 className="text-xl font-bold text-green-700 mb-4">{t.collection}</h2>
-            <p className="text-gray-600 mb-4">{t.collectionDesc}</p>
-            <ul className="list-disc list-inside space-y-2 text-gray-600">
-              {t.collectionList.map((item, i) => (
-                <li key={i}>{item}</li>
-              ))}
-            </ul>
-          </section>
-
-          <section className="bg-white rounded-lg shadow-md p-6">
-            <h2 className="text-xl font-bold text-green-700 mb-4">{t.use}</h2>
-            <ul className="list-disc list-inside space-y-2 text-gray-600">
-              {t.useList.map((item, i) => (
-                <li key={i}>{item}</li>
-              ))}
-            </ul>
-          </section>
-
-          <section className="bg-white rounded-lg shadow-md p-6">
-            <h2 className="text-xl font-bold text-green-700 mb-4">{t.sharing}</h2>
-            <p className="text-gray-600 mb-4">{t.sharingDesc}</p>
-            <ul className="list-disc list-inside space-y-2 text-gray-600">
-              {t.sharingList.map((item, i) => (
-                <li key={i}>{item}</li>
-              ))}
-            </ul>
-          </section>
-
-          <section className="bg-white rounded-lg shadow-md p-6">
-            <h2 className="text-xl font-bold text-green-700 mb-4">{t.security}</h2>
-            <p className="text-gray-600">{t.securityDesc}</p>
-          </section>
-
-          <section className="bg-white rounded-lg shadow-md p-6">
-            <h2 className="text-xl font-bold text-green-700 mb-4">{t.retention}</h2>
-            <p className="text-gray-600">{t.retentionDesc}</p>
-          </section>
-
-          <section className="bg-white rounded-lg shadow-md p-6">
-            <h2 className="text-xl font-bold text-green-700 mb-4">{t.children}</h2>
-            <p className="text-gray-600">{t.childrenDesc}</p>
-          </section>
-
-          <section className="bg-white rounded-lg shadow-md p-6">
-            <h2 className="text-xl font-bold text-green-700 mb-4">{t.rights}</h2>
-            <ul className="list-disc list-inside space-y-2 text-gray-600">
-              {t.rightsList.map((item, i) => (
-                <li key={i}>{item}</li>
-              ))}
-            </ul>
-          </section>
-
-          <section className="bg-white rounded-lg shadow-md p-6">
-            <h2 className="text-xl font-bold text-green-700 mb-4">{t.line}</h2>
-            <p className="text-gray-600">{t.lineDesc}</p>
-          </section>
-
-          <section className="bg-white rounded-lg shadow-md p-6">
-            <h2 className="text-xl font-bold text-green-700 mb-4">{t.changes}</h2>
-            <p className="text-gray-600">{t.changesDesc}</p>
-          </section>
-
-          <section className="bg-gray-50 rounded-lg p-6">
-            <h2 className="text-xl font-bold text-green-700 mb-2">{t.contact}</h2>
-            <p className="text-gray-600">{t.contactDesc}</p>
-          </section>
-        </div>
-
-        <div className="mt-8">
-          <Link href="/" className="text-green-600 hover:underline">{t.backToHome}</Link>
-        </div>
-      </div>
-    </div>
+      <footer className="footer">FootLine Bot © {new Date().getFullYear()}</footer>
+    </>
   );
 }

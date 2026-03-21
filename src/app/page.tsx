@@ -1,255 +1,264 @@
+'use client';
+
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { Metadata } from 'next';
+import { useSearchParams } from 'next/navigation';
 
-export const metadata: Metadata = {
-  title: 'FootLineBot - LINE Bot for Football Group Management',
-  description: 'Manage your amateur football group with FootLineBot. Schedule events, register players, generate teams automatically.',
-};
+const LANGS = ['en', 'es', 'th'] as const;
+type Lang = (typeof LANGS)[number];
 
-const translations = {
+const UI: Record<Lang, any> = {
   en: {
-    heroTitle: 'FootLineBot',
-    heroSubtitle: 'LINE Bot for Amateur Football Management',
-    description: 'Easily manage your football group with automated event scheduling, player registration, team generation, and tactical formations.',
-    features: 'Features',
-    feature1Title: 'Event Scheduling',
-    feature1Desc: 'Create and manage football events with flexible scheduling options',
-    feature2Title: 'Team Generation',
-    feature2Desc: 'Automatically generate balanced teams based on player ratings',
-    feature3Title: 'Tactical Formations',
-    feature3Desc: 'Support for multiple formations (4-3-3, 4-4-2, 3-2-1, and more)',
-    feature4Title: 'Recurring Events',
-    feature4Desc: 'Set up weekly recurring events that automatically generate',
-    getStarted: 'Get Started',
-    addBot: 'Add Bot to LINE',
-    howItWorks: 'How It Works',
-    step1Title: '1. Add to Group',
-    step1Desc: 'Add FootLineBot to your LINE group',
-    step2Title: '2. Create Event',
-    step2Desc: 'Use !create to schedule a match',
-    step3Title: '3. Register Players',
-    step3Desc: 'Players register with !register',
-    step4Title: '4. Generate Teams',
-    step4Desc: 'Use !lineup to create balanced teams',
-    links: 'Quick Links',
+    hero: 'FootLine Bot',
+    subtitle: 'The ultimate AI assistant for your amateur football group',
+    description: 'Manage matches, generate balanced teams, and track stats directly from LINE.',
+    cta: 'View Guide',
+    featuresTitle: 'Smart Features',
+    feature1: { title: 'Auto-Scheduling', desc: 'Create matches and recurring weekly events with one command.' },
+    feature2: { title: 'AI Formations', desc: 'Balanced teams based on player level and preferred positions.' },
+    feature3: { title: 'Admin Control', desc: 'Full control over registrations, groups, and kicked members.' },
+    feature4: { title: 'Zero Friction', desc: 'Add the bot to a group, run !setup, and start playing.' },
+    linksTitle: 'Quick Access',
     help: 'Help Center',
-    helpDesc: 'Learn how to use the bot',
+    helpDesc: 'Full command list and usage guide.',
     terms: 'Terms of Service',
-    termsDesc: 'Terms and conditions',
     privacy: 'Privacy Policy',
-    privacyDesc: 'How we handle your data',
-    contact: 'Contact',
-    contactDesc: 'Get in touch with us',
-    footer: '© 2024 FootLineBot. All rights reserved.',
+    footer: 'FootLine Bot ©'
   },
   es: {
-    heroTitle: 'FootLineBot',
-    heroSubtitle: 'Bot de LINE para Gestión de Fútbol Aficionado',
-    description: 'Administra fácilmente tu grupo de fútbol con programación automática de eventos, registro de jugadores, generación de equipos y formaciones tácticas.',
-    features: 'Características',
-    feature1Title: 'Programación de Eventos',
-    feature1Desc: 'Crear y administrar eventos de fútbol con opciones flexibles',
-    feature2Title: 'Generación de Equipos',
-    feature2Desc: 'Generar equipos equilibrados automáticamente según la clasificación de jugadores',
-    feature3Title: 'Formaciones Tácticas',
-    feature3Desc: 'Soporte para múltiples formaciones (4-3-3, 4-4-2, 3-2-1 y más)',
-    feature4Title: 'Eventos Recurrentes',
-    feature4Desc: 'Configura eventos semanales que se generan automáticamente',
-    getStarted: 'Comenzar',
-    addBot: 'Agregar Bot a LINE',
-    howItWorks: 'Cómo Funciona',
-    step1Title: '1. Agregar al Grupo',
-    step1Desc: 'Agrega FootLineBot a tu grupo de LINE',
-    step2Title: '2. Crear Evento',
-    step2Desc: 'Usa !create para programar un partido',
-    step3Title: '3. Registrar Jugadores',
-    step3Desc: 'Los jugadores se registran con !register',
-    step4Title: '4. Generar Equipos',
-    step4Desc: 'Usa !lineup para crear equipos equilibrados',
-    links: 'Enlaces Rápidos',
+    hero: 'FootLine Bot',
+    subtitle: 'El asistente definitivo para tu grupo de fútbol aficionado',
+    description: 'Gestiona partidos, genera equipos equilibrados y sigue estadísticas directamente desde LINE.',
+    cta: 'Ver Guía',
+    featuresTitle: 'Funciones Inteligentes',
+    feature1: { title: 'Programación Auto', desc: 'Crea partidos y eventos recurrentes con un solo comando.' },
+    feature2: { title: 'Equipos por IA', desc: 'Equipos nivelados según el nivel y posiciones preferidas.' },
+    feature3: { title: 'Control Total', desc: 'Gestión completa de inscritos, grupos y expulsiones.' },
+    feature4: { title: 'Sin Fricción', desc: 'Añade el bot, escribe !iniciar y empieza a jugar.' },
+    linksTitle: 'Acceso Rápido',
     help: 'Centro de Ayuda',
-    helpDesc: 'Aprende a usar el bot',
+    helpDesc: 'Lista completa de comandos y guía de uso.',
     terms: 'Términos de Servicio',
-    termsDesc: 'Términos y condiciones',
     privacy: 'Política de Privacidad',
-    privacyDesc: 'Cómo manejamos tus datos',
-    contact: 'Contacto',
-    contactDesc: 'Escríbenos',
-    footer: '© 2024 FootLineBot. Todos los derechos reservados.',
+    footer: 'FootLine Bot ©'
   },
   th: {
-    heroTitle: 'FootLineBot',
-    heroSubtitle: 'บอท LINE สำหรับจัดการฟุตบอลสมัครเล่น',
-    description: 'จัดการกลุ่มฟุตบอลของคุณได้อย่างง่ายดายด้วยการจัดกำหนดการอีเวนต์อัตโนมัติ การลงทะเบียนผู้เล่น การสร้างทีม และการจัดวางแผนการเล่น',
-    features: 'คุณสมบัติ',
-    feature1Title: 'การจัดกำหนดการอีเวนต์',
-    feature1Desc: 'สร้างและจัดการอีเวนต์ฟุตบอลด้วยตัวเลือกที่ยืดหยุ่น',
-    feature2Title: 'การสร้างทีม',
-    feature2Desc: 'สร้างทีมที่สมดุลโดยอัตโนมัติตามระดับผู้เล่น',
-    feature3Title: 'การจัดวางแผน',
-    feature3Desc: 'รองรับการจัดวางหลายรูปแบบ (4-3-3, 4-4-2, 3-2-1 และอื่นๆ)',
-    feature4Title: 'อีเวนต์ประจำ',
-    feature4Desc: 'ตั้งค่าอีเวนต์ประจำสัปดาห์ที่สร้างอัตโนมัติ',
-    getStarted: 'เริ่มต้น',
-    addBot: 'เพิ่มบอทเข้า LINE',
-    howItWorks: 'วิธีใช้งาน',
-    step1Title: '1. เพิ่มเข้ากลุ่ม',
-    step1Desc: 'เพิ่ม FootLineBot เข้ากลุ่ม LINE ของคุณ',
-    step2Title: '2. สร้างอีเวนต์',
-    step2Desc: 'ใช้ !create เพื่อสร้างการแข่งขัน',
-    step3Title: '3. ลงทะเบียนผู้เล่น',
-    step3Desc: 'ผู้เล่นลงทะเบียนด้วย !register',
-    step4Title: '4. สร้างทีม',
-    step4Desc: 'ใช้ !lineup เพื่อสร้างทีมที่สมดุล',
-    links: 'ลิงก์ด่วน',
+    hero: 'FootLine Bot',
+    subtitle: 'ผู้ช่วยจัดการกลุ่มฟุตบอลอัจฉริยะบน LINE',
+    description: 'จัดการแข่งขัน สร้างทีมที่สมดุล และติดตามสถิติได้โดยตรงจากแอป LINE ของคุณ',
+    cta: 'ดูคู่มือ',
+    featuresTitle: 'คุณสมบัติอัจฉริยะ',
+    feature1: { title: 'จัดตารางอัตโนมัติ', desc: 'สร้างแมตซ์และเหตุการณ์รายสัปดาห์ด้วยคำสั่งเดียว' },
+    feature2: { title: 'จัดทีมด้วย IA', desc: 'ทีมที่สมดุลตามระดับฝีมือและตำแหน่งที่ผู้เล่นชอบ' },
+    feature3: { title: 'ระบบจัดการแอดมิน', desc: 'ควบคุมการลงทะเบียน กลุ่ม และสมาชิกได้อย่างเต็มที่' },
+    feature4: { title: 'เริ่มเล่นง่าย', desc: 'เพิ่มบอทเข้ากลุ่ม พิมพ์ !เริ่มต้น และเริ่มเล่นได้ทันที' },
+    linksTitle: 'ลิงก์ด่วน',
     help: 'ศูนย์ช่วยเหลือ',
-    helpDesc: 'เรียนรู้วิธีใช้บอท',
+    helpDesc: 'รายการคำสั่งและวิธีใช้งานทั้งหมด',
     terms: 'ข้อกำหนดการใช้งาน',
-    termsDesc: 'ข้อตกลงและเงื่อนไข',
     privacy: 'นโยบายความเป็นส่วนตัว',
-    privacyDesc: 'วิธีที่เราจัดการข้อมูลของคุณ',
-    contact: 'ติดต่อ',
-    contactDesc: 'ติดต่อเรา',
-    footer: '© 2024 FootLineBot สงวนลิขสิทธิ์',
-  },
+    footer: 'FootLine Bot ©'
+  }
 };
 
-type Lang = 'en' | 'es' | 'th';
+export default function HomePage() {
+  const searchParams = useSearchParams();
+  const [lang, setLang] = useState<Lang>('en');
 
-export default function Home({ searchParams }: { searchParams: { lang?: string } }) {
-  const lang = (searchParams.lang as Lang) || 'en';
-  const t = translations[lang] || translations.en;
+  useEffect(() => {
+    const l = searchParams.get('lang') as Lang;
+    if (l && LANGS.includes(l)) {
+      setLang(l);
+    }
+  }, [searchParams]);
+
+  const ui = UI[lang];
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-green-50 to-white">
-      {/* Header */}
-      <header className="bg-white shadow-sm">
-        <div className="max-w-6xl mx-auto px-4 py-4 flex justify-between items-center">
-          <h1 className="text-2xl font-bold text-green-700">⚽ FootLineBot</h1>
-          <nav className="flex gap-4">
-            <Link href={`/help?lang=${lang}`} className="text-gray-600 hover:text-green-600">{t.help}</Link>
-            <Link href={`/terms?lang=${lang}`} className="text-gray-600 hover:text-green-600">{t.terms}</Link>
-            <Link href={`/privacy?lang=${lang}`} className="text-gray-600 hover:text-green-600">{t.privacy}</Link>
-          </nav>
-        </div>
+    <>
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Inter', sans-serif; background: #0a0e1a; color: #e2e8f0; min-height: 100vh; }
+
+        .hero {
+          background: linear-gradient(135deg, #1a2744 0%, #0f1e40 50%, #0a1628 100%);
+          border-bottom: 1px solid rgba(66, 153, 225, 0.15);
+          padding: 5rem 1.5rem 4rem;
+          text-align: center;
+          position: relative;
+          overflow: hidden;
+        }
+        .hero::before {
+          content: '';
+          position: absolute;
+          inset: 0;
+          background: radial-gradient(ellipse 80% 60% at 50% 0%, rgba(66, 153, 225, 0.15) 0%, transparent 70%);
+          pointer-events: none;
+        }
+        .hero-badge {
+          display: inline-flex;
+          align-items: center;
+          gap: 0.5rem;
+          background: rgba(66, 153, 225, 0.12);
+          border: 1px solid rgba(66, 153, 225, 0.25);
+          border-radius: 100px;
+          padding: 0.35rem 1rem;
+          font-size: 0.78rem;
+          font-weight: 600;
+          letter-spacing: 0.06em;
+          text-transform: uppercase;
+          color: #63b3ed;
+          margin-bottom: 1.5rem;
+        }
+        .hero h1 {
+          font-size: clamp(2.5rem, 8vw, 4.5rem);
+          font-weight: 900;
+          background: linear-gradient(135deg, #fff 0%, #90cdf4 50%, #63b3ed 100%);
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+          background-clip: text;
+          line-height: 1.1;
+          letter-spacing: -0.04em;
+          margin-bottom: 1rem;
+        }
+        .hero .subtitle {
+          font-size: 1.25rem;
+          color: #94a3b8;
+          max-width: 600px;
+          margin: 0 auto 2.5rem;
+          line-height: 1.6;
+        }
+        .hero-cta {
+          display: inline-flex;
+          align-items: center;
+          background: #3182ce;
+          color: white;
+          padding: 0.8rem 2rem;
+          border-radius: 100px;
+          font-weight: 700;
+          text-decoration: none;
+          transition: transform 0.2s ease, background 0.2s ease;
+          box-shadow: 0 4px 14px 0 rgba(0, 118, 255, 0.3);
+        }
+        .hero-cta:hover { background: #2b6cb0; transform: translateY(-2px); }
+
+        .container { max-width: 1000px; margin: 0 auto; padding: 4rem 1.5rem; }
+
+        .features-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+          gap: 1.5rem;
+          margin-bottom: 4rem;
+        }
+        .feat-card {
+          background: rgba(255,255,255,0.02);
+          border: 1px solid rgba(255,255,255,0.07);
+          border-radius: 16px;
+          padding: 1.5rem;
+          transition: all 0.2s ease;
+        }
+        .feat-card:hover { transform: translateY(-3px); background: rgba(66, 153, 225, 0.04); border-color: rgba(66,153,225,0.2); }
+        .feat-icon { font-size: 2rem; margin-bottom: 1rem; display: block; }
+        .feat-title { font-size: 1.15rem; font-weight: 700; color: #fff; margin-bottom: 0.5rem; }
+        .feat-desc { font-size: 0.9rem; color: #94a3b8; line-height: 1.6; }
+
+        .links-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+          gap: 1rem;
+        }
+        .lnk-card {
+          background: rgba(255,255,255,0.03);
+          border: 1px solid rgba(255,255,255,0.05);
+          padding: 1.25rem;
+          border-radius: 12px;
+          text-decoration: none;
+          display: block;
+          transition: border-color 0.2s ease;
+        }
+        .lnk-card:hover { border-color: rgba(66,153,225,0.3); }
+        .lnk-title { color: #63b3ed; font-weight: 700; margin-bottom: 0.25rem; }
+        .lnk-desc { font-size: 0.8rem; color: #64748b; }
+
+        .footer {
+          text-align: center;
+          padding: 3rem 1.5rem;
+          color: #2d3748;
+          font-size: 0.85rem;
+          border-top: 1px solid rgba(255,255,255,0.04);
+        }
+
+        .lang-nav {
+           display: flex; justify-content: center; gap: 0.5rem; margin-top: 2rem;
+        }
+        .lang-nav a {
+          text-decoration: none; padding: 0.4rem 1rem; border-radius: 50px; font-size: 0.75rem; 
+          border: 1px solid rgba(255,255,255,0.08); color: #4a5568; transition: all 0.2s;
+        }
+        .lang-nav a.active { background: rgba(66, 153, 225, 0.15); color: #63b3ed; border-color: rgba(66,153,225,0.3); }
+      `}</style>
+
+      <title>FootLine Bot – AI Football Manager</title>
+
+      <header className="hero">
+        <div className="hero-badge">⚽ Next Generation Management</div>
+        <h1>{ui.hero}</h1>
+        <p className="subtitle">{ui.subtitle}</p>
+        <Link href={`/help?lang=${lang}`} className="hero-cta">{ui.cta}</Link>
+        
+        <nav className="lang-nav">
+          <Link href="/?lang=en" className={lang === 'en' ? 'active' : ''}>ENG</Link>
+          <Link href="/?lang=es" className={lang === 'es' ? 'active' : ''}>ESP</Link>
+          <Link href="/?lang=th" className={lang === 'th' ? 'active' : ''}>THA</Link>
+        </nav>
       </header>
 
-      {/* Language Selector */}
-      <div className="bg-green-600 py-2">
-        <div className="max-w-6xl mx-auto px-4 flex justify-center gap-2">
-          <Link href="/?lang=en" className={`px-3 py-1 rounded-full text-sm ${lang === 'en' ? 'bg-white text-green-700' : 'text-white hover:bg-green-500'}`}>English</Link>
-          <Link href="/?lang=es" className={`px-3 py-1 rounded-full text-sm ${lang === 'es' ? 'bg-white text-green-700' : 'text-white hover:bg-green-500'}`}>Español</Link>
-          <Link href="/?lang=th" className={`px-3 py-1 rounded-full text-sm ${lang === 'th' ? 'bg-white text-green-700' : 'text-white hover:bg-green-500'}`}>ภาษาไทย</Link>
-        </div>
-      </div>
-
-      {/* Hero */}
-      <section className="py-20 text-center">
-        <div className="max-w-4xl mx-auto px-4">
-          <h2 className="text-5xl font-bold text-green-800 mb-4">{t.heroTitle}</h2>
-          <p className="text-xl text-green-600 mb-6">{t.heroSubtitle}</p>
-          <p className="text-gray-600 mb-8">{t.description}</p>
-          <div className="flex justify-center gap-4">
-            <Link href={`/help?lang=${lang}`} className="bg-green-600 text-white px-8 py-3 rounded-full font-semibold hover:bg-green-700 transition">
-              {t.getStarted}
-            </Link>
+      <main className="container">
+        <h2 style={{ fontSize: '1.5rem', marginBottom: '2rem', textAlign: 'center' }}>{ui.featuresTitle}</h2>
+        <div className="features-grid">
+          <div className="feat-card">
+            <span className="feat-icon">🗓️</span>
+            <div className="feat-title">{ui.feature1.title}</div>
+            <div className="feat-desc">{ui.feature1.desc}</div>
+          </div>
+          <div className="feat-card">
+            <span className="feat-icon">🤖</span>
+            <div className="feat-title">{ui.feature2.title}</div>
+            <div className="feat-desc">{ui.feature2.desc}</div>
+          </div>
+          <div className="feat-card">
+            <span className="feat-icon">⚡</span>
+            <div className="feat-title">{ui.feature3.title}</div>
+            <div className="feat-desc">{ui.feature3.desc}</div>
+          </div>
+          <div className="feat-card">
+            <span className="feat-icon">💎</span>
+            <div className="feat-title">{ui.feature4.title}</div>
+            <div className="feat-desc">{ui.feature4.desc}</div>
           </div>
         </div>
-      </section>
 
-      {/* Features */}
-      <section className="py-16 bg-white">
-        <div className="max-w-6xl mx-auto px-4">
-          <h3 className="text-3xl font-bold text-center text-gray-800 mb-12">{t.features}</h3>
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-            <div className="text-center p-6 bg-green-50 rounded-lg">
-              <div className="text-4xl mb-4">📅</div>
-              <h4 className="font-bold text-green-800 mb-2">{t.feature1Title}</h4>
-              <p className="text-gray-600 text-sm">{t.feature1Desc}</p>
-            </div>
-            <div className="text-center p-6 bg-green-50 rounded-lg">
-              <div className="text-4xl mb-4">⚽</div>
-              <h4 className="font-bold text-green-800 mb-2">{t.feature2Title}</h4>
-              <p className="text-gray-600 text-sm">{t.feature2Desc}</p>
-            </div>
-            <div className="text-center p-6 bg-green-50 rounded-lg">
-              <div className="text-4xl mb-4">📋</div>
-              <h4 className="font-bold text-green-800 mb-2">{t.feature3Title}</h4>
-              <p className="text-gray-600 text-sm">{t.feature3Desc}</p>
-            </div>
-            <div className="text-center p-6 bg-green-50 rounded-lg">
-              <div className="text-4xl mb-4">🔄</div>
-              <h4 className="font-bold text-green-800 mb-2">{t.feature4Title}</h4>
-              <p className="text-gray-600 text-sm">{t.feature4Desc}</p>
-            </div>
-          </div>
+        <h2 style={{ fontSize: '1.2rem', marginBottom: '1.5rem', color: '#4a5568' }}>{ui.linksTitle}</h2>
+        <div className="links-grid">
+          <Link href={`/help?lang=${lang}`} className="lnk-card">
+            <div className="lnk-title">{ui.help}</div>
+            <div className="lnk-desc">{ui.helpDesc}</div>
+          </Link>
+          <Link href={`/terms?lang=${lang}`} className="lnk-card">
+            <div className="lnk-title">{ui.terms}</div>
+            <div className="lnk-desc">Legal info and usage terms.</div>
+          </Link>
+          <Link href={`/privacy?lang=${lang}`} className="lnk-card">
+            <div className="lnk-title">{ui.privacy}</div>
+            <div className="lnk-desc">How we protect your data.</div>
+          </Link>
         </div>
-      </section>
+      </main>
 
-      {/* How It Works */}
-      <section className="py-16">
-        <div className="max-w-4xl mx-auto px-4">
-          <h3 className="text-3xl font-bold text-center text-gray-800 mb-12">{t.howItWorks}</h3>
-          <div className="grid md:grid-cols-2 gap-8">
-            <div className="flex gap-4 items-start">
-              <div className="w-12 h-12 bg-green-600 text-white rounded-full flex items-center justify-center font-bold shrink-0">1</div>
-              <div>
-                <h4 className="font-bold text-gray-800">{t.step1Title}</h4>
-                <p className="text-gray-600">{t.step1Desc}</p>
-              </div>
-            </div>
-            <div className="flex gap-4 items-start">
-              <div className="w-12 h-12 bg-green-600 text-white rounded-full flex items-center justify-center font-bold shrink-0">2</div>
-              <div>
-                <h4 className="font-bold text-gray-800">{t.step2Title}</h4>
-                <p className="text-gray-600">{t.step2Desc}</p>
-              </div>
-            </div>
-            <div className="flex gap-4 items-start">
-              <div className="w-12 h-12 bg-green-600 text-white rounded-full flex items-center justify-center font-bold shrink-0">3</div>
-              <div>
-                <h4 className="font-bold text-gray-800">{t.step3Title}</h4>
-                <p className="text-gray-600">{t.step3Desc}</p>
-              </div>
-            </div>
-            <div className="flex gap-4 items-start">
-              <div className="w-12 h-12 bg-green-600 text-white rounded-full flex items-center justify-center font-bold shrink-0">4</div>
-              <div>
-                <h4 className="font-bold text-gray-800">{t.step4Title}</h4>
-                <p className="text-gray-600">{t.step4Desc}</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Quick Links */}
-      <section className="py-16 bg-white">
-        <div className="max-w-6xl mx-auto px-4">
-          <h3 className="text-3xl font-bold text-center text-gray-800 mb-12">{t.links}</h3>
-          <div className="grid md:grid-cols-3 gap-8">
-            <Link href={`/help?lang=${lang}`} className="block p-6 bg-green-50 rounded-lg hover:bg-green-100 transition">
-              <h4 className="font-bold text-green-800 mb-2">{t.help}</h4>
-              <p className="text-gray-600 text-sm">{t.helpDesc}</p>
-            </Link>
-            <Link href={`/terms?lang=${lang}`} className="block p-6 bg-green-50 rounded-lg hover:bg-green-100 transition">
-              <h4 className="font-bold text-green-800 mb-2">{t.terms}</h4>
-              <p className="text-gray-600 text-sm">{t.termsDesc}</p>
-            </Link>
-            <Link href={`/privacy?lang=${lang}`} className="block p-6 bg-green-50 rounded-lg hover:bg-green-100 transition">
-              <h4 className="font-bold text-green-800 mb-2">{t.privacy}</h4>
-              <p className="text-gray-600 text-sm">{t.privacyDesc}</p>
-            </Link>
-          </div>
-        </div>
-      </section>
-
-      {/* Footer */}
-      <footer className="bg-green-800 text-white py-8">
-        <div className="max-w-6xl mx-auto px-4 text-center">
-          <p>{t.footer}</p>
-        </div>
+      <footer className="footer">
+        {ui.footer} {new Date().getFullYear()} – Made for the Beautiful Game
       </footer>
-    </div>
+    </>
   );
 }

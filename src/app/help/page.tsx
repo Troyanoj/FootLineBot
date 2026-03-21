@@ -115,6 +115,12 @@ const PLAYER_CMDS: Record<Lang, Section[]> = {
 const ADMIN_CMDS: Record<Lang, Section[]> = {
   en: [
     {
+      title: 'Initial Setup',
+      cmds: [
+        { cmd: '!setup', desc: 'Register your current LINE group and set yourself as admin.', example: '!setup' },
+      ],
+    },
+    {
       title: 'Match Management',
       cmds: [
         { cmd: '!create_event [date] [time] [dur] [min_game] [teams]', desc: 'Create a new match event.', example: '!create_event 2024-04-20 19:00 90 20 2' },
@@ -144,6 +150,12 @@ const ADMIN_CMDS: Record<Lang, Section[]> = {
   ],
   es: [
     {
+      title: 'Configuracion Inicial',
+      cmds: [
+        { cmd: '!iniciar', desc: 'Registra el grupo actual de LINE y te asigna como administrador.', example: '!iniciar' },
+      ],
+    },
+    {
       title: 'Gestión de Partidos',
       cmds: [
         { cmd: '!crear_evento [fecha] [hora] [dur] [min_partido] [equipos]', desc: 'Crea un nuevo partido con todos sus parámetros.', example: '!crear_evento 2024-04-20 19:00 90 20 2' },
@@ -172,6 +184,12 @@ const ADMIN_CMDS: Record<Lang, Section[]> = {
     },
   ],
   th: [
+    {
+      title: 'การเริ่มต้นใช้งาน',
+      cmds: [
+        { cmd: '!ลงทะเบียนกลุ่ม / !เริ่มต้น', desc: 'ลงทะเบียนกลุ่ม LINE ปัจจุบันและตั้งค่าตัวคุณเป็นแอดมิน', example: '!เริ่มต้น' },
+      ],
+    },
     {
       title: 'จัดการอีเวนต์',
       cmds: [
