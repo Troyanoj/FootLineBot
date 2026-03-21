@@ -200,13 +200,13 @@ async function handleMessageEvent(event: LineWebhookEvent): Promise<void> {
   const isSpanish = [
     'crear_evento', 'configurar', 'tactica', 'generar', 'cerrar', 'borrar_evento', 'expulsar', 'recurrente', 'recurring',
     'ayuda', 'apuntar', 'inscribirme', 'baja', 'desinscribirme', 'perfil', 'alineacion', 'horario', 'grupos', 'unirse',
-    'posicion',
+    'posicion', 'iniciar',
   ].includes(command);
 
   const isEnglish = [
     'create_event', 'config', 'tactics', 'generate', 'close', 'delete_event', 'kick', 'recurring_events',
     'help', 'register', 'unregister', 'profile', 'lineup', 'schedule', 'groups_list', 'join',
-    'position',
+    'position', 'setup', 'config_group',
   ].includes(command);
   
   let lang: 'es' | 'en' | 'th' = 'th';
@@ -223,7 +223,7 @@ async function handleMessageEvent(event: LineWebhookEvent): Promise<void> {
         message: msgFile.adminRequiredMessage(),
       };
     } else {
-      const context: HandlerContext & { lang: 'es' | 'th' } = {
+      const context: HandlerContext & { lang: 'es' | 'en' | 'th' } = {
         userId,
         replyToken,
         lang,
@@ -232,7 +232,7 @@ async function handleMessageEvent(event: LineWebhookEvent): Promise<void> {
     }
   } else {
     // Handle user command
-    const context: HandlerContext & { lang: 'es' | 'th' } = {
+    const context: HandlerContext & { lang: 'es' | 'en' | 'th' } = {
       userId,
       replyToken,
       lang,

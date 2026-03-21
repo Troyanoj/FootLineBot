@@ -625,12 +625,3 @@ export const joinedGroupMessage = (): string => {
 
 📋 ใช้คำสั่ง !help เพื่อดูคำสั่งทั้งหมดครับ`;
 };
-
-/** Invalid command message */
-export const invalidCommandMessage = (command: string): string => {
-  return `⚠️ *คำสั่งไม่ถูกต้อง*
-
-คำสั่ง !${command} ไม่ถูกต้อง
-
-ใช้ !help เพื่อดูคำสั่งทั้งหมดครับ`;
-};
