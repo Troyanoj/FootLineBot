@@ -14,7 +14,8 @@ export const welcomeMessage = (displayName: string): string => {
 *Para Jugadores:*
 • !apuntar o !inscribirme - Regístrate al partido actual
 • !baja o !desinscribirme - Cancela tu registro
-• !perfil - Mira tu perfil y posiciones
+• !perfil - Mira tu perfil
+• !posicion [p1] [p2] [p3] - Configura tus posiciones
 • !alineacion - Mira la alineación del partido
 • !horario - Mira el calendario de partidos
 • !grupos - Mira tus grupos
@@ -40,7 +41,8 @@ export const helpMessage = (): string => {
 *Para Jugadores:*
 🔹 !apuntar o !inscribirme - Anótate al partido
 🔹 !baja o !desinscribirme - Date de baja
-🔹 !perfil - Configura tu posición y ve tu nivel
+🔹 !perfil - Mira tu perfil
+🔹 !posicion [pos1] [pos2] [pos3] - Configura tus posiciones
 🔹 !alineacion - Mira la lista de equipos
 🔹 !horario - Próximos partidos
 🔹 !grupos - Tus grupos
@@ -109,6 +111,12 @@ export const registrationFailedAlreadyRegisteredMessage = (): string => {
 No es necesario apuntarte de nuevo a este evento.`;
 };
 
+// Aliases for user.handlers.ts consistency
+export const noOpenEventMessage = registrationFailedNoEventMessage;
+export const alreadyRegisteredMessage = registrationFailedAlreadyRegisteredMessage;
+export const notRegisteredMessage = (): string => `❌ *No estás registrado en este evento.*`;
+
+
 // ============================================================================
 // Group Messages
 // ============================================================================
@@ -150,7 +158,7 @@ export const eventCreatedMessage = (event: Event): string => {
 📝 ¡A partir de este momento pueden usar !apuntar para jugar!`;
 };
 
-export const eventClosedMessage = (event: Event, registrations: Registration[]): string => {
+export const eventClosedMessage = (event: Event, registrations: any[]): string => {
   return `🔒 *¡Inscripciones Cerradas!*
 
 👥 *Apuntados:* ${registrations.length} jugadores
@@ -158,7 +166,7 @@ export const eventClosedMessage = (event: Event, registrations: Registration[]):
 ¡Prepárense para el partido! ⚽`;
 };
 
-export const eventDetailsMessage = (event: Event, registrations: Registration[]): string => {
+export const eventDetailsMessage = (event: Event, registrations: any[]): string => {
   const date = new Date(event.eventDate).toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long' });
   const playerList = registrations.map((r: any, i) => `${i + 1}. ${r.user?.displayName || 'Unknown'}`).join('\n');
   return `📋 *Detalle del Partido*
@@ -212,6 +220,7 @@ export const profileMessage = (user: User, groups: Group[]): string => {
 📛 *Nombre:* ${user.displayName}
 ⚽ *Pos 1:* ${user.position1 || 'N/A'}
 ⚽ *Pos 2:* ${user.position2 || 'N/A'}
+⚽ *Pos 3:* ${user.position3 || 'N/A'}
 ⭐ *Nivel:* ${user.rating || 5}/10
 ⚽ *Partidos:* ${user.totalMatches || 0}`;
 };

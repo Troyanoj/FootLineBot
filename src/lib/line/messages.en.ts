@@ -14,7 +14,8 @@ export const welcomeMessage = (displayName: string): string => {
 *For Players:*
 • !register - Register for the current match
 • !unregister - Cancel your registration
-• !profile - View your profile and positions
+• !profile - View your profile
+• !position [p1] [p2] [p3] - Set your positions
 • !lineup - View the match lineup
 • !schedule - View match schedule
 • !groups - View your groups
@@ -40,7 +41,8 @@ export const helpMessage = (): string => {
 *For Players:*
 🔹 !register - Sign up for the match
 🔹 !unregister - Cancel your spot
-🔹 !profile - Set your position and rating
+🔹 !profile - View your profile
+🔹 !position [p1] [p2] [p3] - Set your positions
 🔹 !lineup - Team assignments
 🔹 !schedule - Upcoming games
 🔹 !groups - Your active groups
@@ -111,6 +113,12 @@ export const registrationFailedAlreadyRegisteredMessage = (): string => {
 You are already signed up for this event.`;
 };
 
+// Aliases for user.handlers.ts consistency
+export const noOpenEventMessage = registrationFailedNoEventMessage;
+export const alreadyRegisteredMessage = registrationFailedAlreadyRegisteredMessage;
+export const notRegisteredMessage = (): string => `❌ *You are not registered for this event.*`;
+
+
 // ============================================================================
 // Group Messages
 // ============================================================================
@@ -152,7 +160,7 @@ export const eventCreatedMessage = (event: Event): string => {
 📝 Players can now use !register to join!`;
 };
 
-export const eventClosedMessage = (event: Event, registrations: Registration[]): string => {
+export const eventClosedMessage = (event: Event, registrations: any[]): string => {
   return `🔒 *Registrations Closed!*
 
 👥 *Players signed up:* ${registrations.length}
@@ -160,7 +168,7 @@ export const eventClosedMessage = (event: Event, registrations: Registration[]):
 Get ready for the match! ⚽`;
 };
 
-export const eventDetailsMessage = (event: Event, registrations: Registration[]): string => {
+export const eventDetailsMessage = (event: Event, registrations: any[]): string => {
   const date = new Date(event.eventDate).toLocaleDateString('en-US', { weekday: 'long', day: 'numeric', month: 'long' });
   const playerList = registrations.map((r: any, i) => `${i + 1}. ${r.user?.displayName || 'Unknown'}`).join('\n');
   return `📋 *Match Details*
@@ -214,6 +222,7 @@ export const profileMessage = (user: User, groups: Group[]): string => {
 📛 *Name:* ${user.displayName}
 ⚽ *Pos 1:* ${user.position1 || 'N/A'}
 ⚽ *Pos 2:* ${user.position2 || 'N/A'}
+⚽ *Pos 3:* ${user.position3 || 'N/A'}
 ⭐ *Rating:* ${user.rating || 5}/10
 ⚽ *Matches:* ${user.totalMatches || 0}`;
 };

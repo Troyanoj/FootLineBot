@@ -18,7 +18,8 @@ export const welcomeMessage = (displayName: string): string => {
 *สำหรับผู้เล่น:*
 • !register หรือ !ลงทะเบียน - ลงทะเบียนเข้าร่วมอีเวนต์ปัจจุบัน
 • !unregister หรือ !ยกเลิก - ยกเลิกการลงทะเบียน
-• !profile หรือ !โปรไฟล์ - ดูโปรไฟล์และตำแหน่ง
+• !profile หรือ !โปรไฟล์ - ดูโปรไฟล์ของคุณ
+• !ตำแหน่ง [p1] [p2] [p3] - ตั้งค่าตำแหน่งที่ชอบ
 • !lineup หรือ !รายชื่อ - ดูรายชื่อในอีเวนต์ปัจจุบัน
 • !events หรือ !อีเวนต์ - ดูปฏิทินอีเวนต์
 • !groups หรือ !กลุ่ม - รายการกลุ่มที่มี
@@ -51,7 +52,8 @@ export const helpMessage = (): string => {
 *สำหรับผู้เล่น:*
 🔹 !register หรือ !ลงทะเบียน - ลงทะเบียนเข้าร่วมอีเวนต์
 🔹 !unregister หรือ !ยกเลิก - ยกเลิกการลงทะเบียน
-🔹 !profile หรือ !โปรไฟล์ - ดูโปรไฟล์และตำแหน่งที่ชอบ
+🔹 !profile หรือ !โปรไฟล์ - ดูโปรไฟล์
+🔹 !ตำแหน่ง [pos1] [pos2] [pos3] - ตั้งค่าตำแหน่งที่ชอบ
 🔹 !lineup หรือ !รายชื่อ - ดูตำแหน่งในทีม
 🔹 !events หรือ !อีเวนต์ - ดูอีเวนต์ที่กำลังจะมาถึง
 🔹 !groups หรือ !กลุ่ม - รายการกลุ่มที่มี
@@ -195,7 +197,7 @@ export const eventCreatedMessage = (event: Event): string => {
 };
 
 /** Event closed message */
-export const eventClosedMessage = (event: Event, registrations: Registration[]): string => {
+export const eventClosedMessage = (event: Event, registrations: any[]): string => {
   const playerCount = registrations.length;
   return `🔒 *ปิดการลงทะเบียนแล้ว!*
 
@@ -206,7 +208,7 @@ export const eventClosedMessage = (event: Event, registrations: Registration[]):
 };
 
 /** Event details message */
-export const eventDetailsMessage = (event: Event, registrations: Registration[]): string => {
+export const eventDetailsMessage = (event: Event, registrations: any[]): string => {
   const date = new Date(event.eventDate).toLocaleDateString('th-TH', {
     weekday: 'long',
     day: 'numeric',

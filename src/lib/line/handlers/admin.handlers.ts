@@ -832,12 +832,12 @@ export async function handleAdminCommand(
     
     case 'tactica':
     case 'กลยุทธ์':
-    case 'จัดทีม':
     case 'tactics':
       return handleTactica(context, args);
     
     case 'generar':
     case 'generate':
+    case 'จัดทีม':
       return handleGenerar(context);
     
     case 'cerrar':
