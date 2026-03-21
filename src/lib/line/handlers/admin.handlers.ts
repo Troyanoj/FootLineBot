@@ -8,11 +8,17 @@ import { eventService } from '@/services/event.service';
 import { registrationService } from '@/services/registration.service';
 import { lineupService } from '@/services/lineup.service';
 import { recurringEventService } from '@/services/recurring-event.service';
-import * as msg from '@/lib/line/messages';
+import * as msgTh from '@/lib/line/messages';
+import * as msgEs from '@/lib/line/messages.es';
+import * as msgEn from '@/lib/line/messages.en';
 import type { User, Group, Event, GameType, CreateEventInput, UpdateEventInput } from '@/types';
+
+const getMsg = (context: any) =>
+  context?.lang === 'es' ? msgEs : (context?.lang === 'en' ? msgEn : msgTh);
 
 // Context passed to all handlers
 export interface AdminHandlerContext {
+  lang?: "es" | "en" | "th";
   userId: string;
   groupId?: string;
   replyToken: string;
@@ -131,7 +137,7 @@ Ejemplo: !crear_evento 2024-12-25 18:00 90 20 2
     if (adminGroups.length === 0) {
       return {
         success: false,
-        message: msg.adminRequiredMessage(),
+        message: getMsg(context).adminRequiredMessage(),
       };
     }
     
@@ -166,13 +172,13 @@ Ejemplo: !crear_evento 2024-12-25 18:00 90 20 2
     
     return {
       success: true,
-      message: msg.eventCreatedMessage(newEvent),
+      message: getMsg(context).eventCreatedMessage(newEvent),
     };
   } catch (error) {
     console.error('Error in handleCrearEvento:', error);
     return {
       success: false,
-      message: msg.errorMessage(),
+      message: getMsg(context).errorMessage(),
     };
   }
 }
@@ -216,7 +222,7 @@ Ejemplo: !configurar 7`,
     if (adminGroups.length === 0) {
       return {
         success: false,
-        message: msg.adminRequiredMessage(),
+        message: getMsg(context).adminRequiredMessage(),
       };
     }
     
@@ -238,7 +244,7 @@ Este cambio afecta a los nuevos eventos creados.`,
     console.error('Error in handleConfigurar:', error);
     return {
       success: false,
-      message: msg.errorMessage(),
+      message: getMsg(context).errorMessage(),
     };
   }
 }
@@ -311,7 +317,7 @@ export async function handleTactica(
     if (adminGroups.length === 0) {
       return {
         success: false,
-        message: msg.adminRequiredMessage(),
+        message: getMsg(context).adminRequiredMessage(),
       };
     }
     
@@ -349,7 +355,7 @@ ${Object.keys(newTactics).map((t) => `• ${t}`).join('\n') || 'ยังไม�
     console.error('Error in handleTactica:', error);
     return {
       success: false,
-      message: msg.errorMessage(),
+      message: getMsg(context).errorMessage(),
     };
   }
 }
@@ -371,7 +377,7 @@ export async function handleRecurrente(
     if (adminGroups.length === 0) {
       return {
         success: false,
-        message: msg.adminRequiredMessage(),
+        message: getMsg(context).adminRequiredMessage(),
       };
     }
     
@@ -575,7 +581,7 @@ export async function handleRecurrente(
     console.error('Error in handleRecurrente:', error);
     return {
       success: false,
-      message: msg.errorMessage(),
+      message: getMsg(context).errorMessage(),
     };
   }
 }
@@ -592,7 +598,7 @@ export async function handleGenerar(context: AdminHandlerContext): Promise<Handl
     if (adminGroups.length === 0) {
       return {
         success: false,
-        message: msg.adminRequiredMessage(),
+        message: getMsg(context).adminRequiredMessage(),
       };
     }
     
@@ -638,7 +644,7 @@ Usa !alineacion para ver las alineaciones.`,
     console.error('Error in handleGenerar:', error);
     return {
       success: false,
-      message: msg.errorMessage(),
+      message: getMsg(context).errorMessage(),
     };
   }
 }
@@ -655,7 +661,7 @@ export async function handleCerrar(context: AdminHandlerContext): Promise<Handle
     if (adminGroups.length === 0) {
       return {
         success: false,
-        message: msg.adminRequiredMessage(),
+        message: getMsg(context).adminRequiredMessage(),
       };
     }
     
@@ -682,13 +688,13 @@ export async function handleCerrar(context: AdminHandlerContext): Promise<Handle
     
     return {
       success: true,
-      message: msg.registrationClosedMessage(),
+      message: getMsg(context).registrationClosedMessage(),
     };
   } catch (error) {
     console.error('Error in handleCerrar:', error);
     return {
       success: false,
-      message: msg.errorMessage(),
+      message: getMsg(context).errorMessage(),
     };
   }
 }
@@ -708,7 +714,7 @@ export async function handleBorrarEvento(
     if (adminGroups.length === 0) {
       return {
         success: false,
-        message: msg.adminRequiredMessage(),
+        message: getMsg(context).adminRequiredMessage(),
       };
     }
     
@@ -732,7 +738,7 @@ export async function handleBorrarEvento(
     if (!isAdmin) {
       return {
         success: false,
-        message: msg.adminRequiredMessage(),
+        message: getMsg(context).adminRequiredMessage(),
       };
     }
     
@@ -749,7 +755,7 @@ El evento "${event.title || event.id}" ha sido eliminado.`,
     console.error('Error in handleBorrarEvento:', error);
     return {
       success: false,
-      message: msg.errorMessage(),
+      message: getMsg(context).errorMessage(),
     };
   }
 }
@@ -776,7 +782,7 @@ export async function handleExpulsar(
     if (adminGroups.length === 0) {
       return {
         success: false,
-        message: msg.adminRequiredMessage(),
+        message: getMsg(context).adminRequiredMessage(),
       };
     }
     
@@ -794,7 +800,7 @@ El usuario ha sido eliminado del grupo ${group.name}.`,
     console.error('Error in handleExpulsar:', error);
     return {
       success: false,
-      message: msg.errorMessage(),
+      message: getMsg(context).errorMessage(),
     };
   }
 }
@@ -816,39 +822,47 @@ export async function handleAdminCommand(
   switch (normalizedCommand) {
     case 'crear_evento':
     case 'สร้าง':
+    case 'create_event':
       return handleCrearEvento(context, args);
     
     case 'configurar':
     case 'ตั้งค่า':
+    case 'config':
       return handleConfigurar(context, args);
     
     case 'tactica':
     case 'กลยุทธ์':
     case 'จัดทีม':
+    case 'tactics':
       return handleTactica(context, args);
     
     case 'generar':
+    case 'generate':
       return handleGenerar(context);
     
     case 'cerrar':
     case 'ปิด':
+    case 'close':
       return handleCerrar(context);
     
     case 'borrar_evento':
     case 'ลบ':
+    case 'delete_event':
       return handleBorrarEvento(context, args[0]);
     
     case 'expulsar':
+    case 'kick':
       return handleExpulsar(context, args[0]);
     
     case 'recurrente':
     case 'recurring':
+    case 'recurring_events':
       return handleRecurrente(context, args);
     
     default:
       return {
         success: false,
-        message: msg.invalidCommandMessage(normalizedCommand),
+        message: getMsg(context).invalidCommandMessage(normalizedCommand),
       };
   }
 }

@@ -7,12 +7,18 @@ import { groupService } from '@/services/group.service';
 import { eventService } from '@/services/event.service';
 import { registrationService } from '@/services/registration.service';
 import { lineupService } from '@/services/lineup.service';
-import * as msg from '@/lib/line/messages';
+import * as msgTh from '@/lib/line/messages';
+import * as msgEs from '@/lib/line/messages.es';
+import * as msgEn from '@/lib/line/messages.en';
 import type { User, Group, Event, Position } from '@/types';
 import prisma from '@/lib/db/prisma';
 
+const getMsg = (context: any) =>
+  context?.lang === 'es' ? msgEs : (context?.lang === 'en' ? msgEn : msgTh);
+
 // Context passed to all handlers
 export interface HandlerContext {
+  lang?: "es" | "en" | "th";
   userId: string;
   groupId?: string;
   replyToken: string;
@@ -78,7 +84,7 @@ export async function handleApuntar(context: HandlerContext): Promise<HandlerRes
     if (groups.length === 0) {
       return {
         success: false,
-        message: msg.notInGroupMessage(),
+        message: getMsg(context).notInGroupMessage(),
       };
     }
     
@@ -92,7 +98,7 @@ export async function handleApuntar(context: HandlerContext): Promise<HandlerRes
     if (!openEvent) {
       return {
         success: false,
-        message: msg.noOpenEventMessage(),
+        message: getMsg(context).noOpenEventMessage(),
       };
     }
     
@@ -101,7 +107,7 @@ export async function handleApuntar(context: HandlerContext): Promise<HandlerRes
     if (isRegistered) {
       return {
         success: false,
-        message: msg.alreadyRegisteredMessage(),
+        message: getMsg(context).alreadyRegisteredMessage(),
       };
     }
     
@@ -113,13 +119,13 @@ export async function handleApuntar(context: HandlerContext): Promise<HandlerRes
     
     return {
       success: true,
-      message: msg.registrationSuccessMessage(openEvent),
+      message: getMsg(context).registrationSuccessMessage(openEvent),
     };
   } catch (error) {
     console.error('Error in handleApuntar:', error);
     return {
       success: false,
-      message: msg.errorMessage(),
+      message: getMsg(context).errorMessage(),
     };
   }
 }
@@ -145,7 +151,7 @@ export async function handleBaja(context: HandlerContext): Promise<HandlerResult
     if (groups.length === 0) {
       return {
         success: false,
-        message: msg.notInGroupMessage(),
+        message: getMsg(context).notInGroupMessage(),
       };
     }
     
@@ -159,7 +165,7 @@ export async function handleBaja(context: HandlerContext): Promise<HandlerResult
     if (!openEvent) {
       return {
         success: false,
-        message: msg.noOpenEventMessage(),
+        message: getMsg(context).noOpenEventMessage(),
       };
     }
     
@@ -168,7 +174,7 @@ export async function handleBaja(context: HandlerContext): Promise<HandlerResult
     if (!registration) {
       return {
         success: false,
-        message: msg.notRegisteredMessage(),
+        message: getMsg(context).notRegisteredMessage(),
       };
     }
     
@@ -177,13 +183,13 @@ export async function handleBaja(context: HandlerContext): Promise<HandlerResult
     
     return {
       success: true,
-      message: msg.registrationCancelledMessage(openEvent),
+      message: getMsg(context).registrationCancelledMessage(openEvent),
     };
   } catch (error) {
     console.error('Error in handleBaja:', error);
     return {
       success: false,
-      message: msg.errorMessage(),
+      message: getMsg(context).errorMessage(),
     };
   }
 }
@@ -199,13 +205,13 @@ export async function handlePerfil(context: HandlerContext): Promise<HandlerResu
     
     return {
       success: true,
-      message: msg.profileMessage(user, groups),
+      message: getMsg(context).profileMessage(user, groups),
     };
   } catch (error) {
     console.error('Error in handlePerfil:', error);
     return {
       success: false,
-      message: msg.errorMessage(),
+      message: getMsg(context).errorMessage(),
     };
   }
 }
@@ -231,7 +237,7 @@ export async function handleAlineacion(context: HandlerContext): Promise<Handler
     if (groups.length === 0) {
       return {
         success: false,
-        message: msg.notInGroupMessage(),
+        message: getMsg(context).notInGroupMessage(),
       };
     }
     
@@ -261,19 +267,19 @@ export async function handleAlineacion(context: HandlerContext): Promise<Handler
     if (teamAssignments.length === 0) {
       return {
         success: false,
-        message: msg.noLineupMessage(),
+        message: getMsg(context).noLineupMessage(),
       };
     }
     
     return {
       success: true,
-      message: msg.lineupMessage(currentEvent, teamAssignments, lineups, user.id),
+      message: getMsg(context).lineupMessage(currentEvent, teamAssignments, lineups, user.id),
     };
   } catch (error) {
     console.error('Error in handleAlineacion:', error);
     return {
       success: false,
-      message: msg.errorMessage(),
+      message: getMsg(context).errorMessage(),
     };
   }
 }
@@ -297,7 +303,7 @@ export async function handleHorario(context: HandlerContext): Promise<HandlerRes
     if (groups.length === 0) {
       return {
         success: true,
-        message: msg.scheduleMessage([]),
+        message: getMsg(context).scheduleMessage([]),
       };
     }
     
@@ -316,13 +322,13 @@ export async function handleHorario(context: HandlerContext): Promise<HandlerRes
     
     return {
       success: true,
-      message: msg.scheduleMessage(upcomingEvents),
+      message: getMsg(context).scheduleMessage(upcomingEvents),
     };
   } catch (error) {
     console.error('Error in handleHorario:', error);
     return {
       success: false,
-      message: msg.errorMessage(),
+      message: getMsg(context).errorMessage(),
     };
   }
 }
@@ -331,19 +337,19 @@ export async function handleHorario(context: HandlerContext): Promise<HandlerRes
  * Handle !grupos command
  * List available groups
  */
-export async function handleGrupos(): Promise<HandlerResult> {
+export async function handleGrupos(context: HandlerContext): Promise<HandlerResult> {
   try {
     const groups = await groupService.getAll();
     
     return {
       success: true,
-      message: msg.groupsListMessage(groups),
+      message: getMsg(context).groupsListMessage(groups),
     };
   } catch (error) {
     console.error('Error in handleGrupos:', error);
     return {
       success: false,
-      message: msg.errorMessage(),
+      message: getMsg(context).errorMessage(),
     };
   }
 }
@@ -357,7 +363,7 @@ export async function handleUnirse(context: HandlerContext, groupId: string): Pr
     if (!groupId) {
       return {
         success: false,
-        message: msg.invalidParametersMessage('unirse'),
+        message: getMsg(context).invalidParametersMessage('unirse'),
       };
     }
     
@@ -388,13 +394,13 @@ export async function handleUnirse(context: HandlerContext, groupId: string): Pr
     
     return {
       success: true,
-      message: msg.joinedGroupMessage(group),
+      message: getMsg(context).joinedGroupMessage(group),
     };
   } catch (error) {
     console.error('Error in handleUnirse:', error);
     return {
       success: false,
-      message: msg.errorMessage(),
+      message: getMsg(context).errorMessage(),
     };
   }
 }
@@ -403,10 +409,10 @@ export async function handleUnirse(context: HandlerContext, groupId: string): Pr
  * Handle !ayuda / !help command
  * Show help message
  */
-export async function handleAyuda(): Promise<HandlerResult> {
+export async function handleAyuda(context: HandlerContext): Promise<HandlerResult> {
   return {
     success: true,
-    message: msg.helpMessage(),
+    message: getMsg(context).helpMessage(),
   };
 }
 
@@ -419,13 +425,13 @@ export async function handleStart(context: HandlerContext): Promise<HandlerResul
     const lineProfile = await getUserProfile(context.userId);
     return {
       success: true,
-      message: msg.welcomeMessage(lineProfile.displayName),
+      message: getMsg(context).welcomeMessage(lineProfile.displayName),
     };
   } catch (error) {
     console.error('Error in handleStart:', error);
     return {
       success: false,
-      message: msg.errorMessage(),
+      message: getMsg(context).errorMessage(),
     };
   }
 }
@@ -443,30 +449,37 @@ export async function handleUserCommand(
   switch (normalizedCommand) {
     case 'apuntar':
     case 'inscribirme':
+    case 'register':
       return handleApuntar(context);
     
     case 'baja':
     case 'desinscribirme':
+    case 'unregister':
       return handleBaja(context);
     
     case 'perfil':
+    case 'profile':
       return handlePerfil(context);
     
     case 'alineacion':
+    case 'lineup':
       return handleAlineacion(context);
     
     case 'horario':
+    case 'schedule':
       return handleHorario(context);
     
     case 'grupos':
-      return handleGrupos();
+    case 'groups_list':
+      return handleGrupos(context);
     
     case 'unirse':
+    case 'join':
       return handleUnirse(context, args[0]);
     
     case 'ayuda':
     case 'help':
-      return handleAyuda();
+      return handleAyuda(context);
     
     case 'start':
       return handleStart(context);
@@ -474,7 +487,7 @@ export async function handleUserCommand(
     default:
       return {
         success: false,
-        message: msg.invalidCommandMessage(),
+        message: getMsg(context).invalidCommandMessage(),
       };
   }
 }

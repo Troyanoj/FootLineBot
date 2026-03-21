@@ -1,0 +1,18 @@
+FROM node:20
+WORKDIR /app
+
+# Copy package and prisma schema before install so postinstall logic doesn't fail
+COPY package*.json ./
+COPY prisma ./prisma/
+
+# Install dependencies (will also trigger prisma generate if in postinstall)
+RUN npm install
+
+# Copy all the project files, including the .env
+COPY . .
+
+# Generate the Prisma client just in case
+RUN npx prisma generate
+
+# Then push the DB configuration to Supabase
+CMD npx prisma db push

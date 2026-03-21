@@ -191,47 +191,51 @@ async function handleMessageEvent(event: LineWebhookEvent): Promise<void> {
   
   // Determine if this is an admin command
   const adminCommands = [
-    'crear_evento',
-    'configurar',
-    'tactica',
-    'generar',
-    'cerrar',
-    'borrar_evento',
-    'expulsar',
-    'recurrente',
-    'recurring',
-    // Thai aliases
-    'กลยุทธ์',
-    'จัดทีม',
-    'สร้าง',
-    'ตั้งค่า',
-    'ปิด',
-    'ลบ',
+    'crear_evento', 'configurar', 'tactica', 'generar', 'cerrar', 'borrar_evento', 'expulsar', 'recurrente', 'recurring',
+    'กลยุทธ์', 'จัดทีม', 'สร้าง', 'ตั้งค่า', 'ปิด', 'ลบ',
+    'create_event', 'config', 'tactics', 'generate', 'close', 'delete_event', 'kick', 'recurring_events'
   ];
   
-  let result: HandlerResult;
+  // Check if it's a Spanish command based on keywords
+  const isSpanish = [
+    'crear_evento', 'configurar', 'tactica', 'generar', 'cerrar', 'borrar_evento', 'expulsar', 'recurrente', 'recurring',
+    'ayuda', 'apuntar', 'inscribirme', 'baja', 'desinscribirme', 'perfil', 'alineacion', 'horario', 'grupos', 'unirse'
+  ].includes(command);
+
+  const isEnglish = [
+    'create_event', 'config', 'tactics', 'generate', 'close', 'delete_event', 'kick', 'recurring_events',
+    'help', 'register', 'unregister', 'profile', 'lineup', 'schedule', 'groups_list', 'join'
+  ].includes(command);
   
+  let lang: 'es' | 'en' | 'th' = 'th';
+  if (isSpanish) lang = 'es';
+  else if (isEnglish) lang = 'en';
+  
+  let result: HandlerResult;
   if (adminCommands.includes(command)) {
     // Handle admin command
     if (!isAdmin) {
+      const msgFile = lang === 'es' ? require('@/lib/line/messages.es') : (lang === 'en' ? require('@/lib/line/messages.en') : msg);
       result = {
         success: false,
-        message: msg.adminRequiredMessage(),
+        message: msgFile.adminRequiredMessage(),
       };
     } else {
-      const context: HandlerContext = {
+      const context: HandlerContext & { lang: 'es' | 'th' } = {
         userId,
         replyToken,
+        lang,
       };
-      result = await handleAdminCommand(command, args, context);
+      result = await handleAdminCommand(command, args, context as any);
     }
   } else {
     // Handle user command
-    const context: HandlerContext = {
+    const context: HandlerContext & { lang: 'es' | 'th' } = {
       userId,
       replyToken,
+      lang,
     };
-    result = await handleUserCommand(command, args, context);
+    result = await handleUserCommand(command, args, context as any);
   }
   
   // Send response
