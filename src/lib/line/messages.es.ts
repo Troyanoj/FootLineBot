@@ -36,30 +36,27 @@ export const welcomeMessage = (displayName: string): string => {
 };
 
 export const helpMessage = (): string => {
-  return `📋 *Comandos Completos*
+  return `📋 *Comandos de FootLine*
 
 *Para Jugadores:*
-🔹 !apuntar o !inscribirme - Anótate al partido
-🔹 !baja o !desinscribirme - Date de baja
-🔹 !perfil - Mira tu perfil
-🔹 !posicion [pos1] [pos2] [pos3] - Configura tus posiciones
-🔹 !alineacion - Mira la lista de equipos
-🔹 !horario - Próximos partidos
-🔹 !grupos - Tus grupos
-🔹 !unirse [id] - Unirse a grupo
+🔹 !apuntar o !register - Inscripción
+🔹 !baja o !unregister - Darse de baja
+🔹 !perfil o !profile - Ver tu perfil
+🔹 !posicion o !position - Configurar posiciones
+🔹 !alineacion o !lineup - Ver equipos
+🔹 !horario o !schedule - Próximos partidos
+🔹 !unirse [id] - Unirse a un grupo
 
 *Para Administradores:*
-🔹 !crear_evento [fecha] [hora] [duracion] [min_partido] [equipos] - Crear evento
-🔹 !configurar [5|7|11] - Tipo de juego
-🔹 !generar - Arma equipos por rating
-🔹 !cerrar - Cierra la lista
-🔹 !tactica agregar [formación] - Nueva táctica
-🔹 !tactica quitar [formación] - Quitar táctica
-🔹 !recurrente - Eventos semanales
+🔹 !crear_evento o !create_event
+🔹 !configurar o !config [5|7|11]
+🔹 !generar o !generate - Crear equipos
+🔹 !cerrar o !close - Cerrar lista
+🔹 !expulsar o !kick @Usuario
+🔹 !recurrente o !recurring - Eventos automáticos
 
-*Formaciones comunes:*
-• Fútbol 7: 3-2-1, 2-3-1, 2-2-2, 3-1-2
-• Fútbol 11: 4-4-2, 4-3-3, 3-5-2`;
+📖 *Guía detallada con imágenes:*
+https://app-omega-sand-14.vercel.app/help?lang=es`;
 };
 
 // ============================================================================

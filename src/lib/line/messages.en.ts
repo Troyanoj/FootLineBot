@@ -36,30 +36,27 @@ export const welcomeMessage = (displayName: string): string => {
 };
 
 export const helpMessage = (): string => {
-  return `📋 *All Commands*
+  return `📋 *FootLine Commands*
 
 *For Players:*
-🔹 !register - Sign up for the match
+🔹 !register - Sign up for a match
 🔹 !unregister - Cancel your spot
 🔹 !profile - View your profile
-🔹 !position [p1] [p2] [p3] - Set your positions
-🔹 !lineup - Team assignments
-🔹 !schedule - Upcoming games
-🔹 !groups - Your active groups
+🔹 !position - Set preferred positions
+🔹 !lineup - See team assignments
+🔹 !schedule - View upcoming games
 🔹 !join [id] - Join a group
 
 *For Admins:*
-🔹 !create_event [date] [time] [dur] [min_game] [teams] - Create event
-🔹 !config [5|7|11] - Game type
-🔹 !generate - Make teams by rating
-🔹 !close - Close list
-🔹 !tactics add [formation] - New tactic
-🔹 !tactics remove [formation] - Delete tactic
-🔹 !recurring - Manage weekly events
+🔹 !create_event
+🔹 !config [5|7|11]
+🔹 !generate - Generate teams
+🔹 !close - Close registrations
+🔹 !kick @User - Remove player
+🔹 !recurring - Automate events
 
-*Common formations:*
-• 7v7: 3-2-1, 2-3-1, 2-2-2, 3-1-2
-• 11v11: 4-4-2, 4-3-3, 3-5-2`;
+📖 *Detailed guide with images:*
+https://app-omega-sand-14.vercel.app/help?lang=en`;
 };
 
 // ============================================================================

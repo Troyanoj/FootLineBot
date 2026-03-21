@@ -1,11 +1,12 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Head from 'next/head';
+import { useSearchParams } from 'next/navigation';
 
 // ============================================================
 // DATA
-// ============================================================
+// ===========================================-=================
 const LANGS = ['en', 'es', 'th'] as const;
 type Lang = (typeof LANGS)[number];
 
@@ -205,8 +206,17 @@ const ADMIN_CMDS: Record<Lang, Section[]> = {
 // COMPONENT
 // ============================================================
 export default function HelpPage() {
+  const searchParams = useSearchParams();
   const [lang, setLang] = useState<Lang>('en');
   const [tab, setTab] = useState<'player' | 'admin'>('player');
+
+  useEffect(() => {
+    const l = searchParams.get('lang') as Lang;
+    if (l && LANGS.includes(l)) {
+      setLang(l);
+    }
+  }, [searchParams]);
+
   const ui = UI[lang];
   const sections = tab === 'player' ? PLAYER_CMDS[lang] : ADMIN_CMDS[lang];
 
