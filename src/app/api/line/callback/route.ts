@@ -199,12 +199,14 @@ async function handleMessageEvent(event: LineWebhookEvent): Promise<void> {
   // Check if it's a Spanish command based on keywords
   const isSpanish = [
     'crear_evento', 'configurar', 'tactica', 'generar', 'cerrar', 'borrar_evento', 'expulsar', 'recurrente', 'recurring',
-    'ayuda', 'apuntar', 'inscribirme', 'baja', 'desinscribirme', 'perfil', 'alineacion', 'horario', 'grupos', 'unirse'
+    'ayuda', 'apuntar', 'inscribirme', 'baja', 'desinscribirme', 'perfil', 'alineacion', 'horario', 'grupos', 'unirse',
+    'posicion',
   ].includes(command);
 
   const isEnglish = [
     'create_event', 'config', 'tactics', 'generate', 'close', 'delete_event', 'kick', 'recurring_events',
-    'help', 'register', 'unregister', 'profile', 'lineup', 'schedule', 'groups_list', 'join'
+    'help', 'register', 'unregister', 'profile', 'lineup', 'schedule', 'groups_list', 'join',
+    'position',
   ].includes(command);
   
   let lang: 'es' | 'en' | 'th' = 'th';

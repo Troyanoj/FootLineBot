@@ -12,6 +12,7 @@ import * as msgEs from '@/lib/line/messages.es';
 import * as msgEn from '@/lib/line/messages.en';
 import type { User, Group, Event, Position } from '@/types';
 import prisma from '@/lib/db/prisma';
+import { isValidPosition, getPositionName, VALID_POSITIONS } from '@/lib/positions';
 
 const getMsg = (context: any) =>
   context?.lang === 'es' ? msgEs : (context?.lang === 'en' ? msgEn : msgTh);
@@ -476,6 +477,11 @@ export async function handleUserCommand(
     case 'unirse':
     case 'join':
       return handleUnirse(context, args[0]);
+    
+    case 'posicion':
+    case 'position':
+    case 'ตำแหน่ง':
+      return handlePosicion(context, args);
     
     case 'ayuda':
     case 'help':

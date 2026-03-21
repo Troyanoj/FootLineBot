@@ -60,6 +60,7 @@ const PLAYER_CMDS: Record<Lang, Section[]> = {
       title: 'Profile & Groups',
       cmds: [
         { cmd: '!profile', desc: 'View your profile: position, rating, and stats.', example: '!profile' },
+        { cmd: '!position [pos1] [pos2] [pos3]', desc: 'Set up to 3 preferred positions (in priority order). Pos 1 = best, Pos 2 = OK, Pos 3 = can play. The bot uses these when building teams.', example: '!position ST CM GK' },
         { cmd: '!groups_list', desc: 'List all groups you belong to.', example: '!groups_list' },
         { cmd: '!join [id]', desc: 'Join a group using its ID.', example: '!join abc12345' },
         { cmd: '!help', desc: 'Show this help message.', example: '!help' },
@@ -80,6 +81,7 @@ const PLAYER_CMDS: Record<Lang, Section[]> = {
       title: 'Perfil y Grupos',
       cmds: [
         { cmd: '!perfil', desc: 'Consulta tu posición favorita, tu nivel y estadísticas.', example: '!perfil' },
+        { cmd: '!posicion [pos1] [pos2] [pos3]', desc: 'Configura hasta 3 posiciones preferidas en orden de prioridad. Pos 1 = mejor posición, Pos 2 = puede jugar bien, Pos 3 = puede jugar. El bot las usa para armar el equipo óptimo.', example: '!posicion ST CM GK' },
         { cmd: '!grupos', desc: 'Lista los grupos a los que perteneces.', example: '!grupos' },
         { cmd: '!unirse [id]', desc: 'Únete a un grupo usando su ID.', example: '!unirse abc12345' },
         { cmd: '!ayuda', desc: 'Muestra el mensaje de ayuda.', example: '!ayuda' },
@@ -100,6 +102,7 @@ const PLAYER_CMDS: Record<Lang, Section[]> = {
       title: 'โปรไฟล์และกลุ่ม',
       cmds: [
         { cmd: '!โปรไฟล์ / !profile', desc: 'ดูตำแหน่งที่ชอบ ระดับ และสถิติ', example: '!profile' },
+        { cmd: '!ตำแหน่ง [pos1] [pos2] [pos3]', desc: 'ตั้งค่าสูงสุด 3 ตำแหน่งตามลำดับความถนัด ตำแหน่งที่ 1 = ดีที่สุด, ที่ 2 = พอได้, ที่ 3 = แค่เล่นได้ บอทจะใช้ข้อมูลนี้เพื่อจัดทีมให้สมดุล', example: '!ตำแหน่ง ST CM GK' },
         { cmd: '!กลุ่ม / !groups_list', desc: 'ดูรายการกลุ่มที่คุณเข้าร่วม', example: '!groups_list' },
         { cmd: '!join [id]', desc: 'เข้าร่วมกลุ่มด้วย ID', example: '!join abc12345' },
         { cmd: '!ช่วย / !help', desc: 'แสดงข้อความช่วยเหลือ', example: '!help' },
