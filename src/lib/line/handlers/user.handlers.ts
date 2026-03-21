@@ -509,7 +509,7 @@ export async function handleUserCommand(
  * Handle !posicion / !position / !ตำแหน่ง command
  * Set user's preferred positions
  */
-export async function handlePosicion(context, args) {
+export async function handlePosicion(context: HandlerContext, args: string[]): Promise<HandlerResult> {
   try {
     const user = await getOrCreateUser(context.userId);
     const lang = context.lang || 'th';
