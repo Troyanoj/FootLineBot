@@ -14,7 +14,8 @@ export class GroupService {
     name: string,
     adminUserId: string,
     country?: string,
-    defaultGameType?: GameType
+    defaultGameType?: GameType,
+    id?: string
   ): Promise<Group> {
     try {
       // First, ensure the admin user exists
@@ -28,6 +29,7 @@ export class GroupService {
 
       const group = await prisma.group.create({
         data: {
+          id,
           name,
           country,
           defaultGameType,
@@ -378,7 +380,7 @@ export class GroupService {
    * Create a new group
    */
   async create(input: CreateGroupInput, adminUserId: string): Promise<Group> {
-    return this.createGroup(input.name, adminUserId, input.country, input.defaultGameType);
+    return this.createGroup(input.name, adminUserId, input.country, input.defaultGameType, input.id);
   }
 
   /**

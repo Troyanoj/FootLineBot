@@ -69,6 +69,7 @@ export interface CreateGroupInput {
   name: string;
   country?: string;
   defaultGameType?: GameType;
+  id?: string;
 }
 
 export interface UpdateGroupInput {

@@ -1,4 +1,4 @@
-// Admin Command Handlers
+﻿// Admin Command Handlers
 // Handles all admin-facing commands for LINE bot
 
 import { replyMessage, pushMessage, getUserProfile } from '@/lib/line/client';
@@ -194,15 +194,11 @@ export async function handleConfigurar(
 ): Promise<HandlerResult> {
   try {
     if (args.length === 0) {
+      const lang = context.lang || "th";
+      const cmd = lang === "es" ? "configurar" : (lang === "en" ? "config" : "à¸•à¸±à¹‰à¸‡à¸„à¹ˆà¸²");
       return {
         success: false,
-        message: `⚠️ *Formato incorrecto*
-
-Usa: !configurar [tipo_juego]
-
-Tipos válidos: 5, 7, 11
-
-Ejemplo: !configurar 7`,
+        message: getMsg(context).adminInvalidFormatMessage(cmd, "[5|7|11]"),
       };
     }
     
@@ -772,7 +768,7 @@ export async function handleExpulsar(
     if (!userIdToRemove) {
       return {
         success: false,
-        message: '⚠️ Especifica el ID del usuario a expulsar.',
+        message: '⚠️ Specify User ID',
       };
     }
     
@@ -866,3 +862,5 @@ export async function handleAdminCommand(
       };
   }
 }
+
+

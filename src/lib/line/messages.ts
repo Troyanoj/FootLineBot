@@ -409,6 +409,28 @@ export const adminRequiredMessage = (): string => {
 คุณต้องเป็นแอดมินของกลุ่มเพื่อใช้คำสั่งนี้ครับ`;
 };
 
+export const invalidCommandMessage = (command?: string): string => {
+  return `❓ *ไม่พบคำสั่ง*
+
+ใช้ !ช่วย เพื่อดูคำสั่งที่สามารถใช้ได้ครับ`;
+};
+
+export const adminInvalidFormatMessage = (command: string, example: string): string => {
+  return `⚠️ *รูปแบบไม่ถูกต้อง*
+
+ใช้: !${command} ${example}
+
+ตัวอย่าง: !${command} 2024-12-25 18:00 90 20 2`;
+};
+
+export const adminConfigUpdatedMessage = (type: string): string => {
+  return `✅ *อัปเดตการตั้งค่าแล้ว*
+
+ประเภทเกมเริ่มต้น: ฟุตบอล ${type} คน
+
+การเปลี่ยนแปลงนี้จะมีผลกับอีเวนต์ใหม่ที่สร้างขึ้นครับ`;
+};
+
 /** No open event message */
 export const noOpenEventMessage = (): string => {
   return `❌ *ไม่มีอีเวนต์ที่เปิด*

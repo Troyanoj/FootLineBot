@@ -1,4 +1,4 @@
-// User Command Handlers
+﻿// User Command Handlers
 // Handles all user-facing commands for LINE bot
 
 import { replyMessage, pushMessage, getUserProfile } from '@/lib/line/client';
@@ -497,11 +497,66 @@ export async function handleUserCommand(
     case 'start':
       return handleStart(context);
     
+    case 'setup':
+    case 'iniciar':
+    case 'config_group':
+      return handleRegisterGroup(context);
+    
     default:
       return {
         success: false,
         message: getMsg(context).invalidCommandMessage(),
       };
+  }
+}
+
+/**
+ * Handle !setup / !iniciar / !config_group command
+ * Register current group in the database
+ */
+export async function handleRegisterGroup(context: HandlerContext): Promise<HandlerResult> {
+  try {
+    const groupId = context.groupId;
+    if (!groupId) {
+      return {
+        success: false,
+        message: context.lang === 'es' 
+          ? '⚠️ Este comando solo puede usarse dentro de un grupo de LINE.' 
+          : '⚠️ This command can only be used inside a LINE group.',
+      };
+    }
+
+    // Check if group already exists
+    const existingGroup = await groupService.getGroupById(groupId);
+    if (existingGroup) {
+      return {
+        success: false,
+        message: getMsg(context).groupAlreadyRegisteredMessage(existingGroup.name),
+      };
+    }
+
+    // Get sender profile to make them admin
+    const user = await getOrCreateUser(context.userId);
+    
+    // Create the group using LINE groupId as DB id
+    const group = await groupService.createGroup(
+      'Nuevo Grupo de Fútbol',
+      user.id,
+      context.lang === 'es' ? 'España' : (context.lang === 'th' ? 'Thailand' : 'Global'),
+      '7',
+      groupId
+    );
+
+    return {
+      success: true,
+      message: getMsg(context).groupRegisteredMessage(group.name, group.id),
+    };
+  } catch (error) {
+    console.error('Error in handleRegisterGroup:', error);
+    return {
+      success: false,
+      message: getMsg(context).errorMessage(),
+    };
   }
 }
 
@@ -591,3 +646,4 @@ export async function handlePosicion(context: HandlerContext, args: string[]): P
     };
   }
 }
+

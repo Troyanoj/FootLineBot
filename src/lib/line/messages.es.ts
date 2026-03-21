@@ -228,6 +228,25 @@ export const notAdminMessage = (): string => {
 Este comando es exclusivo para organizadores.`;
 };
 
+// Alias for route.ts consistency
+export const adminRequiredMessage = notAdminMessage;
+
+export const adminInvalidFormatMessage = (command: string, example: string): string => {
+  return `⚠️ *Formato Incorrecto*
+
+Usa: !${command} ${example}
+
+Ejemplo: !${command} 2024-12-25 18:00 90 20 2`;
+};
+
+export const adminConfigUpdatedMessage = (type: string): string => {
+  return `✅ *Configuración actualizada*
+
+Tipo de juego por defecto: Fútbol ${type}
+
+Este cambio afecta a los nuevos eventos creados.`;
+};
+
 export const notInGroupMessage = (): string => {
   return `ℹ️ *Requiere grupo*
 

@@ -1,0 +1,200 @@
+﻿// Admin Command Handlers
+// Handles all admin-facing commands for LINE bot
+
+import { replyMessage, pushMessage, getUserProfile } from '@/lib/line/client';
+import { userService } from '@/services/user.service';
+import { groupService } from '@/services/group.service';
+import { eventService } from '@/services/event.service';
+import { registrationService } from '@/services/registration.service';
+import { lineupService } from '@/services/lineup.service';
+import { recurringEventService } from '@/services/recurring-event.service';
+import * as msgTh from '@/lib/line/messages';
+import * as msgEs from '@/lib/line/messages.es';
+import * as msgEn from '@/lib/line/messages.en';
+import type { User, Group, Event, GameType, CreateEventInput, UpdateEventInput } from '@/types';
+
+const getMsg = (context: any) =>
+  context?.lang === 'es' ? msgEs : (context?.lang === 'en' ? msgEn : msgTh);
+
+// Context passed to all handlers
+export interface AdminHandlerContext {
+  lang?: "es" | "en" | "th";
+  userId: string;
+  groupId?: string;
+  replyToken: string;
+}
+
+// Result of handler execution
+export interface HandlerResult {
+  success: boolean;
+  message: string;
+  shouldFollowUp?: boolean;
+}
+
+// ============================================================================
+// Helper Functions
+// ============================================================================
+
+/** Get or create user from LINE user ID */
+async function getOrCreateUser(lineUserId: string): Promise<User> {
+  let user = await userService.findByLineUserId(lineUserId);
+  
+  if (!user) {
+    // Get LINE profile
+    const lineProfile = await getUserProfile(lineUserId);
+    
+    // Create user with default values
+    user = await userService.create({
+      lineUserId,
+      displayName: lineProfile.displayName,
+      position1: 'CM', // Default position
+    });
+  }
+  
+  return user;
+}
+
+/** Check if user is admin of a group */
+async function checkGroupAdmin(userId: string, groupId: string): Promise<boolean> {
+  return groupService.isAdmin(groupId, userId);
+}
+
+/** Get user's groups where they are admin */
+async function getUserAdminGroups(userId: string): Promise<Group[]> {
+  const user = await userService.findByLineUserId(userId);
+  if (!user) return [];
+  
+  const allGroups = await groupService.getAll();
+  const adminGroups: Group[] = [];
+  
+  for (const group of allGroups) {
+    if (await groupService.isAdmin(group.id, user.id)) {
+      adminGroups.push(group);
+    }
+  }
+  
+  return adminGroups;
+}
+
+// ============================================================================
+// Admin Commands
+// ============================================================================
+
+/**
+ * Handle !crear_evento command
+ * Create a new event
+ * Format: !crear_evento [fecha] [hora] [duracion_total] [min_por_partido] [equipos]
+ * Example: !crear_evento 2024-12-25 18:00 90 20 2
+ */
+export async function handleCrearEvento(
+  context: AdminHandlerContext,
+  args: string[]
+): Promise<HandlerResult> {
+  try {
+    // Parse arguments
+    // args: [fecha, hora, duracion_total, min_por_partido, equipos]
+    if (args.length < 2) {
+      return {
+        success: false,
+        message: `âš ï¸ *Formato incorrecto*
+
+Usa: !crear_evento [fecha] [hora] [duracion] [min_partido] [equipos]
+
+Ejemplo: !crear_evento 2024-12-25 18:00 90 20 2
+
+â€¢ fecha: YYYY-MM-DD
+â€¢ hora: HH:MM
+â€¢ duracion: minutos totales (ej: 90)
+â€¢ min_partido: minutos por partido (ej: 20)
+â€¢ equipos: nÃºmero de equipos (ej: 2)`,
+      };
+    }
+    
+    const [fecha, hora, duracion, minPartido, equipos] = args;
+    
+    // Validate date
+    const eventDate = new Date(fecha);
+    if (isNaN(eventDate.getTime())) {
+      return {
+        success: false,
+        message: 'âš ï¸ Fecha invÃ¡lida. Usa formato YYYY-MM-DD',
+      };
+    }
+    
+    // Validate time format
+    const timeRegex = /^([01]?[0-9]|2[0-3]):[0-5][0-9]$/;
+    if (!timeRegex.test(hora)) {
+      return {
+        success: false,
+        message: 'âš ï¸ Hora invÃ¡lida. Usa formato HH:MM',
+      };
+    }
+    
+    // Get user and check admin status
+    const user = await getOrCreateUser(context.userId);
+    const adminGroups = await getUserAdminGroups(context.userId);
+    
+    if (adminGroups.length === 0) {
+      return {
+        success: false,
+        message: getMsg(context).adminRequiredMessage(),
+      };
+    }
+    
+    // Use first admin group
+    const group = adminGroups[0];
+    
+    // Parse optional parameters
+    const totalDuration = duracion ? parseInt(duracion, 10) : 90;
+    const minutesPerMatch = minPartido ? parseInt(minPartido, 10) : 20;
+    const teamsCount = equipos ? parseInt(equipos, 10) : 2;
+    
+    // Validate parameters
+    if (isNaN(totalDuration) || isNaN(minutesPerMatch) || isNaN(teamsCount)) {
+      return {
+        success: false,
+        message: 'âš ï¸ ParÃ¡metros numÃ©ricos invÃ¡lidos',
+      };
+    }
+    
+    // Create event
+    const eventInput: CreateEventInput = {
+      groupId: group.id,
+      eventDate,
+      startTime: hora,
+      totalDurationMinutes: totalDuration,
+      minutesPerMatch,
+      teamsCount,
+      gameType: group.defaultGameType as GameType || '7',
+    };
+    
+    const newEvent = await eventService.create(eventInput);
+    
+    return {
+      success: true,
+      message: getMsg(context).eventCreatedMessage(newEvent),
+    };
+  } catch (error) {
+    console.error('Error in handleCrearEvento:', error);
+    return {
+      success: false,
+      message: getMsg(context).errorMessage(),
+    };
+  }
+}
+
+/**
+ * Handle !configurar command
+ * Configure game type for the group
+ * Format: !configurar [tipo_juego]
+ */
+export async function handleConfigurar(
+  context: AdminHandlerContext,
+  args: string[]
+): Promise<HandlerResult> {
+  try {
+    if (args.length === 0) {
+      return {
+        success: false,
+        message: `âš ï¸ *Formato incorrecto*
+
