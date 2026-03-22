@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 
@@ -43,7 +43,7 @@ const UI: Record<Lang, any> = {
   }
 };
 
-export default function PrivacyPage() {
+function PrivacyPageContent() {
   const searchParams = useSearchParams();
   const [lang, setLang] = useState<Lang>('en');
 
@@ -121,5 +121,13 @@ export default function PrivacyPage() {
 
       <footer className="footer">FootLine Bot © {new Date().getFullYear()}</footer>
     </>
+  );
+}
+
+export default function PrivacyPage() {
+  return (
+    <Suspense fallback={<div style={{display:'flex',justifyContent:'center',alignItems:'center',minHeight:'100vh',background:'#0a0e1a',color:'#e2e8f0'}}>Loading...</div>}>
+      <PrivacyPageContent />
+    </Suspense>
   );
 }

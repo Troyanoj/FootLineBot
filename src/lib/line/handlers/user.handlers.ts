@@ -445,7 +445,11 @@ export async function handleUserCommand(
   args: string[],
   context: HandlerContext
 ): Promise<HandlerResult> {
+  // DEBUG: Log incoming command details
+  console.log(`[DEBUG handleUserCommand] Received command: "${command}", args: ${JSON.stringify(args)}, context.lang: ${context.lang}`);
+  
   const normalizedCommand = command.toLowerCase().replace(/^!/, '');
+  console.log(`[DEBUG handleUserCommand] normalizedCommand: "${normalizedCommand}"`);
   
   switch (normalizedCommand) {
     case 'apuntar':
@@ -500,9 +504,12 @@ export async function handleUserCommand(
     case 'setup':
     case 'iniciar':
     case 'config_group':
+      console.log(`[DEBUG] Handling setup command, groupId: ${context.groupId}`);
       return handleRegisterGroup(context);
     
     default:
+      // DEBUG: Log unknown command
+      console.log(`[DEBUG] Unknown command reached default case: "${normalizedCommand}"`);
       return {
         success: false,
         message: getMsg(context).invalidCommandMessage(),

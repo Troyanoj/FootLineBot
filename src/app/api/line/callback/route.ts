@@ -183,14 +183,21 @@ async function handleMessageEvent(event: LineWebhookEvent): Promise<void> {
     return;
   }
   
+  // DEBUG: Log raw message object to diagnose undefined command issue
+  console.log(`[DEBUG] Raw message object:`, JSON.stringify(message));
+  console.log(`[DEBUG] message.text type: ${typeof message.text}, value: ${message.text}`);
+  
   const text = message.text?.trim() || '';
   const userId = source.userId;
   const groupId = source.groupId || source.roomId || undefined;
   
-  console.log(`Received message from ${userId} in group/room: ${groupId || 'direct'}: ${text}`);
+  console.log(`[DEBUG] Processed text: "${text}", userId: ${userId}, groupId: ${groupId}`);
   
   // Parse command from message
   const parsed = parseCommand(text);
+  
+  // DEBUG: Log parse result
+  console.log(`[DEBUG] parseCommand result:`, parsed);
   
   if (!parsed) {
     // Not a command, could ignore or respond with help

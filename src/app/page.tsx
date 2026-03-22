@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 
@@ -61,7 +61,7 @@ const UI: Record<Lang, any> = {
   }
 };
 
-export default function HomePage() {
+function PageContent() {
   const searchParams = useSearchParams();
   const [lang, setLang] = useState<Lang>('en');
 
@@ -260,5 +260,13 @@ export default function HomePage() {
         {ui.footer} {new Date().getFullYear()} – Made for the Beautiful Game
       </footer>
     </>
+  );
+}
+
+export default function HomePage() {
+  return (
+    <Suspense fallback={<div style={{display:'flex',justifyContent:'center',alignItems:'center',minHeight:'100vh',background:'#0a0e1a',color:'#e2e8f0'}}>Loading...</div>}>
+      <PageContent />
+    </Suspense>
   );
 }

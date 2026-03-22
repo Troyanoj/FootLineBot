@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import Head from 'next/head';
 import { useSearchParams } from 'next/navigation';
 
@@ -223,7 +223,7 @@ const ADMIN_CMDS: Record<Lang, Section[]> = {
 // ============================================================
 // COMPONENT
 // ============================================================
-export default function HelpPage() {
+function HelpPageContent() {
   const searchParams = useSearchParams();
   const [lang, setLang] = useState<Lang>('en');
   const [tab, setTab] = useState<'player' | 'admin'>('player');
@@ -484,5 +484,13 @@ export default function HelpPage() {
 
       <footer className="footer">FootLine Bot © {new Date().getFullYear()}</footer>
     </>
+  );
+}
+
+export default function HelpPageWrapper() {
+  return (
+    <Suspense fallback={<div style={{display:'flex',justifyContent:'center',alignItems:'center',minHeight:'100vh',background:'#0a0e1a',color:'#e2e8f0'}}>Loading...</div>}>
+      <HelpPageContent />
+    </Suspense>
   );
 }
