@@ -84,6 +84,13 @@ Te has dado de baja de ${event.title || 'Partido'}.
 // Alias used by handlers
 export const registrationCancelledMessage = registrationCancelSuccessMessage;
 
+/** Registration closed message */
+export const registrationClosedMessage = (): string => {
+  return `🔒 *Registro Cerrado*
+
+El registro para este evento ha sido cerrado.`;
+};
+
 export const noLineupMessage = (): string => {
   return `❌ *Alineaciones aún no generadas*
 

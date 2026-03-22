@@ -86,6 +86,13 @@ Hope to see you in the next one! 👋`;
 // Alias used by handlers
 export const registrationCancelledMessage = registrationCancelSuccessMessage;
 
+/** Registration closed message */
+export const registrationClosedMessage = (): string => {
+  return `🔒 *Registration Closed*
+
+Registration for this event has been closed.`;
+};
+
 export const noLineupMessage = (): string => {
   return `❌ *Lineups not ready yet*
 
