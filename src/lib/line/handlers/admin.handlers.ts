@@ -609,7 +609,7 @@ export async function handleGenerar(context: AdminHandlerContext): Promise<Handl
     if (!currentEvent) {
       return {
         success: false,
-        message: '⚠️ No hay eventos abiertos para generar alineaciones.',
+        message: getMsg(context).noOpenEventMessage(),
       };
     }
     
@@ -619,7 +619,7 @@ export async function handleGenerar(context: AdminHandlerContext): Promise<Handl
     if (registrations.length === 0) {
       return {
         success: false,
-        message: '⚠️ No hay inscritos para generar alineaciones.',
+        message: getMsg(context).noRegistrationsForLineupMessage(),
       };
     }
     
@@ -628,13 +628,11 @@ export async function handleGenerar(context: AdminHandlerContext): Promise<Handl
     
     return {
       success: true,
-      message: `✅ *Alineaciones generadas*
-
-Evento: ${currentEvent.title || 'Partido de Fútbol'}
-Equipos: ${result.teamAssignments.length}
-Jugadores: ${registrations.length}
-
-Usa !alineacion para ver las alineaciones.`,
+      message: getMsg(context).lineupGeneratedWithDetailsMessage(
+        currentEvent.title,
+        result.teamAssignments.length,
+        registrations.length
+      ),
     };
   } catch (error) {
     console.error('Error in handleGenerar:', error);
@@ -743,9 +741,7 @@ export async function handleBorrarEvento(
     
     return {
       success: true,
-      message: `✅ *Evento eliminado*
-
-El evento "${event.title || event.id}" ha sido eliminado.`,
+      message: getMsg(context).eventDeletedMessage(event),
     };
   } catch (error) {
     console.error('Error in handleBorrarEvento:', error);
@@ -788,9 +784,7 @@ export async function handleExpulsar(
     
     return {
       success: true,
-      message: `✅ *Usuario expulsado*
-
-El usuario ha sido eliminado del grupo ${group.name}.`,
+      message: getMsg(context).userExpelledMessage(group.name),
     };
   } catch (error) {
     console.error('Error in handleExpulsar:', error);

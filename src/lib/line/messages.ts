@@ -164,6 +164,16 @@ export const groupNotRegisteredMessage = (): string => {
 ใช้คำสั่ง !register หรือ !ลงทะเบียน เพื่อลงทะเบียนกลุ่มครับ`;
 };
 
+/** Group not found message */
+export const groupNotFoundMessage = (groupId?: string): string => {
+  return `❌ *ไม่พบกลุ่ม*\n\nใช้คำสั่ง !groups เพื่อดูกลุ่มที่มีอยู่ครับ`;
+};
+
+/** Already member message */
+export const alreadyMemberMessage = (groupName: string): string => {
+  return `ℹ️ *เป็นสมาชิกอยู่แล้ว*\n\nคุณเป็นสมาชิกของกลุ่ม ${groupName} อยู่แล้วครับ`;
+};
+
 // ============================================================================
 // Event Messages
 // ============================================================================
@@ -197,6 +207,20 @@ export const eventClosedMessage = (event: Event, registrations: any[]): string =
 👥 *ผู้เล่นที่ลงทะเบียน:* ${playerCount} คน
 
 จำนวนผู้เล่นครบตามกำหนดแล้ว เตรียมตัวสนุกกันได้เลย! ⚽`;
+};
+
+/** Event deleted message */
+export const eventDeletedMessage = (event: Event): string => {
+  return `✅ *ลบอีเวนต์สำเร็จ!*
+
+อีเวนต์ "${event.title || event.id}" ได้ถูกลบแล้ว`;
+};
+
+/** User expelled message */
+export const userExpelledMessage = (groupName: string): string => {
+  return `✅ *ผู้ใช้ถูกไล่ออก!*
+
+ผู้ใช้ถูกลบออกจากกลุ่ม "${groupName}" แล้ว`;
 };
 
 /** Event details message */
@@ -351,6 +375,16 @@ export const notInGroupMessage = (): string => {
 คำสั่งนี้ต้องใช้ในกลุ่ม LINE เท่านั้น`;
 };
 
+/** Default group name */
+export const defaultGroupName = (): string => {
+  return 'กลุ่มฟุตบอลใหม่';
+};
+
+/** Default region */
+export const defaultRegion = (): string => {
+  return 'Thailand';
+};
+
 // ============================================================================
 // Button Messages
 // ============================================================================
@@ -431,11 +465,154 @@ export const adminConfigUpdatedMessage = (type: string): string => {
 การเปลี่ยนแปลงนี้จะมีผลกับอีเวนต์ใหม่ที่สร้างขึ้นครับ`;
 };
 
+/** Tactica format error message */
+export const tacticaFormatMessage = (): string => {
+  return `⚠️ *รูปแบบไม่ถูกต้อง*
+
+ใช้: !กลยุทธ์ [เพิ่ม|ลบ] [การจัดวาง]
+หรือ: !tactica [add|remove] [formation]
+
+ตัวอย่าง:
+• !กลยุทธ์ เพิ่ม 4-3-3
+• !กลยุทธ์ เพิ่ม 3-2-1
+• !กลยุทธ์ ลบ 4-3-3
+
+*การจัดวางที่ใช้ได้:*
+• ฟุตบอล 7 คน: 3-2-1, 2-3-1, 2-2-2, 3-1-2
+• ฟุตบอล 5 คน: 2-2, 1-2-1, 1-1-2, 2-1-1
+• ฟุตบอล 11 คน: 4-4-2, 4-3-3, 3-5-2, 5-3-2, 4-2-3-1, 3-4-3`;
+};
+
+/** Tactica invalid action message */
+export const tacticaInvalidActionMessage = (): string => {
+  return `⚠️ *การดำเนินการไม่ถูกต้อง* ใช้: เพิ่ม หรือ ลบ (add หรือ remove)`;
+};
+
+/** Tactica added message */
+export const tacticaAddedMessage = (): string => {
+  return 'เพิ่มแล้ว';
+};
+
+/** Tactica removed message */
+export const tacticaRemovedMessage = (): string => {
+  return 'ลบแล้ว';
+};
+
+/** Tactica success message */
+export const tacticaSuccessMessage = (actionText: string, formation: string, groupName: string, availableFormations: string[]): string => {
+  return `✅ *${actionText}*
+
+📋 *การจัดวาง:* ${formation}
+👥 *กลุ่ม:* ${groupName}
+
+*การจัดวางที่ใช้ได้:*
+${availableFormations.map((t) => `• ${t}`).join('\n') || 'ยังไม่มีการจัดวาง'}`;
+};
+
+// ============================================================================
+// Recurrente Messages (Thai)
+// ============================================================================
+
+/** Recurrente format error message */
+export const recurrenteFormatMessage = (): string => {
+  return `⚠️ *รูปแบบไม่ถูกต้อง*
+
+ใช้: !recurrente [เพิ่ม|พัก|ต่อ|ลบ|ดู] [วัน] [เวลา]
+หรือ: !recurrente [agregar|pausar|reanudar|eliminar|listar]
+
+*คำสั่ง:*
+• !recurrente เพิ่ม พุธ 18:00 - สร้างเหตุการณ์ทุกวันพุธ
+• !recurrente พัก พุธ - พักเหตุการณ์ชั่วคราว
+• !recurrente ต่อ พุธ - กลับมาจัดอีกครั้ง
+• !recurrente ลบ พุธ - ลบการจัดทุกสัปดาห์
+• !recurrente ดู - ดูรายการทั้งหมด
+
+*วันในสัปดาห์:*
+อาทิตย์, จันทร์, อังคาร, พุธ, พฤหัส, ศุกร์, เสาร์`;
+};
+
+/** Recurrente empty list message */
+export const recurrenteEmptyListMessage = (): string => {
+  return `📋 *เหตุการณ์ประจำ*
+
+ยังไม่มีเหตุการณ์ประจำที่ตั้งค่าไว้
+
+ใช้คำสั่ง !recurrente เพิ่ม เพื่อสร้างเหตุการณ์ทุกสัปดาห์`;
+};
+
+/** Recurrente list message */
+export const recurrenteListMessage = (events: any[], getDayName: (day: number) => string): string => {
+  if (events.length === 0) {
+    return recurrenteEmptyListMessage();
+  }
+  let message = `📋 *เหตุการณ์ประจำทุกสัปดาห์:*\n\n`;
+  events.forEach((re: any, idx: number) => {
+    const dayName = getDayName(re.dayOfWeek);
+    const status = re.isActive ? '✅ กำลังทำงาน' : '⏸️ พักอยู่';
+    message += `${idx + 1}. *${dayName}* ${re.startTime}\n`;
+    message += `   ${status} | ${re.gameType}v${re.gameType} | ${re.teamsCount} ทีม\n\n`;
+  });
+  return message;
+};
+
+/** Recurrente day required message */
+export const recurrenteDayRequiredMessage = (action: string): string => {
+  return `⚠️ *ต้องระบุวัน*\n\nใช้: !recurrente ${action} [วัน] [เวลา]\nตัวอย่าง: !recurrente ${action} พุธ 18:00`;
+};
+
+/** Recurrente invalid day message */
+export const recurrenteInvalidDayMessage = (): string => {
+  return `⚠️ *วันไม่ถูกต้อง*\n\nวันที่ใช้ได้: อาทิตย์, จันทร์, อังคาร, พุธ, พฤหัส, ศุกร์, เสาร์`;
+};
+
+/** Recurrente not found message */
+export const recurrenteNotFoundMessage = (dayName: string): string => {
+  return `⚠️ *ไม่พบเหตุการณ์ประจำ*\n\nไม่มีเหตุการณ์ประจำในวัน${dayName}`;
+};
+
+/** Recurrente paused message */
+export const recurrentePausedMessage = (dayName: string): string => {
+  return `⏸️ *พักเหตุการณ์ประจำแล้ว*\n\nวัน${dayName} - การจัดอีเวนต์ถูกพักไว้ชั่วคราว\n\nใช้คำสั่ง !recurrente ต่อ เพื่อกลับมาจัดอีกครั้ง`;
+};
+
+/** Recurrente resumed message */
+export const recurrenteResumedMessage = (dayName: string): string => {
+  return `✅ *กลับมาจัดอีกครั้งแล้ว*\n\nวัน${dayName} - การจัดอีเวนต์กลับมาทำงานแล้ว`;
+};
+
+/** Recurrente deleted message */
+export const recurrenteDeletedMessage = (dayName: string): string => {
+  return `🗑️ *ลบเหตุการณ์ประจำแล้ว*\n\nวัน${dayName} - การจัดทุกสัปดาห์ถูกลบแล้ว`;
+};
+
+/** Recurrente invalid time message */
+export const recurrenteInvalidTimeMessage = (): string => {
+  return `⚠️ *เวลาไม่ถูกต้อง*\n\nใช้รูปแบบ HH:MM เช่น 18:00`;
+};
+
+/** Recurrente created message */
+export const recurrenteCreatedMessage = (dayName: string, time: string, gameType: string): string => {
+  return `✅ *สร้างเหตุการณ์ประจำแล้ว*\n\n📅 ทุก${dayName}\n⏰ เวลา: ${time}\n⚽ ประเภท: ฟุตบอล ${gameType} คน\n\n💡 ใช้คำสั่ง !recurrente พัก เพื่อพักการจัดชั่วคราว`;
+};
+
+/** Recurrente invalid action message */
+export const recurrenteInvalidActionMessage = (): string => {
+  return `⚠️ *การดำเนินการไม่ถูกต้อง*\n\nใช้: เพิ่ม, พัก, ต่อ, ลบ, ดู`;
+};
+
 /** No open event message */
 export const noOpenEventMessage = (): string => {
-  return `❌ *ไม่มีอีเวนต์ที่เปิด*
+  return `❌ *ไม่มีอีเวนต์ที่เปิด*`;
+};
 
-ขณะนี้ไม่มีอีเวนต์ที่เปิดให้ลงทะเบียนครับ`;
+/** No registrations for lineup message */
+export const noRegistrationsForLineupMessage = (): string => {
+  return `⚠️ *ไม่มีผู้ลงทะเบียน*\n\nไม่มีผู้เล่นที่ลงทะเบียนสำหรับอีเวนต์นี้ครับ`;
+};
+
+/** Lineup generated with details message */
+export const lineupGeneratedWithDetailsMessage = (eventTitle: string, teamsCount: number, playersCount: number): string => {
+  return `✅ *สร้างรายชื่อทีมแล้ว*\n\nอีเวนต์: ${eventTitle || 'แมตซ์ฟุตบอล'}\nทีม: ${teamsCount}\nผู้เล่น: ${playersCount}\n\nใช้คำสั่ง !รายชื่อ เพื่อดูรายชื่อทีม`;
 };
 
 /** Already registered message */

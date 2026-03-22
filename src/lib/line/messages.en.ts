@@ -112,6 +112,16 @@ You are already signed up for this event.`;
 
 // Aliases for user.handlers.ts consistency
 export const noOpenEventMessage = registrationFailedNoEventMessage;
+
+/** No registrations for lineup message */
+export const noRegistrationsForLineupMessage = (): string => {
+  return `⚠️ *No registrations*\n\nThere are no players registered for this event`;
+};
+
+/** Lineup generated with details message */
+export const lineupGeneratedWithDetailsMessage = (eventTitle: string, teamsCount: number, playersCount: number): string => {
+  return `✅ *Lineups generated*\n\nEvent: ${eventTitle || 'Football Match'}\nTeams: ${teamsCount}\nPlayers: ${playersCount}\n\nUse !lineup to view the lineups`;
+};
 export const alreadyRegisteredMessage = registrationFailedAlreadyRegisteredMessage;
 export const notRegisteredMessage = (): string => `❌ *You are not registered for this event.*`;
 
@@ -139,6 +149,14 @@ export const groupNotRegisteredMessage = (): string => {
   return `❌ *Group not registered*`;
 };
 
+export const groupNotFoundMessage = (groupId?: string): string => {
+  return `❌ *Group not found*\n\nUse !groups to see available groups.`;
+};
+
+export const alreadyMemberMessage = (groupName: string): string => {
+  return `ℹ️ *Already a member*\n\nYou are already a member of ${groupName}.`;
+};
+
 // ============================================================================
 // Event Messages
 // ============================================================================
@@ -163,6 +181,18 @@ export const eventClosedMessage = (event: Event, registrations: any[]): string =
 👥 *Players signed up:* ${registrations.length}
 
 Get ready for the match! ⚽`;
+};
+
+export const eventDeletedMessage = (event: Event): string => {
+  return `✅ *Event Deleted!*
+
+The event "${event.title || event.id}" has been deleted.`;
+};
+
+export const userExpelledMessage = (groupName: string): string => {
+  return `✅ *User Expelled!*
+
+The user has been removed from the group "${groupName}".`;
 };
 
 export const eventDetailsMessage = (event: Event, registrations: any[]): string => {
@@ -249,10 +279,155 @@ Default game type: Football ${type}
 This change affects new events created.`;
 };
 
+/** Tactica format error message */
+export const tacticaFormatMessage = (): string => {
+  return `⚠️ *Invalid Format*
+
+Use: !tactica [add|remove] [formation]
+or: !tactica [add|remove] [formation]
+
+Examples:
+• !tactica add 4-3-3
+• !tactica add 3-2-1
+• !tactica remove 4-3-3
+
+*Available Formations:*
+• 7-a-side: 3-2-1, 2-3-1, 2-2-2, 3-1-2
+• 5-a-side: 2-2, 1-2-1, 1-1-2, 2-1-1
+• 11-a-side: 4-4-2, 4-3-3, 3-5-2, 5-3-2, 4-2-3-1, 3-4-3`;
+};
+
+/** Tactica invalid action message */
+export const tacticaInvalidActionMessage = (): string => {
+  return `⚠️ *Invalid action* Use: add or remove`;
+};
+
+/** Tactica added message */
+export const tacticaAddedMessage = (): string => {
+  return 'Added';
+};
+
+/** Tactica removed message */
+export const tacticaRemovedMessage = (): string => {
+  return 'Removed';
+};
+
+/** Tactica success message */
+export const tacticaSuccessMessage = (actionText: string, formation: string, groupName: string, availableFormations: string[]): string => {
+  return `✅ *${actionText}*
+
+📋 *Formation:* ${formation}
+👥 *Group:* ${groupName}
+
+*Available Formations:*
+${availableFormations.map((t) => `• ${t}`).join('\n') || 'No formations available'}`;
+};
+
+// ============================================================================
+// Recurrente Messages (English)
+// ============================================================================
+
+/** Recurrente format error message */
+export const recurrenteFormatMessage = (): string => {
+  return `⚠️ *Invalid Format*
+
+Use: !recurring [add|pause|resume|delete|list] [day] [time]
+or: !recurring [agregar|pausar|reanudar|eliminar|listar]
+
+*Commands:*
+• !recurring add Wednesday 18:00 - Create weekly match
+• !recurring pause Wednesday - Pause weekly match
+• !recurring resume Wednesday - Resume weekly match
+• !recurring delete Wednesday - Delete weekly schedule
+• !recurring list - View all recurring events
+
+*Days of the week:*
+Sunday, Monday, Tuesday, Wednesday, Thursday, Friday, Saturday`;
+};
+
+/** Recurrente empty list message */
+export const recurrenteEmptyListMessage = (): string => {
+  return `📋 *Recurring Events*
+
+No recurring events configured yet.
+
+Use !recurring add to create a weekly match.`;
+};
+
+/** Recurrente list message */
+export const recurrenteListMessage = (events: any[], getDayName: (day: number) => string): string => {
+  if (events.length === 0) {
+    return recurrenteEmptyListMessage();
+  }
+  let message = `📋 *Weekly Recurring Events:*\n\n`;
+  events.forEach((re: any, idx: number) => {
+    const dayName = getDayName(re.dayOfWeek);
+    const status = re.isActive ? '✅ Active' : '⏸️ Paused';
+    message += `${idx + 1}. *${dayName}* ${re.startTime}\n`;
+    message += `   ${status} | ${re.gameType}v${re.gameType} | ${re.teamsCount} teams\n\n`;
+  });
+  return message;
+};
+
+/** Recurrente day required message */
+export const recurrenteDayRequiredMessage = (action: string): string => {
+  return `⚠️ *Day Required*\n\nUse: !recurring ${action} [day] [time]\nExample: !recurring ${action} Wednesday 18:00`;
+};
+
+/** Recurrente invalid day message */
+export const recurrenteInvalidDayMessage = (): string => {
+  return `⚠️ *Invalid Day*\n\nValid days: Sunday, Monday, Tuesday, Wednesday, Thursday, Friday, Saturday`;
+};
+
+/** Recurrente not found message */
+export const recurrenteNotFoundMessage = (dayName: string): string => {
+  return `⚠️ *Recurring Event Not Found*\n\nNo recurring event on ${dayName}`;
+};
+
+/** Recurrente paused message */
+export const recurrentePausedMessage = (dayName: string): string => {
+  return `⏸️ *Recurring Event Paused*\n\n${dayName} - Event scheduling is temporarily paused\n\nUse !recurring resume to resume`;
+};
+
+/** Recurrente resumed message */
+export const recurrenteResumedMessage = (dayName: string): string => {
+  return `✅ *Recurring Event Resumed*\n\n${dayName} - Event scheduling is active again`;
+};
+
+/** Recurrente deleted message */
+export const recurrenteDeletedMessage = (dayName: string): string => {
+  return `🗑️ *Recurring Event Deleted*\n\n${dayName} - Weekly schedule has been removed`;
+};
+
+/** Recurrente invalid time message */
+export const recurrenteInvalidTimeMessage = (): string => {
+  return `⚠️ *Invalid Time*\n\nUse HH:MM format, e.g., 18:00`;
+};
+
+/** Recurrente created message */
+export const recurrenteCreatedMessage = (dayName: string, time: string, gameType: string): string => {
+  return `✅ *Recurring Event Created*\n\n📅 Every ${dayName}\n⏰ Time: ${time}\n⚽ Type: ${gameType}-a-side\n\n💡 Use !recurring pause to pause scheduling`;
+};
+
+/** Recurrente invalid action message */
+export const recurrenteInvalidActionMessage = (): string => {
+  return `⚠️ *Invalid Action*\n\nUse: add, pause, resume, delete, list`;
+};
+
 export const notInGroupMessage = (): string => {
   return `ℹ️ *Group Required*
 
-This command only works inside a registered group.`;
+This command can only be used inside a LINE group.`;
+};
+
+/** Default group name */
+export const defaultGroupName = (): string => {
+  return 'New Football Group';
+};
+
+/** Default region */
+export const defaultRegion = (): string => {
+  return 'Global';
 };
 
 export const scheduleMessage = (events: Event[]): string => {

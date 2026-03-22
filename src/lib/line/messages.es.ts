@@ -110,6 +110,16 @@ No es necesario apuntarte de nuevo a este evento.`;
 
 // Aliases for user.handlers.ts consistency
 export const noOpenEventMessage = registrationFailedNoEventMessage;
+
+/** No registrations for lineup message */
+export const noRegistrationsForLineupMessage = (): string => {
+  return `⚠️ *No hay inscritos*\n\nNo hay jugadores registrados para este evento`;
+};
+
+/** Lineup generated with details message */
+export const lineupGeneratedWithDetailsMessage = (eventTitle: string, teamsCount: number, playersCount: number): string => {
+  return `✅ *Alineaciones generadas*\n\nEvento: ${eventTitle || 'Partido de Fútbol'}\nEquipos: ${teamsCount}\nJugadores: ${playersCount}\n\nUsa !alineacion para ver las alineaciones`;
+};
 export const alreadyRegisteredMessage = registrationFailedAlreadyRegisteredMessage;
 export const notRegisteredMessage = (): string => `❌ *No estás registrado en este evento.*`;
 
@@ -137,6 +147,14 @@ export const groupNotRegisteredMessage = (): string => {
   return `❌ *Grupo no registrado*`;
 };
 
+export const groupNotFoundMessage = (groupId?: string): string => {
+  return `❌ *Grupo no encontrado*\n\nUsa !grupos para ver los disponibles.`;
+};
+
+export const alreadyMemberMessage = (groupName: string): string => {
+  return `ℹ️ *Ya eres miembro*\n\nYa eres miembro del grupo ${groupName}.`;
+};
+
 // ============================================================================
 // Event Messages
 // ============================================================================
@@ -161,6 +179,18 @@ export const eventClosedMessage = (event: Event, registrations: any[]): string =
 👥 *Apuntados:* ${registrations.length} jugadores
 
 ¡Prepárense para el partido! ⚽`;
+};
+
+export const eventDeletedMessage = (event: Event): string => {
+  return `✅ *Evento Eliminado!*
+
+El evento "${event.title || event.id}" ha sido eliminado.`;
+};
+
+export const userExpelledMessage = (groupName: string): string => {
+  return `✅ *Usuario Expulsado!*
+
+El usuario ha sido eliminado del grupo "${groupName}".`;
 };
 
 export const eventDetailsMessage = (event: Event, registrations: any[]): string => {
@@ -247,10 +277,155 @@ Tipo de juego por defecto: Fútbol ${type}
 Este cambio afecta a los nuevos eventos creados.`;
 };
 
+/** Tactica format error message */
+export const tacticaFormatMessage = (): string => {
+  return `⚠️ *Formato Incorrecto*
+
+Usa: !tactica [agregar|quitar] [formación]
+o: !tactica [add|remove] [formation]
+
+Ejemplos:
+• !tactica agregar 4-3-3
+• !tactica agregar 3-2-1
+• !tactica quitar 4-3-3
+
+*Formaciones Disponibles:*
+• Fútbol 7: 3-2-1, 2-3-1, 2-2-2, 3-1-2
+• Fútbol 5: 2-2, 1-2-1, 1-1-2, 2-1-1
+• Fútbol 11: 4-4-2, 4-3-3, 3-5-2, 5-3-2, 4-2-3-1, 3-4-3`;
+};
+
+/** Tactica invalid action message */
+export const tacticaInvalidActionMessage = (): string => {
+  return `⚠️ *Acción inválida* Usa: agregar o quitar (add o remove)`;
+};
+
+/** Tactica added message */
+export const tacticaAddedMessage = (): string => {
+  return 'Añadido';
+};
+
+/** Tactica removed message */
+export const tacticaRemovedMessage = (): string => {
+  return 'Eliminado';
+};
+
+/** Tactica success message */
+export const tacticaSuccessMessage = (actionText: string, formation: string, groupName: string, availableFormations: string[]): string => {
+  return `✅ *${actionText}*
+
+📋 *Formación:* ${formation}
+👥 *Grupo:* ${groupName}
+
+*Formaciones Disponibles:*
+${availableFormations.map((t) => `• ${t}`).join('\n') || 'No hay formaciones disponibles'}`;
+};
+
+// ============================================================================
+// Recurrente Messages (Spanish)
+// ============================================================================
+
+/** Recurrente format error message */
+export const recurrenteFormatMessage = (): string => {
+  return `⚠️ *Formato Incorrecto*
+
+Usa: !recurrente [agregar|pausar|reanudar|eliminar|listar] [día] [hora]
+O: !recurring [add|pause|resume|delete|list]
+
+*Comandos:*
+• !recurrente agregar miércoles 18:00 - Crear partido semanal
+• !recurrente pausar miércoles - Pausar partido semanal
+• !recurrente reanudar miércoles - Reanudar partido semanal
+• !recurrente eliminar miércoles - Eliminar programación
+• !recurrente listar - Ver todos los eventos
+
+*Días de la semana:*
+Domingo, Lunes, Martes, Miércoles, Jueves, Viernes, Sábado`;
+};
+
+/** Recurrente empty list message */
+export const recurrenteEmptyListMessage = (): string => {
+  return `📋 *Eventos Recurrentes*
+
+No hay eventos recurrentes configurados.
+
+Usa !recurrente agregar para crear un partido semanal.`;
+};
+
+/** Recurrente list message */
+export const recurrenteListMessage = (events: any[], getDayName: (day: number) => string): string => {
+  if (events.length === 0) {
+    return recurrenteEmptyListMessage();
+  }
+  let message = `📋 *Eventos Recurrentes Semanales:*\n\n`;
+  events.forEach((re: any, idx: number) => {
+    const dayName = getDayName(re.dayOfWeek);
+    const status = re.isActive ? '✅ Activo' : '⏸️ Pausado';
+    message += `${idx + 1}. *${dayName}* ${re.startTime}\n`;
+    message += `   ${status} | ${re.gameType}v${re.gameType} | ${re.teamsCount} equipos\n\n`;
+  });
+  return message;
+};
+
+/** Recurrente day required message */
+export const recurrenteDayRequiredMessage = (action: string): string => {
+  return `⚠️ *Día Requerido*\n\nUsa: !recurrente ${action} [día] [hora]\nEjemplo: !recurrente ${action} miércoles 18:00`;
+};
+
+/** Recurrente invalid day message */
+export const recurrenteInvalidDayMessage = (): string => {
+  return `⚠️ *Día Inválido*\n\nDías válidos: Domingo, Lunes, Martes, Miércoles, Jueves, Viernes, Sábado`;
+};
+
+/** Recurrente not found message */
+export const recurrenteNotFoundMessage = (dayName: string): string => {
+  return `⚠️ *Evento Recurrente No Encontrado*\n\nNo hay evento recurrente el ${dayName}`;
+};
+
+/** Recurrente paused message */
+export const recurrentePausedMessage = (dayName: string): string => {
+  return `⏸️ *Evento Recurrente Pausado*\n\n${dayName} - La programación está pausada temporalmente\n\nUsa !recurrente reanudar para continuar`;
+};
+
+/** Recurrente resumed message */
+export const recurrenteResumedMessage = (dayName: string): string => {
+  return `✅ *Evento Recurrente Reanudado*\n\n${dayName} - La programación está activa nuevamente`;
+};
+
+/** Recurrente deleted message */
+export const recurrenteDeletedMessage = (dayName: string): string => {
+  return `🗑️ *Evento Recurrente Eliminado*\n\n${dayName} - La programación semanal ha sido eliminada`;
+};
+
+/** Recurrente invalid time message */
+export const recurrenteInvalidTimeMessage = (): string => {
+  return `⚠️ *Hora Inválida*\n\nUsa formato HH:MM, ej: 18:00`;
+};
+
+/** Recurrente created message */
+export const recurrenteCreatedMessage = (dayName: string, time: string, gameType: string): string => {
+  return `✅ *Evento Recurrente Creado*\n\n📅 Cada ${dayName}\n⏰ Hora: ${time}\n⚽ Tipo: Fútbol ${gameType}\n\n💡 Usa !recurrente pausar para pausar la programación`;
+};
+
+/** Recurrente invalid action message */
+export const recurrenteInvalidActionMessage = (): string => {
+  return `⚠️ *Acción Inválida*\n\nUsa: agregar, pausar, reanudar, eliminar, listar`;
+};
+
 export const notInGroupMessage = (): string => {
   return `ℹ️ *Requiere grupo*
 
-Este comando solo sirve dentro de un grupo registrado.`;
+Este comando solo puede usarse dentro de un grupo de LINE.`;
+};
+
+/** Default group name */
+export const defaultGroupName = (): string => {
+  return 'Nuevo Grupo de Fútbol';
+};
+
+/** Default region */
+export const defaultRegion = (): string => {
+  return 'España';
 };
 
 export const scheduleMessage = (events: Event[]): string => {

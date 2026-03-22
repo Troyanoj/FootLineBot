@@ -13,6 +13,8 @@ const DAY_NAMES: Record<string, number> = {
 };
 
 const DAY_NAMES_THAI = ['อาทิตย์', 'จันทร์', 'อังคาร', 'พุธ', 'พฤหัส', 'ศุกร์', 'เสาร์'];
+const DAY_NAMES_ENGLISH = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+const DAY_NAMES_SPANISH = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
 
 export interface CreateRecurringEventInput {
   groupId: string;
@@ -50,6 +52,18 @@ export class RecurringEventService {
    * Get day name in Thai
    */
   getDayNameThai(dayOfWeek: number): string {
+    return DAY_NAMES_THAI[dayOfWeek] || 'ไม่ทราบ';
+  }
+
+  /**
+   * Get day name in the specified language
+   */
+  getDayName(dayOfWeek: number, lang: string = 'th'): string {
+    if (lang === 'en') {
+      return DAY_NAMES_ENGLISH[dayOfWeek] || 'Unknown';
+    } else if (lang === 'es') {
+      return DAY_NAMES_SPANISH[dayOfWeek] || 'Desconocido';
+    }
     return DAY_NAMES_THAI[dayOfWeek] || 'ไม่ทราบ';
   }
 

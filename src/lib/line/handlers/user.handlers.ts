@@ -142,7 +142,7 @@ export async function handleBaja(context: HandlerContext): Promise<HandlerResult
     if (!user) {
       return {
         success: false,
-        message: 'No estás registrado. Usa !apuntar para inscribirte.',
+        message: getMsg(context).notRegisteredMessage(),
       };
     }
     
@@ -228,7 +228,7 @@ export async function handleAlineacion(context: HandlerContext): Promise<Handler
     if (!user) {
       return {
         success: false,
-        message: 'No tienes perfil. Usa !perfil para crear uno.',
+        message: getMsg(context).errorMessage(),
       };
     }
     
@@ -257,7 +257,7 @@ export async function handleAlineacion(context: HandlerContext): Promise<Handler
     if (!currentEvent) {
       return {
         success: false,
-        message: 'No hay eventos activos actualmente.',
+        message: getMsg(context).noEventsMessage(),
       };
     }
     
@@ -377,7 +377,7 @@ export async function handleUnirse(context: HandlerContext, groupId: string): Pr
     if (!group) {
       return {
         success: false,
-        message: 'El grupo no existe. Usa !grupos para ver los disponibles.',
+        message: getMsg(context).groupNotFoundMessage(groupId),
       };
     }
     
@@ -386,7 +386,7 @@ export async function handleUnirse(context: HandlerContext, groupId: string): Pr
     if (isMember) {
       return {
         success: false,
-        message: `Ya eres miembro del grupo ${group.name}.`,
+        message: getMsg(context).alreadyMemberMessage(group.name),
       };
     }
     
@@ -520,9 +520,7 @@ export async function handleRegisterGroup(context: HandlerContext): Promise<Hand
     if (!groupId) {
       return {
         success: false,
-        message: context.lang === 'es' 
-          ? '⚠️ Este comando solo puede usarse dentro de un grupo de LINE.' 
-          : '⚠️ This command can only be used inside a LINE group.',
+        message: getMsg(context).notInGroupMessage(),
       };
     }
 
@@ -540,9 +538,9 @@ export async function handleRegisterGroup(context: HandlerContext): Promise<Hand
     
     // Create the group using LINE groupId as DB id
     const group = await groupService.createGroup(
-      'Nuevo Grupo de Fútbol',
+      getMsg(context).defaultGroupName(),
       user.id,
-      context.lang === 'es' ? 'España' : (context.lang === 'th' ? 'Thailand' : 'Global'),
+      getMsg(context).defaultRegion(),
       '7',
       groupId
     );
