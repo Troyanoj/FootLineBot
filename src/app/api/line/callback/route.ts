@@ -374,6 +374,8 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     // Get raw body for signature validation
     const rawBody = await request.text();
     console.log('Raw body:', rawBody);
+    console.log('Signature:', signature);
+    console.log('Channel secret:', process.env.LINE_CHANNEL_SECRET ? 'present' : 'MISSING');
     
     // Validate signature
     const isValid = validateSignature(rawBody, signature);
