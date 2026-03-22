@@ -45,17 +45,29 @@ function parseCommand(text: string): { command: string; args: string[] } | null 
 /** Check if user is admin (placeholder - checks group admin status) */
 async function isUserAdmin(userId: string): Promise<boolean> {
   try {
+    console.log(`[DEBUG] Checking admin status for userId: ${userId}`);
     const user = await userService.findByLineUserId(userId);
-    if (!user) return false;
     
+    if (!user) {
+      console.log(`[DEBUG] User not found in database for LINE userId: ${userId}`);
+      return false;
+    }
+    
+    console.log(`[DEBUG] User found: ${user.id}, ${user.displayName}`);
     const groups = await groupService.getByUserId(user.id);
+    console.log(`[DEBUG] User is member of ${groups.length} groups`);
+    
     for (const group of groups) {
+      console.log(`[DEBUG] Checking if user is admin of group: ${group.id}, ${group.name}`);
       if (await groupService.isAdmin(group.id, user.id)) {
+        console.log(`[DEBUG] User IS admin of group: ${group.id}`);
         return true;
       }
     }
+    console.log(`[DEBUG] User is NOT admin of any group`);
     return false;
-  } catch {
+  } catch (error) {
+    console.error(`[DEBUG] Error in isUserAdmin:`, error);
     return false;
   }
 }
@@ -84,12 +96,14 @@ async function ensureUserExists(lineUserId: string): Promise<void> {
 /** Send response to user via LINE */
 async function sendResponse(replyToken: string, result: HandlerResult): Promise<void> {
   try {
+    console.log(`[DEBUG] Sending reply to LINE with token: ${replyToken?.substring(0, 10)}...`);
     await replyMessage(replyToken, {
       type: 'text',
       text: result.message,
     });
+    console.log(`[DEBUG] Reply sent successfully`);
   } catch (error) {
-    console.error('Error sending response:', error);
+    console.error('[DEBUG] Error sending response:', error);
   }
 }
 
@@ -165,13 +179,15 @@ async function handleMessageEvent(event: LineWebhookEvent): Promise<void> {
   const { source, message, replyToken } = event;
   
   if (!source.userId || !message || message.type !== 'text' || !replyToken) {
+    console.log(`[DEBUG] Missing required fields: userId=${!!source.userId}, message=${!!message}, type=${message?.type}, replyToken=${!!replyToken}`);
     return;
   }
   
   const text = message.text?.trim() || '';
   const userId = source.userId;
+  const groupId = source.groupId || source.roomId || undefined;
   
-  console.log(`Received message from ${userId}: ${text}`);
+  console.log(`Received message from ${userId} in group/room: ${groupId || 'direct'}: ${text}`);
   
   // Parse command from message
   const parsed = parseCommand(text);
@@ -188,8 +204,11 @@ async function handleMessageEvent(event: LineWebhookEvent): Promise<void> {
   
   const { command, args } = parsed;
   
+  console.log(`[DEBUG] Command: ${command}, Args: ${JSON.stringify(args)}`);
+  
   // Check if user is admin for admin commands
   const isAdmin = await isUserAdmin(userId);
+  console.log(`[DEBUG] isAdmin result: ${isAdmin}`);
   
   // Determine if this is an admin command
   const adminCommands = [
@@ -227,23 +246,29 @@ async function handleMessageEvent(event: LineWebhookEvent): Promise<void> {
     } else {
       const context: HandlerContext & { lang: 'es' | 'en' | 'th' } = {
         userId,
+        groupId,
         replyToken,
         lang,
       };
+      console.log(`[DEBUG] Admin context: userId=${userId}, groupId=${groupId}`);
       result = await handleAdminCommand(command, args, context as any);
     }
   } else {
     // Handle user command
     const context: HandlerContext & { lang: 'es' | 'en' | 'th' } = {
       userId,
+      groupId,
       replyToken,
       lang,
     };
+    console.log(`[DEBUG] User context: userId=${userId}, groupId=${groupId}`);
     result = await handleUserCommand(command, args, context as any);
   }
   
   // Send response
+  console.log(`[DEBUG] Sending response: success=${result.success}, message=${result.message.substring(0, 100)}...`);
   await sendResponse(replyToken, result);
+  console.log(`[DEBUG] Response sent`);
 }
 
 /** Handle postback event - process quick reply actions */
