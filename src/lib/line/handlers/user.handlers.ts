@@ -118,14 +118,19 @@ export async function handleApuntar(context: HandlerContext): Promise<HandlerRes
     }
     
     // Register for event
-    await registrationService.register({
+    const result = await registrationService.register({
       eventId: openEvent.id,
       userId: user.id,
     });
     
+    // Check if registered or waitlisted
+    const isWaitlisted = result.status === 'waitlisted';
+    
     return {
       success: true,
-      message: getMsg(context).registrationSuccessMessage(openEvent),
+      message: isWaitlisted 
+        ? getMsg(context).waitlistSuccessMessage(openEvent)
+        : getMsg(context).registrationSuccessMessage(openEvent),
     };
   } catch (error) {
     console.error('Error in handleApuntar:', error);

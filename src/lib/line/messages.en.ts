@@ -65,14 +65,30 @@ https://app-omega-sand-14.vercel.app/help?lang=en`;
 
 export const registrationSuccessMessage = (event: Event): string => {
   const date = new Date(event.eventDate).toLocaleDateString('en-US', { weekday: 'long', day: 'numeric', month: 'long' });
+  const time = new Date(event.startTime).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false });
   return `✅ *Registration Successful!*
 
 📅 *Event:* ${event.title || 'Football Match'}
 📆 *Date:* ${date}
-⏰ *Time:* ${event.startTime}
+⏰ *Time:* ${time}
 ⏱️ *Duration:* ${event.totalDurationMinutes} min
 
 See you on the pitch! ⚽`;
+};
+
+export const waitlistSuccessMessage = (event: Event): string => {
+  const date = new Date(event.eventDate).toLocaleDateString('en-US', { weekday: 'long', day: 'numeric', month: 'long' });
+  const time = new Date(event.startTime).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false });
+  return `⚠️ *Waitlist*
+
+The event is full. You've been added to the waitlist.
+
+📅 *Event:* ${event.title || 'Football Match'}
+📆 *Date:* ${date}
+⏰ *Time:* ${time}
+👥 *Max players:* ${event.maxPlayers || 'No limit'}
+
+We'll notify you if someone drops out. ⚽`;
 };
 
 export const registrationCancelSuccessMessage = (event: Event): string => {

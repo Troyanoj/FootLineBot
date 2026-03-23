@@ -81,14 +81,35 @@ export const registrationSuccessMessage = (event: Event): string => {
     day: 'numeric',
     month: 'long',
   });
+  const time = new Date(event.startTime).toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit', hour12: false });
   return `✅ *ลงทะเบียนสำเร็จ!*
 
 📅 *อีเวนต์:* ${event.title || 'แมตซ์ฟุตบอล'}
 📆 *วันที่:* ${date}
-⏰ *เวลา:* ${event.startTime}
+⏰ *เวลา:* ${time}
 ⏱️ *ระยะเวลา:* ${event.totalDurationMinutes} นาที
 
 ขอให้สนุกกับการเล่นครับ! ⚽`;
+};
+
+/** Waitlist success message */
+export const waitlistSuccessMessage = (event: Event): string => {
+  const date = new Date(event.eventDate).toLocaleDateString('th-TH', {
+    weekday: 'long',
+    day: 'numeric',
+    month: 'long',
+  });
+  const time = new Date(event.startTime).toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit', hour12: false });
+  return `⚠️ *รอลงทะเบียน*
+
+อีเวนต์เต็มแล้ว คุณได้รับการเพิ่มเข้าลิสต์รอ
+
+📅 *อีเวนต์:* ${event.title || 'แมตซ์ฟุตบอล'}
+📆 *วันที่:* ${date}
+⏰ *เวลา:* ${time}
+👥 *ผู้เล่นสูงสุด:* ${event.maxPlayers || 'ไม่จำกัด'}
+
+เราจะแจ้งให้ทราบหากมีผู้ยกเลิก ครับ! ⚽`;
 };
 
 /** Registration cancel success message */
