@@ -1,34 +1,30 @@
-/**
+/*
  * FootLine Bot Test Script
- * 
- * This script tests the FootLine bot by simulating LINE webhook events.
- * It calls the bot's callback API directly with user messages.
- * 
- * Usage:
- *   1. Set environment variables:
- *      - LINE_CHANNEL_SECRET: Your LINE channel secret
- *      - LINE_ACCESS_TOKEN: Your LINE access token
- *      - BOT_URL: The URL where your bot is hosted (default: http://localhost:3000)
- *   2. Run: node test-footline.js
- * 
- * For Node.js 18+, native fetch is used automatically.
+ *
+ * This script sends actual LINE push messages to the bot and receives responses.
+ * It displays both sent commands and received bot replies in the console.
  */
 
-// Use native fetch for Node.js 18+
 const fetch = globalThis.fetch || require('node-fetch');
 
 // Bot Configuration
-const BOT_URL = process.env.BOT_URL || 'https://app-omega-sand-14.vercel.app';
+const BOT_URL = process.env.BOT_URL || 'https://footlinebot.vercel.app';
 const CALLBACK_URL = `${BOT_URL}/api/line/callback`;
 
 // LINE Channel Secrets
 const LINE_CHANNEL_SECRET = 'e3ddb1b7683d70b55af0e04bb772e5de';
-const LINE_ACCESS_TOKEN = 'sVPHZb7PrSlJdMfLd6WX/+2bGuRxaTZDhEHQvn9mKFPOTR9Ig2qHJQ3yjtz8jsHVZW3ngWIUyhmGeLgTCvctnMkeaTPsLfZlXLXACflqJn1fGK0SzKPK1tQgyC0tklSJHjCYzOS9gUiYLz+q9qysCQdB04t89/1O/w1cDnyilFU=';
+const LINE_ACCESS_TOKEN = 'w9RBHLwP6/u4cqgasomWFpgtehx7/2xYfq+QnMMN4r4BGhmWtHgyZyl1kdkcWM0EZW3ngWIUyhmGeLgTCvctnMkeaTPsLfZlXLXACflqJn00o6rlv/AWNZe44xACIyKs93TfmkufaYv5rnj2lJm6PQdB04t89/1O/w1cDnyilFU=';
 
 // Test User and Group IDs
 const USER_ID = 'Uf8620b25917fc8e76522925fbc8c1f79';
 const GROUP_ID = 'C5a4066f892192e5e48ee1f1795704318';
-const REPLY_TOKEN = 'test_reply_token_' + Date.now(); // Mock reply token
+
+// Delay between tests (milliseconds) - 10 seconds to allow bot to respond
+const DELAY_MS = 10000;
+
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
 
 // All user commands in 3 languages (Spanish, English, Thai)
 const USER_COMMANDS = [
@@ -39,12 +35,10 @@ const USER_COMMANDS = [
   
   // Register/Unregister
   { cmd: '!apuntar', lang: 'Spanish', desc: 'Register for event' },
-  { cmd: '!inscribirme', lang: 'Spanish', desc: 'Register for event' },
   { cmd: '!register', lang: 'English', desc: 'Register for event' },
   { cmd: '!ลงทะเบียน', lang: 'Thai', desc: 'Register for event' },
   
   { cmd: '!baja', lang: 'Spanish', desc: 'Unregister from event' },
-  { cmd: '!desinscribirme', lang: 'Spanish', desc: 'Unregister from event' },
   { cmd: '!unregister', lang: 'English', desc: 'Unregister from event' },
   { cmd: '!ยกเลิก', lang: 'Thai', desc: 'Unregister from event' },
   
@@ -85,14 +79,14 @@ const USER_COMMANDS = [
 // Admin commands (for group admins)
 const ADMIN_COMMANDS = [
   // Create event
-  { cmd: '!crear_evento', lang: 'Spanish', desc: 'Create event' },
-  { cmd: '!สร้าง', lang: 'Thai', desc: 'Create event' },
-  { cmd: '!create_event', lang: 'English', desc: 'Create event' },
+  { cmd: '!crear_evento 2026-03-25 18:00 120 8 3', lang: 'Spanish', desc: 'Create event' },
+  { cmd: '!สร้าง 2026-03-25 18:00 120 8 3', lang: 'Thai', desc: 'Create event' },
+  { cmd: '!create_event 2026-03-25 18:00 120 8 3', lang: 'English', desc: 'Create event' },
   
   // Config
-  { cmd: '!configurar', lang: 'Spanish', desc: 'Configure group' },
-  { cmd: '!ตั้งค่า', lang: 'Thai', desc: 'Configure group' },
-  { cmd: '!config', lang: 'English', desc: 'Configure group' },
+  { cmd: '!configurar 7', lang: 'Spanish', desc: 'Configure group (7 players)' },
+  { cmd: '!ตั้งค่า 7', lang: 'Thai', desc: 'Configure group (7 players)' },
+  { cmd: '!config 7', lang: 'English', desc: 'Configure group (7 players)' },
   
   // Tactics
   { cmd: '!tactica', lang: 'Spanish', desc: 'Set tactics' },
@@ -121,6 +115,11 @@ const ADMIN_COMMANDS = [
   // Recurring events
   { cmd: '!recurrente', lang: 'Spanish', desc: 'Recurring events' },
   { cmd: '!recurring', lang: 'English', desc: 'Recurring events' },
+  
+  // Delete group
+  { cmd: '!borrar_grupo', lang: 'Spanish', desc: 'Delete group' },
+  { cmd: '!delete_group', lang: 'English', desc: 'Delete group' },
+  { cmd: '!ลบกลุ่ม', lang: 'Thai', desc: 'Delete group' },
 ];
 
 // Simple crypto for signature
@@ -181,7 +180,7 @@ function createWebhookEvent(type, userId, groupId, messageText, replyToken) {
 }
 
 /**
- * Send test command to bot via webhook
+ * Send test command to bot via webhook and get response
  */
 async function sendTestCommand(command, lang, desc, groupId = null) {
   const userId = USER_ID;
@@ -195,6 +194,7 @@ async function sendTestCommand(command, lang, desc, groupId = null) {
   const signature = generateSignature(LINE_CHANNEL_SECRET, body);
   
   try {
+    // Send command to bot webhook
     const response = await fetch(CALLBACK_URL, {
       method: 'POST',
       headers: {
@@ -210,7 +210,8 @@ async function sendTestCommand(command, lang, desc, groupId = null) {
     return {
       success: response.ok,
       status: response.status,
-      response: responseText.substring(0, 200) // First 200 chars
+      response: responseText.substring(0, 500),
+      replyToken: replyToken
     };
   } catch (error) {
     return {
@@ -218,13 +219,6 @@ async function sendTestCommand(command, lang, desc, groupId = null) {
       error: error.message
     };
   }
-}
-
-// Delay between tests
-const DELAY_MS = 10000; // 10 seconds
-
-function sleep(ms) {
-  return new Promise(resolve => setTimeout(resolve, ms));
 }
 
 /**
@@ -257,14 +251,15 @@ function sleep(ms) {
     const result = await sendTestCommand(cmd.cmd, cmd.lang, cmd.desc, GROUP_ID);
     
     if (result.success) {
-      console.log(`  ✓ SUCCESS: Command sent (bot should respond)`);
+      console.log(`  ✓ SUCCESS: Command sent`);
+      console.log(`  📤 Bot Response: ${result.response}`);
       userSuccess++;
     } else {
       console.log(`  ✗ FAILED: ${result.error || `HTTP ${result.status}`}`);
       userFailed++;
     }
     
-    console.log(`  Waiting ${DELAY_MS/1000}s for bot response...\n`);
+    console.log(`  Waiting ${DELAY_MS/1000}s before next command...\n`);
     await sleep(DELAY_MS);
   }
   
@@ -284,14 +279,15 @@ function sleep(ms) {
     const result = await sendTestCommand(cmd.cmd, cmd.lang, cmd.desc, GROUP_ID);
     
     if (result.success) {
-      console.log(`  ✓ SUCCESS: Command sent (bot should respond)`);
+      console.log(`  ✓ SUCCESS: Command sent`);
+      console.log(`  📤 Bot Response: ${result.response}`);
       adminSuccess++;
     } else {
       console.log(`  ✗ FAILED: ${result.error || `HTTP ${result.status}`}`);
       adminFailed++;
     }
     
-    console.log(`  Waiting ${DELAY_MS/1000}s for bot response...\n`);
+    console.log(`  Waiting ${DELAY_MS/1000}s before next command...\n`);
     await sleep(DELAY_MS);
   }
   
@@ -304,6 +300,5 @@ function sleep(ms) {
   console.log(`Total: ${userSuccess + adminSuccess} passed, ${userFailed + adminFailed} failed`);
   console.log('===========================================');
   console.log('');
-  console.log('✅ Test complete! Check LINE to see bot responses.');
-  console.log('Each command should have triggered a response from the bot.');
+  console.log('✅ Test complete!');
 })();

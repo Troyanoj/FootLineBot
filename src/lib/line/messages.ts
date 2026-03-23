@@ -146,6 +146,15 @@ export const groupRegisteredMessage = (groupName: string, groupId: string): stri
 ขอให้สนุกกับการเล่นฟุตบอลครับ! ⚽`;
 };
 
+/** Group deleted successfully */
+export const groupDeletedMessage = (groupName: string): string => {
+  return `🗑️ *กลุ่มถูกลบแล้ว!*
+
+กลุ่ม "${groupName}" ถูกลบออกจากระบบแล้ว
+
+เพิ่มบอทอีกครั้งและใช้ !สร้าง เพื่อเริ่มต้นใหม่ครับ`;
+};
+
 /** Group already registered */
 export const groupAlreadyRegisteredMessage = (groupName: string): string => {
   return `ℹ️ *กลุ่มลงทะเบียนแล้ว*

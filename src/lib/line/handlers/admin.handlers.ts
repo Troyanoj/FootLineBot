@@ -13,8 +13,58 @@ import * as msgEs from '@/lib/line/messages.es';
 import * as msgEn from '@/lib/line/messages.en';
 import type { User, Group, Event, GameType, CreateEventInput, UpdateEventInput } from '@/types';
 
-const getMsg = (context: any) =>
-  context?.lang === 'es' ? msgEs : (context?.lang === 'en' ? msgEn : msgTh);
+// Advanced logging system for debugging
+const LOG_LEVELS = {
+  ERROR: 'ERROR',
+  WARN: 'WARN',
+  INFO: 'INFO',
+  DEBUG: 'DEBUG'
+};
+
+function logError(context: any, operation: string, error: any, details?: any) {
+  const timestamp = new Date().toISOString();
+  const errorInfo = {
+    timestamp,
+    level: LOG_LEVELS.ERROR,
+    operation,
+    userId: context?.userId,
+    groupId: context?.groupId,
+    lang: context?.lang,
+    error: error instanceof Error ? {
+      name: error.name,
+      message: error.message,
+      stack: error.stack
+    } : String(error),
+    details
+  };
+  console.error('========== FOOTLINE BOT ERROR ==========');
+  console.error(JSON.stringify(errorInfo, null, 2));
+  console.error('==========================================');
+}
+
+function logInfo(context: any, operation: string, details?: any) {
+  const timestamp = new Date().toISOString();
+  const info = {
+    timestamp,
+    level: LOG_LEVELS.INFO,
+    operation,
+    userId: context?.userId,
+    groupId: context?.groupId,
+    lang: context?.lang,
+    details
+  };
+  console.log('========== FOOTLINE BOT INFO ==========');
+  console.log(JSON.stringify(info, null, 2));
+  console.log('========================================');
+}
+
+const getMsg = (context: any) => {
+  if (!context || !context.lang) {
+    // Default to Thai if no lang is provided
+    return msgTh;
+  }
+  return context.lang === 'es' ? msgEs : (context.lang === 'en' ? msgEn : msgTh);
+};
 
 // Context passed to all handlers
 export interface AdminHandlerContext {
@@ -112,8 +162,9 @@ Ejemplo: !crear_evento 2024-12-25 18:00 90 20 2
     
     const [fecha, hora, duracion, minPartido, equipos] = args;
     
-    // Validate date
+    // Validate date - Set time to noon to avoid timezone issues
     const eventDate = new Date(fecha);
+    eventDate.setHours(12, 0, 0, 0);
     if (isNaN(eventDate.getTime())) {
       return {
         success: false,
@@ -157,15 +208,21 @@ Ejemplo: !crear_evento 2024-12-25 18:00 90 20 2
       };
     }
     
+    // Prisma expects a DateTime for the startTime field
+    // We need to create a proper DateTime by combining the event date with the time
+    const [hours, minutes] = hora.split(':');
+    const startTimeDate = new Date(eventDate);
+    startTimeDate.setHours(parseInt(hours, 10), parseInt(minutes, 10), 0, 0);
+    
     // Create event
     const eventInput: CreateEventInput = {
       groupId: group.id,
       eventDate,
-      startTime: hora,
+      startTime: startTimeDate.toISOString(),
       totalDurationMinutes: totalDuration,
       minutesPerMatch,
       teamsCount,
-      gameType: group.defaultGameType as GameType || '7',
+      gameType: (group.defaultGameType as GameType) || '7',
     };
     
     const newEvent = await eventService.create(eventInput);
@@ -175,10 +232,18 @@ Ejemplo: !crear_evento 2024-12-25 18:00 90 20 2
       message: getMsg(context).eventCreatedMessage(newEvent),
     };
   } catch (error) {
-    console.error('Error in handleCrearEvento:', error);
+    logError(context, 'handleCrearEvento', error, { args });
+    // Return more detailed error for debugging
+    const errorMsg = error instanceof Error ? error.message : 'Unknown error';
     return {
       success: false,
-      message: getMsg(context).errorMessage(),
+      message: `❌ *Error in handleCrearEvento*
+
+Details: ${errorMsg}
+
+Args: ${JSON.stringify(args)}
+
+Contact support with this error message.`,
     };
   }
 }
@@ -237,10 +302,10 @@ Tipo de juego por defecto: Fútbol ${gameType}
 Este cambio afecta a los nuevos eventos creados.`,
     };
   } catch (error) {
-    console.error('Error in handleConfigurar:', error);
+    logError(context, 'handleConfigurar', error, { args });
     return {
       success: false,
-      message: getMsg(context).errorMessage(),
+      message: `❌ *Error in handleConfigurar*: ${error instanceof Error ? error.message : 'Unknown'}`,
     };
   }
 }
@@ -795,6 +860,41 @@ export async function handleExpulsar(
   }
 }
 
+/**
+ * Handle !borrar_grupo / !delete_group command
+ * Delete the entire group from the database
+ */
+export async function handleBorrarGrupo(
+  context: AdminHandlerContext
+): Promise<HandlerResult> {
+  try {
+    // Get user and check admin status
+    const adminGroups = await getUserAdminGroups(context.userId);
+    
+    if (adminGroups.length === 0) {
+      return {
+        success: false,
+        message: getMsg(context).adminRequiredMessage(),
+      };
+    }
+    
+    // Delete first admin group
+    const group = adminGroups[0];
+    await groupService.delete(group.id);
+    
+    return {
+      success: true,
+      message: getMsg(context).groupDeletedMessage(group.name),
+    };
+  } catch (error) {
+    console.error('Error in handleBorrarGrupo:', error);
+    return {
+      success: false,
+      message: getMsg(context).errorMessage(),
+    };
+  }
+}
+
 // ============================================================================
 // Main Admin Command Dispatcher
 // ============================================================================
@@ -843,6 +943,12 @@ export async function handleAdminCommand(
     case 'expulsar':
     case 'kick':
       return handleExpulsar(context, args[0]);
+    
+    case 'borrar_grupo':
+    case 'delete_group':
+    case 'ลบกลุ่ม':
+    case 'delete-group':
+      return handleBorrarGrupo(context);
     
     case 'recurrente':
     case 'recurring':

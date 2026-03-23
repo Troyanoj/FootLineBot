@@ -200,12 +200,9 @@ async function handleMessageEvent(event: LineWebhookEvent): Promise<void> {
   console.log(`[DEBUG] parseCommand result:`, parsed);
   
   if (!parsed) {
-    // Not a command, could ignore or respond with help
-    // For now, respond with help suggestion
-    await replyMessage(replyToken, {
-      type: 'text',
-      text: 'Usa !ayuda para ver los comandos disponibles.',
-    });
+    // Not a command - ignore the message completely
+    // The bot should only respond to commands that start with ! or /
+    console.log(`[DEBUG] Ignoring non-command message: "${text}"`);
     return;
   }
   
@@ -219,20 +216,20 @@ async function handleMessageEvent(event: LineWebhookEvent): Promise<void> {
   
   // Determine if this is an admin command
   const adminCommands = [
-    'crear_evento', 'configurar', 'tactica', 'generar', 'cerrar', 'borrar_evento', 'expulsar', 'recurrente', 'recurring',
-    'กลยุทธ์', 'จัดทีม', 'สร้าง', 'ตั้งค่า', 'ปิด', 'ลบ',
-    'create_event', 'config', 'tactics', 'generate', 'close', 'delete_event', 'kick', 'recurring_events'
+    'crear_evento', 'configurar', 'tactica', 'generar', 'cerrar', 'borrar_evento', 'expulsar', 'recurrente', 'recurring', 'borrar_grupo',
+    'กลยุทธ์', 'จัดทีม', 'สร้าง', 'ตั้งค่า', 'ปิด', 'ลบ', 'ลบกลุ่ม',
+    'create_event', 'config', 'tactics', 'generate', 'close', 'delete_event', 'kick', 'recurring_events', 'delete_group', 'delete-group'
   ];
   
   // Check if it's a Spanish command based on keywords
   const isSpanish = [
-    'crear_evento', 'configurar', 'tactica', 'generar', 'cerrar', 'borrar_evento', 'expulsar', 'recurrente', 'recurring',
+    'crear_evento', 'configurar', 'tactica', 'generar', 'cerrar', 'borrar_evento', 'expulsar', 'recurrente', 'recurring', 'borrar_grupo',
     'ayuda', 'apuntar', 'inscribirme', 'baja', 'desinscribirme', 'perfil', 'alineacion', 'horario', 'grupos', 'unirse',
     'posicion', 'iniciar',
   ].includes(command);
 
   const isEnglish = [
-    'create_event', 'config', 'tactics', 'generate', 'close', 'delete_event', 'kick', 'recurring_events',
+    'create_event', 'config', 'tactics', 'generate', 'close', 'delete_event', 'kick', 'recurring_events', 'delete_group', 'delete-group',
     'help', 'register', 'unregister', 'profile', 'lineup', 'schedule', 'groups_list', 'join',
     'position', 'setup', 'config_group',
   ].includes(command);

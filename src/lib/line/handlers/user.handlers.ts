@@ -14,8 +14,13 @@ import type { User, Group, Event, Position } from '@/types';
 import prisma from '@/lib/db/prisma';
 import { isValidPosition, getPositionName, VALID_POSITIONS } from '@/lib/positions';
 
-const getMsg = (context: any) =>
-  context?.lang === 'es' ? msgEs : (context?.lang === 'en' ? msgEn : msgTh);
+const getMsg = (context: any) => {
+  if (!context || !context.lang) {
+    // Default to Thai if no lang is provided
+    return msgTh;
+  }
+  return context.lang === 'es' ? msgEs : (context.lang === 'en' ? msgEn : msgTh);
+};
 
 // Context passed to all handlers
 export interface HandlerContext {

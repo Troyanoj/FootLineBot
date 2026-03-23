@@ -146,6 +146,14 @@ export const groupRegisteredMessage = (groupName: string, groupId: string): stri
 Use !create_event to start.`;
 };
 
+export const groupDeletedMessage = (groupName: string): string => {
+  return `🗑️ *Group Deleted!*
+
+Group "${groupName}" has been removed from the system.
+
+Add the bot again and use !setup to start over.`;
+};
+
 export const groupAlreadyRegisteredMessage = (groupName: string): string => {
   return `ℹ️ *Group already exists*
 

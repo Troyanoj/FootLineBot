@@ -39,11 +39,17 @@ export class EventService {
 
       return this.mapToEvent(event);
     } catch (error: unknown) {
+      console.error('========== ERROR in eventService.createEvent ==========');
+      console.error('Input data:', JSON.stringify(data));
+      console.error('Error:', error);
       if (error instanceof AppError) throw error;
       if (error instanceof Error && 'code' in error && error.code === 'P2025') {
         throw new AppError('Group not found', 404, 'GROUP_NOT_FOUND');
       }
-      throw new AppError('Failed to create event', 500);
+      // Log the actual error message
+      const actualError = error instanceof Error ? error.message : String(error);
+      console.error('Actual error:', actualError);
+      throw new AppError(`Failed to create event: ${actualError}`, 500);
     }
   }
 
