@@ -24,6 +24,7 @@ export interface CreateRecurringEventInput {
   minutesPerMatch?: number;
   teamsCount?: number;
   gameType?: string;
+  maxPlayers?: number;
   title?: string;
 }
 
@@ -76,10 +77,11 @@ export class RecurringEventService {
         groupId: input.groupId,
         dayOfWeek: input.dayOfWeek,
         startTime: input.startTime,
-        totalDurationMinutes: input.totalDurationMinutes || 90,
-        minutesPerMatch: input.minutesPerMatch || 20,
-        teamsCount: input.teamsCount || 2,
+        totalDurationMinutes: input.totalDurationMinutes || 120,
+        minutesPerMatch: input.minutesPerMatch || 8,
+        teamsCount: input.teamsCount || 3,
         gameType: input.gameType || '7',
+        maxPlayers: input.maxPlayers || 9,
         title: input.title || null,
         isActive: true,
       },
@@ -176,13 +178,14 @@ export class RecurringEventService {
     const event = await prisma.event.create({
       data: {
         groupId: recurring.groupId,
-        title: recurring.title || `แมตซ์ฟุตบอล${this.getDayNameThai(recurring.dayOfWeek)}`,
+        title: recurring.title || `Partido de Fútbol ${this.getDayNameSpanish(recurring.dayOfWeek)}`,
         eventDate,
         startTime: recurring.startTime as any,
         totalDurationMinutes: recurring.totalDurationMinutes,
         minutesPerMatch: recurring.minutesPerMatch,
         teamsCount: recurring.teamsCount,
         gameType: recurring.gameType,
+        maxPlayers: recurring.maxPlayers,
         status: 'open',
       },
     });
@@ -194,6 +197,116 @@ export class RecurringEventService {
     });
 
     return event as unknown as Event;
+  }
+
+  /**
+   * Get day name in Spanish
+   */
+  getDayNameSpanish(dayOfWeek: number): string {
+    return DAY_NAMES_SPANISH[dayOfWeek] || 'Desconocido';
+  }
+
+  /**
+   * Calculate the next occurrence date for a recurring event
+   * Returns the date of the next event (not the generation date)
+   */
+  getNextEventDate(dayOfWeek: number): Date {
+    const today = new Date();
+    const currentDayOfWeek = today.getDay();
+    
+    // Calculate days until the target day
+    let daysUntil = dayOfWeek - currentDayOfWeek;
+    
+    // If today is the target day or has passed, go to next week
+    if (daysUntil <= 0) {
+      daysUntil += 7;
+    }
+    
+    const nextEvent = new Date(today);
+    nextEvent.setDate(today.getDate() + daysUntil);
+    nextEvent.setHours(0, 0, 0, 0);
+    
+    return nextEvent;
+  }
+
+  /**
+   * Check if an event needs to be generated (3 days before)
+   * Returns the event date if generation is needed, null otherwise
+   */
+  shouldGenerateEvent(recurring: any): Date | null {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    
+    const nextEventDate = this.getNextEventDate(recurring.dayOfWeek);
+    
+    // Calculate the generation date (3 days before the event)
+    const generationDate = new Date(nextEventDate);
+    generationDate.setDate(generationDate.getDate() - 3);
+    
+    // Check if we should generate today
+    if (today.getTime() === generationDate.getTime()) {
+      return nextEventDate;
+    }
+    
+    // If we've passed the generation date but haven't generated, generate now
+    if (today > generationDate) {
+      // Check if already generated this cycle
+      if (recurring.lastGeneratedDate) {
+        const lastGen = new Date(recurring.lastGeneratedDate);
+        lastGen.setHours(0, 0, 0, 0);
+        
+        // If already generated for this week, skip
+        if (lastGen.getTime() >= generationDate.getTime()) {
+          return null;
+        }
+      }
+      return nextEventDate;
+    }
+    
+    return null;
+  }
+
+  /**
+   * Process all recurring events and generate events that need to be created
+   * Returns array of generated events
+   */
+  async processRecurringEvents(): Promise<{ recurringId: string; eventDate: Date; eventId: string }[]> {
+    const result: { recurringId: string; eventDate: Date; eventId: string }[] = [];
+    
+    // Get all active recurring events
+    const recurringEvents = await prisma.recurringEvent.findMany({
+      where: { isActive: true },
+      include: { group: true },
+    });
+    
+    for (const recurring of recurringEvents) {
+      const eventDate = this.shouldGenerateEvent(recurring);
+      
+      if (eventDate) {
+        // Check if event already exists for this date
+        const existingEvent = await prisma.event.findFirst({
+          where: {
+            groupId: recurring.groupId,
+            eventDate: eventDate,
+          },
+        });
+        
+        if (!existingEvent) {
+          try {
+            const event = await this.generateEventFromRecurring(recurring.id, eventDate);
+            result.push({
+              recurringId: recurring.id,
+              eventDate,
+              eventId: event.id,
+            });
+          } catch (error) {
+            console.error(`Error generating event for recurring ${recurring.id}:`, error);
+          }
+        }
+      }
+    }
+    
+    return result;
   }
 }
 
