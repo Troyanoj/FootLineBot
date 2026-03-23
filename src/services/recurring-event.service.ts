@@ -174,18 +174,23 @@ export class RecurringEventService {
       throw new Error('Recurring event not found');
     }
 
+    // Convert startTime (HH:mm) to proper DateTime
+    const [hours, minutes] = (recurring.startTime || '18:00').split(':');
+    const startTimeDate = new Date(eventDate);
+    startTimeDate.setHours(parseInt(hours, 10), parseInt(minutes, 10), 0, 0);
+
     // Create the event
     const event = await prisma.event.create({
       data: {
         groupId: recurring.groupId,
         title: recurring.title || `Partido de Fútbol ${this.getDayNameSpanish(recurring.dayOfWeek)}`,
         eventDate,
-        startTime: recurring.startTime as any,
-        totalDurationMinutes: recurring.totalDurationMinutes,
-        minutesPerMatch: recurring.minutesPerMatch,
-        teamsCount: recurring.teamsCount,
-        gameType: recurring.gameType,
-        maxPlayers: recurring.maxPlayers,
+        startTime: startTimeDate.toISOString(),
+        totalDurationMinutes: recurring.totalDurationMinutes || 120,
+        minutesPerMatch: recurring.minutesPerMatch || 8,
+        teamsCount: recurring.teamsCount || 3,
+        gameType: recurring.gameType || '7',
+        maxPlayers: recurring.maxPlayers || 9,
         status: 'open',
       },
     });
