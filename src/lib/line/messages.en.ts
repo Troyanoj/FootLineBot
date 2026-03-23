@@ -186,6 +186,9 @@ export const eventCreatedMessage = (event: Event): string => {
 ⏱️ *Duration:* ${event.totalDurationMinutes} min
 👥 *Teams:* ${event.teamsCount} 
 👨 *Per team:* ${Math.ceil((event.maxPlayers || 0) / (event.teamsCount || 1))}
+🆔 *ID:* ${event.id}
+
+📝 To delete this event use: !delete_event ${event.id}
 
 📝 Players can now use !register to join!`;
 };

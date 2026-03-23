@@ -184,6 +184,9 @@ export const eventCreatedMessage = (event: Event): string => {
 ⏱️ *Duración:* ${event.totalDurationMinutes} min
 👥 *Equipos:* ${event.teamsCount} 
 👨 *Por equipo:* ${Math.ceil((event.maxPlayers || 0) / (event.teamsCount || 1))}
+🆔 *ID:* ${event.id}
+
+📝 Para eliminar este evento usa: !borrar_evento ${event.id}
 
 📝 ¡A partir de este momento pueden usar !apuntar para jugar!`;
 };

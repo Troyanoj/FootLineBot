@@ -202,6 +202,9 @@ export const eventCreatedMessage = (event: Event): string => {
 ⏱️ *ระยะเวลา:* ${event.totalDurationMinutes} นาที
 👥 *จำนวนทีม:* ${event.teamsCount} ทีม
 👨 *ผู้เล่นต่อทีม:* ${Math.ceil((event.maxPlayers || 0) / (event.teamsCount || 1))}
+🆔 *ID:* ${event.id}
+
+📝 หากต้องการลบอีเวนต์นี้ใช้คำสั่ง: !ลบ ${event.id}
 
 📝 *การลงทะเบียน:* 
 ผู้เล่นสามารถใช้คำสั่ง !register เพื่อลงทะเบียนได้เลยครับ!`;
