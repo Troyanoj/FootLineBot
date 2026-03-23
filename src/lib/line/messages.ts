@@ -625,8 +625,16 @@ export const recurrenteInvalidTimeMessage = (): string => {
 };
 
 /** Recurrente created message */
-export const recurrenteCreatedMessage = (dayName: string, time: string, gameType: string): string => {
-  return `✅ *สร้างเหตุการณ์ประจำแล้ว*\n\n📅 ทุก${dayName}\n⏰ เวลา: ${time}\n⚽ ประเภท: ฟุตบอล ${gameType} คน\n\n💡 ใช้คำสั่ง !recurrente พัก เพื่อพักการจัดชั่วคราว`;
+export const recurrenteCreatedMessage = (
+  dayName: string,
+  time: string,
+  totalDuration: number,
+  minutesPerMatch: number,
+  teamsCount: number,
+  gameType: string,
+  maxPlayers: number
+): string => {
+  return `✅ *สร้างเหตุการณ์ประจำแล้ว*\n\n📅 ทุก${dayName}\n⏰ เวลา: ${time}\n⏱️ ระยะเวลา: ${totalDuration} นาที\n⚽ ประเภท: ฟุตบอล ${gameType} คน\n👥 ทีม: ${teamsCount}\n👥 สูงสุด: ${maxPlayers} คน\n\n💡 อีเวนต์จะถูกสร้างอัตโนมัติ 3 วันก่อนการแข่งขัน`;
 };
 
 /** Recurrente invalid action message */

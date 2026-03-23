@@ -440,8 +440,16 @@ export const recurrenteInvalidTimeMessage = (): string => {
 };
 
 /** Recurrente created message */
-export const recurrenteCreatedMessage = (dayName: string, time: string, gameType: string): string => {
-  return `✅ *Recurring Event Created*\n\n📅 Every ${dayName}\n⏰ Time: ${time}\n⚽ Type: ${gameType}-a-side\n\n💡 Use !recurring pause to pause scheduling`;
+export const recurrenteCreatedMessage = (
+  dayName: string,
+  time: string,
+  totalDuration: number,
+  minutesPerMatch: number,
+  teamsCount: number,
+  gameType: string,
+  maxPlayers: number
+): string => {
+  return `✅ *Recurring Event Created*\n\n📅 Every ${dayName}\n⏰ Time: ${time}\n⏱️ Duration: ${totalDuration} min\n⚽ Type: ${gameType}-a-side\n👥 Teams: ${teamsCount}\n👥 Max players: ${maxPlayers}\n\n💡 Event will be created automatically 3 days before`;
 };
 
 /** Recurrente invalid action message */

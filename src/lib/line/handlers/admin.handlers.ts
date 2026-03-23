@@ -1,4 +1,4 @@
-﻿// Admin Command Handlers
+// Admin Command Handlers
 // Handles all admin-facing commands for LINE bot
 
 import { replyMessage, pushMessage, getUserProfile } from '@/lib/line/client';
@@ -247,14 +247,8 @@ Ejemplo: !crear_evento 2024-12-25 18:00 90 20 2 14
     const errorMsg = error instanceof Error ? error.message : 'Unknown error';
     return {
       success: false,
-      message: `? *Error in handleCrearEvento*
-
-Details: ${errorMsg}
-
-Args: ${JSON.stringify(args)}
-
-Contact support with this error message.`,
-    };
+      message: getMsg(context).recurrenteCreatedMessage(recurringEventService.getDayName(dayOfWeek, context.lang), timeInput, totalDuration, minutesPerMatch, teamsCount, gameType, maxPlayers),
+      };
   }
 }
 
