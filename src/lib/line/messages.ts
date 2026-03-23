@@ -194,14 +194,15 @@ export const eventCreatedMessage = (event: Event): string => {
     day: 'numeric',
     month: 'long',
   });
+  const time = new Date(event.startTime).toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit', hour12: false });
   return `✅ *สร้างอีเวนต์สำเร็จ!*
 
 📅 *อีเวนต์:* ${event.title || 'แมตซ์ฟุตบอล'}
 📆 *วันที่:* ${date}
-⏰ *เวลา:* ${event.startTime}
+⏰ *เวลา:* ${time}
 ⏱️ *ระยะเวลา:* ${event.totalDurationMinutes} นาที
 👥 *จำนวนทีม:* ${event.teamsCount} ทีม
-👨 *ผู้เล่นต่อทีม:* ${Math.ceil((event.maxPlayers || 0) / (event.teamsCount || 1))}
+👥 *ผู้เล่นสูงสุด:* ${event.maxPlayers || 'ไม่จำกัด'}
 🆔 *ID:* ${event.id}
 
 📝 หากต้องการลบอีเวนต์นี้ใช้คำสั่ง: !ลบ ${event.id}

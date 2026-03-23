@@ -142,25 +142,26 @@ export async function handleCrearEvento(
 ): Promise<HandlerResult> {
   try {
     // Parse arguments
-    // args: [fecha, hora, duracion_total, min_por_partido, equipos]
+    // args: [fecha, hora, duracion_total, min_por_partido, equipos, max_jugadores]
     if (args.length < 2) {
       return {
         success: false,
         message: `⚠️ *Formato incorrecto*
 
-Usa: !crear_evento [fecha] [hora] [duracion] [min_partido] [equipos]
+Usa: !crear_evento [fecha] [hora] [duracion] [min_partido] [equipos] [max_jugadores]
 
-Ejemplo: !crear_evento 2024-12-25 18:00 90 20 2
+Ejemplo: !crear_evento 2024-12-25 18:00 90 20 2 14
 
 • fecha: YYYY-MM-DD
 • hora: HH:MM
 • duracion: minutos totales (ej: 90)
 • min_partido: minutos por partido (ej: 20)
-• equipos: número de equipos (ej: 2)`,
+• equipos: número de equipos (ej: 2)
+• max_jugadores: máximo de jugadores (ej: 14) - opcional`,
       };
     }
     
-    const [fecha, hora, duracion, minPartido, equipos] = args;
+    const [fecha, hora, duracion, minPartido, equipos, maxJugadores] = args;
     
     // Validate date - Set time to noon to avoid timezone issues
     const eventDate = new Date(fecha);
@@ -199,12 +200,20 @@ Ejemplo: !crear_evento 2024-12-25 18:00 90 20 2
     const totalDuration = duracion ? parseInt(duracion, 10) : 90;
     const minutesPerMatch = minPartido ? parseInt(minPartido, 10) : 20;
     const teamsCount = equipos ? parseInt(equipos, 10) : 2;
+    const maxPlayers = maxJugadores ? parseInt(maxJugadores, 10) : undefined;
     
     // Validate parameters
     if (isNaN(totalDuration) || isNaN(minutesPerMatch) || isNaN(teamsCount)) {
       return {
         success: false,
         message: '⚠️ Parámetros numéricos inválidos',
+      };
+    }
+    
+    if (maxJugadores && isNaN(maxPlayers!)) {
+      return {
+        success: false,
+        message: '⚠️ Número de jugadores máximo inválido',
       };
     }
     
@@ -223,6 +232,7 @@ Ejemplo: !crear_evento 2024-12-25 18:00 90 20 2
       minutesPerMatch,
       teamsCount,
       gameType: (group.defaultGameType as GameType) || '7',
+      maxPlayers: maxPlayers,
     };
     
     const newEvent = await eventService.create(eventInput);

@@ -178,14 +178,15 @@ export const alreadyMemberMessage = (groupName: string): string => {
 
 export const eventCreatedMessage = (event: Event): string => {
   const date = new Date(event.eventDate).toLocaleDateString('en-US', { weekday: 'long', day: 'numeric', month: 'long' });
+  const time = new Date(event.startTime).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false });
   return `✅ *Match Created!*
 
 📅 *Event:* ${event.title || 'Football Match'}
 📆 *Date:* ${date}
-⏰ *Time:* ${event.startTime}
+⏰ *Time:* ${time}
 ⏱️ *Duration:* ${event.totalDurationMinutes} min
-👥 *Teams:* ${event.teamsCount} 
-👨 *Per team:* ${Math.ceil((event.maxPlayers || 0) / (event.teamsCount || 1))}
+👥 *Teams:* ${event.teamsCount}
+👥 *Max players:* ${event.maxPlayers || 'No limit'}
 🆔 *ID:* ${event.id}
 
 📝 To delete this event use: !delete_event ${event.id}

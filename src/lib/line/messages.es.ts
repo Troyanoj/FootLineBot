@@ -176,14 +176,15 @@ export const alreadyMemberMessage = (groupName: string): string => {
 
 export const eventCreatedMessage = (event: Event): string => {
   const date = new Date(event.eventDate).toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long' });
+  const time = new Date(event.startTime).toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit', hour12: false });
   return `✅ *¡Partido Creado!*
 
 📅 *Evento:* ${event.title || 'Partido de Fútbol'}
 📆 *Fecha:* ${date}
-⏰ *Hora:* ${event.startTime}
+⏰ *Hora:* ${time}
 ⏱️ *Duración:* ${event.totalDurationMinutes} min
-👥 *Equipos:* ${event.teamsCount} 
-👨 *Por equipo:* ${Math.ceil((event.maxPlayers || 0) / (event.teamsCount || 1))}
+👥 *Equipos:* ${event.teamsCount}
+👥 *Máx. jugadores:* ${event.maxPlayers || 'Sin límite'}
 🆔 *ID:* ${event.id}
 
 📝 Para eliminar este evento usa: !borrar_evento ${event.id}
