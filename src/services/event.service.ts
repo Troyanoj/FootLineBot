@@ -9,9 +9,13 @@ export class EventService {
 
   /**
    * Create new event
+   * Also runs auto-cleanup of expired events
    */
   async createEvent(data: CreateEventInput): Promise<Event> {
     try {
+      // Auto-cleanup: close expired events before creating new one
+      await this.closeExpiredEvents();
+      
       // Verify group exists
       const group = await prisma.group.findUnique({
         where: { id: data.groupId },
@@ -76,8 +80,12 @@ export class EventService {
 
   /**
    * Get current open registration event for a group
+   * Also runs auto-cleanup of expired events
    */
   async getOpenEvent(groupId: string): Promise<Event | null> {
+    // Auto-cleanup: close expired events before retrieving
+    await this.closeExpiredEvents();
+    
     const event = await prisma.event.findFirst({
       where: {
         groupId,
@@ -398,6 +406,50 @@ export class EventService {
    */
   async start(id: string): Promise<Event> {
     return this.updateEvent(id, { status: 'in_progress' });
+  }
+
+  /**
+   * Auto-cleanup: Close events that have passed their date
+   * This helps keep the database clean and prevents old events from accumulating
+   * Returns the number of events that were closed
+   */
+  async closeExpiredEvents(): Promise<number> {
+    try {
+      // Get start of today (midnight)
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+
+      // Find all open events where eventDate < today
+      const expiredEvents = await prisma.event.findMany({
+        where: {
+          status: 'open',
+          eventDate: {
+            lt: today,
+          },
+        },
+        select: { id: true },
+      });
+
+      if (expiredEvents.length === 0) {
+        return 0;
+      }
+
+      // Close all expired events
+      const result = await prisma.event.updateMany({
+        where: {
+          id: { in: expiredEvents.map(e => e.id) },
+        },
+        data: {
+          status: 'completed',
+        },
+      });
+
+      console.log(`[EventService] Auto-cleanup: Closed ${result.count} expired events`);
+      return result.count;
+    } catch (error) {
+      console.error('[EventService] Error in closeExpiredEvents:', error);
+      return 0;
+    }
   }
 
   // ============================================
