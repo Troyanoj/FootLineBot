@@ -509,6 +509,8 @@ export async function handleUserCommand(
       return handleAyuda(context);
     
     case 'start':
+    case 'iniciar':
+    case 'เริ่ม':
       return handleStart(context);
     
     case 'setup':
