@@ -146,18 +146,18 @@ export async function handleCrearEvento(
     if (args.length < 2) {
       return {
         success: false,
-        message: `?? *Formato incorrecto*
+        message: `⚠️ *Formato incorrecto*
 
 Usa: !crear_evento [fecha] [hora] [duracion] [min_partido] [equipos] [max_jugadores]
 
 Ejemplo: !crear_evento 2024-12-25 18:00 90 20 2 14
 
-� fecha: YYYY-MM-DD
-� hora: HH:MM
-� duracion: minutos totales (ej: 90)
-� min_partido: minutos por partido (ej: 20)
-� equipos: n�mero de equipos (ej: 2)
-� max_jugadores: m�ximo de jugadores (ej: 14) - opcional`,
+📅 fecha: YYYY-MM-DD
+⏰ hora: HH:MM
+⏱️ duracion: minutos totales (ej: 90)
+⏱️ min_partido: minutos por partido (ej: 20)
+👥 equipos: número de equipos (ej: 2)
+👥 max_jugadores: máximo de jugadores (ej: 14) - opcional`,
       };
     }
     
@@ -169,7 +169,7 @@ Ejemplo: !crear_evento 2024-12-25 18:00 90 20 2 14
     if (isNaN(eventDate.getTime())) {
       return {
         success: false,
-        message: '?? Fecha inv�lida. Usa formato YYYY-MM-DD',
+        message: '⚠️ Fecha inválida. Usa formato YYYY-MM-DD',
       };
     }
     
@@ -178,7 +178,7 @@ Ejemplo: !crear_evento 2024-12-25 18:00 90 20 2 14
     if (!timeRegex.test(hora)) {
       return {
         success: false,
-        message: '?? Hora inv�lida. Usa formato HH:MM',
+        message: '⚠️ Hora inválida. Usa formato HH:MM',
       };
     }
     
@@ -206,14 +206,14 @@ Ejemplo: !crear_evento 2024-12-25 18:00 90 20 2 14
     if (isNaN(totalDuration) || isNaN(minutesPerMatch) || isNaN(teamsCount)) {
       return {
         success: false,
-        message: '?? Par�metros num�ricos inv�lidos',
+        message: '⚠️ Parámetros numéricos inválidos',
       };
     }
     
     if (maxJugadores && isNaN(maxPlayers!)) {
       return {
         success: false,
-        message: '?? N�mero de jugadores m�ximo inv�lido',
+        message: '⚠️ Número de jugadores máximo inválido',
       };
     }
     
@@ -247,8 +247,8 @@ Ejemplo: !crear_evento 2024-12-25 18:00 90 20 2 14
     const errorMsg = error instanceof Error ? error.message : 'Unknown error';
     return {
       success: false,
-      message: getMsg(context).recurrenteCreatedMessage(recurringEventService.getDayName(dayOfWeek, context.lang), timeInput, totalDuration, minutesPerMatch, teamsCount, gameType, maxPlayers),
-      };
+      message: getMsg(context).errorMessage(),
+    };
   }
 }
 
@@ -277,7 +277,7 @@ export async function handleConfigurar(
     if (!['5', '7', '11'].includes(gameType)) {
       return {
         success: false,
-        message: '?? Tipo de juego inv�lido. Usa: 5, 7, o 11',
+        message: '⚠️ Tipo de juego inválido. Usa: 5, 7, o 11',
       };
     }
     
@@ -299,9 +299,9 @@ export async function handleConfigurar(
     
     return {
       success: true,
-      message: `? *Configuraci�n actualizada*
+      message: `✅ *Configuración actualizada*
 
-Tipo de juego por defecto: F�tbol ${gameType}
+Tipo de juego por defecto: Fútbol ${gameType}
 
 Este cambio afecta a los nuevos eventos creados.`,
     };
@@ -309,7 +309,7 @@ Este cambio afecta a los nuevos eventos creados.`,
     logError(context, 'handleConfigurar', error, { args });
     return {
       success: false,
-      message: `? *Error in handleConfigurar*: ${error instanceof Error ? error.message : 'Unknown'}`,
+      message: `⚠️ *Error in handleConfigurar*: ${error instanceof Error ? error.message : 'Unknown'}`,
     };
   }
 }
@@ -342,20 +342,20 @@ export async function handleTactica(
     if (args.length < 2) {
       return {
         success: false,
-        message: `?? *????????????????*
+        message: `⚠️ *Formato incorrecto*
 
-???: !??????? [?????|??] [?????????]
-????: !tactica [add|remove] [formation]
+Usa: !tactica [agregar|quitar] [formación]
+o: !tactica [add|remove] [formation]
 
-????????:
-� !??????? ????? 4-3-3
-� !??????? ????? 3-2-1
-� !??????? ?? 4-3-3
+Ejemplos:
+• !tactica agregar 4-3-3
+• !tactica agregar 3-2-1
+• !tactica quitar 4-3-3
 
-*??????????????????:*
-� ?????? 7 ??: 3-2-1, 2-3-1, 2-2-2, 3-1-2
-� ?????? 5 ??: 2-2, 1-2-1, 1-1-2, 2-1-1
-� ?????? 11 ??: 4-4-2, 4-3-3, 3-5-2, 5-3-2, 4-2-3-1, 3-4-3`,
+*Formaciones Disponibles:*
+• Fútbol 7: 3-2-1, 2-3-1, 2-2-2, 3-1-2
+• Fútbol 5: 2-2, 1-2-1, 1-1-2, 2-1-1
+• Fútbol 11: 4-4-2, 4-3-3, 3-5-2, 5-3-2, 4-2-3-1, 3-4-3`,
       };
     }
     
@@ -372,7 +372,7 @@ export async function handleTactica(
     if (!['add', 'remove'].includes(action)) {
       return {
         success: false,
-        message: '?? *??????????????????????* ???: ????? ???? ?? (add ???? remove)',
+        message: '⚠️ *Acción inválida* Usa: agregar o quitar (add o remove)',
       };
     }
     
@@ -395,11 +395,11 @@ export async function handleTactica(
     
     if (action === 'add') {
       newTactics = { ...currentTactics, [tactica]: true };
-      actionText = '?????????';
+      actionText = 'Añadido';
     } else {
       newTactics = { ...currentTactics };
       delete newTactics[tactica];
-      actionText = '??????';
+      actionText = 'Eliminado';
     }
     
     await groupService.update(group.id, {
@@ -408,13 +408,13 @@ export async function handleTactica(
     
     return {
       success: true,
-      message: `? *${actionText}*
+      message: `✅ *${actionText}*
 
-?? *?????????:* ${tactica}
-?? *?????:* ${group.name}
+📋 *Formación:* ${tactica}
+👥 *Grupo:* ${group.name}
 
-*??????????????????:*
-${Object.keys(newTactics).map((t) => `� ${t}`).join('\n') || '?????????????????'}`,
+*Formaciones Disponibles:*
+${Object.keys(newTactics).map((t) => `• ${t}`).join('\n') || 'No hay formaciones disponibles'}`,
     };
   } catch (error) {
     console.error('Error in handleTactica:', error);
@@ -428,7 +428,7 @@ ${Object.keys(newTactics).map((t) => `� ${t}`).join('\n') || '????????????????
 /**
  * Handle !recurrente / !recurring command
  * Manage recurring events for the group
- * Format: !recurrente [agregar|pausar|reanudar|eliminar|listar] [d�a] [hora] [duraci�n]
+ * Format: !recurrente [agregar|pausar|reanudar|eliminar|listar] [día] [hora] [duración]
  * Thai: !recurrente [?????|???|???|??|??] [???] [????]
  */
 export async function handleRecurrente(
@@ -473,20 +473,20 @@ export async function handleRecurrente(
     if (args.length === 0) {
       return {
         success: false,
-        message: `?? *????????????????*
+        message: `⚠️ *Formato incorrecto*
 
-???: !recurrente [?????|???|???|??|??] [???] [????]
-????: !recurrente [agregar|pausar|reanudar|eliminar|listar]
+Usa: !recurrente [agregar|pausar|reanudar|eliminar|listar] [día] [hora]
+O: !recurring [add|pause|resume|delete|list]
 
-*??????:*
-� !recurrente ????? ??? 18:00 - ???????????????????????
-� !recurrente ??? ??? - ????????????????????
-� !recurrente ??? ??? - ?????????????????
-� !recurrente ?? ??? - ??????????????????
-� !recurrente ?? - ???????????????
+*Comandos:*
+• !recurrente agregar miércoles 18:00 - Crear partido semanal
+• !recurrente pausar miércoles - Pausar partido semanal
+• !recurrente reanudar miércoles - Reanudar partido semanal
+• !recurrente eliminar miércoles - Eliminar programación
+• !recurrente listar - Ver todos los eventos
 
-*????????????:*
-???????, ??????, ??????, ???, ?????, ?????, ?????`,
+*Días de la semana:*
+Domingo, Lunes, Martes, Miércoles, Jueves, Viernes, Sábado`,
       };
     }
     
@@ -505,20 +505,20 @@ export async function handleRecurrente(
       if (recurringEvents.length === 0) {
         return {
           success: true,
-          message: `?? *??????????????*
+          message: `📋 *Eventos Recurrentes*
 
-???????????????????????????????????
+No hay eventos recurrentes configurados.
 
-????????? !recurrente ????? ?????????????????????????????`,
+Usa !recurrente agregar para crear un partido semanal.`,
         };
       }
       
-      let message = `?? *????????????????????????:*\n\n`;
+      let message = `📋 *Eventos Recurrentes Semanales:*\n\n`;
       recurringEvents.forEach((re: any, idx: number) => {
-        const dayName = recurringEventService.getDayNameThai(re.dayOfWeek);
-        const status = re.isActive ? '? ? active' : '?? ???????';
+        const dayName = recurringEventService.getDayName(re.dayOfWeek, context.lang);
+        const status = re.isActive ? '✅ Activo' : '⏸️ Pausado';
         message += `${idx + 1}. *${dayName}* ${re.startTime}\n`;
-        message += `   ${status} | ${re.gameType}v${re.gameType} | ${re.teamsCount} ???\n\n`;
+        message += `   ${status} | ${re.gameType}v${re.gameType} | ${re.teamsCount} equipos\n\n`;
       });
       
       return {
@@ -531,7 +531,7 @@ export async function handleRecurrente(
     if (args.length < 2) {
       return {
         success: false,
-        message: `?? *???????????*\n\n???: !recurrente ${action} [???] [????]\n????????: !recurrente ${action} ??? 18:00`,
+        message: `⚠️ *Día Requerido*\n\nUsa: !recurrente ${action} [día] [hora]\nEjemplo: !recurrente ${action} miércoles 18:00`,
       };
     }
     
@@ -541,7 +541,7 @@ export async function handleRecurrente(
     if (dayOfWeek === null) {
       return {
         success: false,
-        message: `?? *?????????????*\n\n????????????: ???????, ??????, ??????, ???, ?????, ?????, ?????`,
+        message: `⚠️ *Día Inválido*\n\nDías válidos: Domingo, Lunes, Martes, Miércoles, Jueves, Viernes, Sábado`,
       };
     }
     
@@ -554,7 +554,7 @@ export async function handleRecurrente(
       if (!existingRecurring) {
         return {
           success: false,
-          message: `?? *???????????????????*\n\n????????????????????????${recurringEventService.getDayNameThai(dayOfWeek)}`,
+          message: `⚠️ *Evento Recurrente No Encontrado*\n\nNo hay evento recurrente el ${recurringEventService.getDayName(dayOfWeek, context.lang)}`,
         };
       }
       
@@ -562,7 +562,7 @@ export async function handleRecurrente(
       
       return {
         success: true,
-        message: `?? *?????????????????????*\n\n???${recurringEventService.getDayNameThai(dayOfWeek)} - ??????????????????????????????\n\n????????? !recurrente ??? ${dayInput} ??????????????????????`,
+        message: `⏸️ *Evento Recurrente Pausado*\n\n${recurringEventService.getDayName(dayOfWeek, context.lang)} - La programación está pausada temporalmente\n\nUsa !recurrente reanudar para continuar`,
       };
     }
     
@@ -571,7 +571,7 @@ export async function handleRecurrente(
       if (!existingRecurring) {
         return {
           success: false,
-          message: `?? *???????????????????*\n\n????????????????????????${recurringEventService.getDayNameThai(dayOfWeek)}`,
+          message: `⚠️ *Evento Recurrente No Encontrado*\n\nNo hay evento recurrente el ${recurringEventService.getDayName(dayOfWeek, context.lang)}`,
         };
       }
       
@@ -579,7 +579,7 @@ export async function handleRecurrente(
       
       return {
         success: true,
-        message: `? *?????????????????????*\n\n???${recurringEventService.getDayNameThai(dayOfWeek)} - ????????????????????????????`,
+        message: `✅ *Evento Recurrente Reanudado*\n\n${recurringEventService.getDayName(dayOfWeek, context.lang)} - La programación está activa nuevamente`,
       };
     }
     
@@ -588,7 +588,7 @@ export async function handleRecurrente(
       if (!existingRecurring) {
         return {
           success: false,
-          message: `?? *???????????????????*\n\n????????????????????????${recurringEventService.getDayNameThai(dayOfWeek)}`,
+          message: `⚠️ *Evento Recurrente No Encontrado*\n\nNo hay evento recurrente el ${recurringEventService.getDayName(dayOfWeek, context.lang)}`,
         };
       }
       
@@ -596,7 +596,7 @@ export async function handleRecurrente(
       
       return {
         success: true,
-        message: `??? *????????????????????*\n\n???${recurringEventService.getDayNameThai(dayOfWeek)} - ?????????????????????????`,
+        message: `🗑️ *Evento Recurrente Eliminado*\n\n${recurringEventService.getDayName(dayOfWeek, context.lang)} - La programación semanal ha sido eliminada`,
       };
     }
     
@@ -609,12 +609,16 @@ export async function handleRecurrente(
       if (!timeRegex.test(timeInput)) {
         return {
           success: false,
-          message: `?? *??????????????*\n\n????????? HH:MM ???? 18:00`,
+          message: `⚠️ *Hora Inválida*\n\nUsa formato HH:MM, ej: 18:00`,
         };
       }
       
       // Get game type from group default
-      const totalDuration = args[3] ? parseInt(args[3], 10) : 120; const minutesPerMatch = args[4] ? parseInt(args[4], 10) : 8; const teamsCount = args[5] ? parseInt(args[5], 10) : 3; const gameType = args[6] || '7'; const maxPlayers = args[7] ? parseInt(args[7], 10) : 9;
+      const totalDuration = args[3] ? parseInt(args[3], 10) : 120; 
+      const minutesPerMatch = args[4] ? parseInt(args[4], 10) : 8; 
+      const teamsCount = args[5] ? parseInt(args[5], 10) : 3; 
+      const gameType = args[6] || '7'; 
+      const maxPlayers = args[7] ? parseInt(args[7], 10) : 9;
       
       // Create recurring event
       await recurringEventService.create({
@@ -622,21 +626,21 @@ export async function handleRecurrente(
         dayOfWeek,
         startTime: timeInput,
         gameType,
-        teamsCount, totalDurationMinutes: totalDuration, minutesPerMatch, maxPlayers, });
+        teamsCount, 
+        totalDurationMinutes: totalDuration, 
+        minutesPerMatch, 
+        maxPlayers, 
+      });
       
       return {
         success: true,
-        message: `? *???????????????????????*\n\n?? ???${recurringEventService.getDayNameThai(dayOfWeek)}
-? ????: ${timeInput}
-? ??????: ?????? ${gameType} ??
-
-?? ????????? !recurrente ??? ${dayInput} ??????????????????????`,
+        message: `✅ *Evento Recurrente Creado*\n\n📅 Cada ${recurringEventService.getDayName(dayOfWeek, context.lang)}\n⏰ Hora: ${timeInput}\n⏱️ Duración: ${totalDuration} min\n⚽ Tipo: Fútbol ${gameType}\n👥 Equipos: ${teamsCount}\n👥 Máx. jugadores: ${maxPlayers}\n\n💡 El evento se creará automáticamente 3 días antes`,
       };
     }
     
     return {
       success: false,
-      message: `?? *??????????????????????*\n\n???: ?????, ???, ???, ??, ??`,
+      message: `⚠️ *Acción Inválida*\n\nUsa: agregar, pausar, reanudar, eliminar, listar`,
     };
     
   } catch (error) {
@@ -736,7 +740,7 @@ export async function handleCerrar(context: AdminHandlerContext): Promise<Handle
     if (!currentEvent) {
       return {
         success: false,
-        message: '?? No hay eventos abiertos para cerrar.',
+        message: '⚠️ No hay eventos abiertos para cerrar.',
       };
     }
     
@@ -781,7 +785,7 @@ export async function handleBorrarEvento(
     if (!eventId) {
       return {
         success: false,
-        message: '?? Especifica el ID del evento. Usa !horario para ver los eventos.',
+        message: '⚠️ Especifica el ID del evento. Usa !horario para ver los eventos.',
       };
     }
     
@@ -790,7 +794,7 @@ export async function handleBorrarEvento(
     if (!event) {
       return {
         success: false,
-        message: '?? Evento no encontrado.',
+        message: '⚠️ Evento no encontrado.',
       };
     }
     
@@ -830,7 +834,7 @@ export async function handleExpulsar(
     if (!userIdToRemove) {
       return {
         success: false,
-        message: '?? Specify User ID',
+        message: '⚠️ Specify User ID',
       };
     }
     
@@ -963,5 +967,3 @@ export async function handleAdminCommand(
       };
   }
 }
-
-
