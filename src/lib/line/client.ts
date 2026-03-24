@@ -45,14 +45,32 @@ export async function pushMessage(
   await getLineClient().pushMessage(userId, Array.isArray(messages) ? messages : [messages]);
 }
 
-// Get user profile
+// Get user profile with error handling
 export async function getUserProfile(userId: string): Promise<{
   displayName: string;
   userId: string;
   pictureUrl?: string;
   statusMessage?: string;
 }> {
-  return getLineClient().getProfile(userId);
+  try {
+    return await getLineClient().getProfile(userId);
+  } catch (error: any) {
+    // Log the error for debugging
+    console.error(`Failed to get profile for user ${userId}:`, error.message);
+    
+    // If it's a 404 error, return a default profile
+    if (error.status === 404) {
+      return {
+        displayName: 'Unknown User',
+        userId: userId,
+        pictureUrl: undefined,
+        statusMessage: undefined,
+      };
+    }
+    
+    // Re-throw other errors
+    throw error;
+  }
 }
 
 export default getLineClient;
