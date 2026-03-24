@@ -58,9 +58,9 @@ const TUTORIALS: Record<Lang, { player: { title: string; steps: { title: string;
       title: 'How to Use FootLine as a Player',
       steps: [
         { title: '1. Join a Group', desc: 'Ask your group admin for the group ID and use !join [id] to join the football group.' },
-        { title: '2. Set Your Position', desc: 'Use !position [pos1] [pos2] [pos3] to set your preferred positions. Example: !position ST CM GK' },
+        { title: '2. Set Your Position', desc: 'Use !posicion [pos1] [pos2] [pos3] to set your preferred positions. Example: !posicion ST CM GK' },
         { title: '3. Register for Matches', desc: 'When an event is open, use !register to sign up. You\'ll be notified when the admin closes registration.' },
-        { title: '4. Check Your Team', desc: 'After the admin generates teams with !generate, use !lineup to see which team you\'re on and your position.' },
+        { title: '4. Check Your Team', desc: 'After the admin generates teams with !generar, use !alineacion to see which team you\'re on and your position.' },
         { title: '5. View Schedule', desc: 'Use !schedule to see all upcoming matches in your group.' },
         { title: '6. Update Profile', desc: 'Use !profile to view your stats, rating, and position preferences.' },
         { title: '7. Cancel Registration', desc: 'If you can\'t make it, use !unregister to remove yourself before the admin closes registration.' },
@@ -70,15 +70,15 @@ const TUTORIALS: Record<Lang, { player: { title: string; steps: { title: string;
       title: 'How to Manage Your Football Group',
       steps: [
         { title: '1. Setup Your Group', desc: 'Add FootLine Bot to your LINE group, then type !setup to register the group and become the admin.' },
-        { title: '2. Configure Game Type', desc: 'Use !config [5|7|11] to set the default format (5-a-side, 7-a-side, or 11-a-side).' },
+        { title: '2. Configure Game Type', desc: 'Use !configurar [5|7|11] to set the default format (5-a-side, 7-a-side, or 11-a-side).' },
         { title: '3. Create an Event', desc: 'Use !create_event [date] [time] [duration] [min_players] [teams]. Example: !create_event 2024-04-20 19:00 90 14 2' },
         { title: '4. Let Players Register', desc: 'Players use !register to sign up. Wait for enough players to join.' },
-        { title: '5. Generate Teams', desc: 'When ready, use !generate to automatically create balanced teams based on player ratings.' },
+        { title: '5. Generate Teams', desc: 'When ready, use !generar to automatically create balanced teams based on player ratings.' },
         { title: '6. Close Registration', desc: 'Use !close to prevent new players from registering.' },
         { title: '7. View Lineup', desc: 'Use !lineup to see the final team assignments.' },
         { title: '8. Delete Event', desc: 'Use !delete_event [id] to remove an event if needed.' },
         { title: '9. Set Up Recurring Events', desc: 'Use !recurring add [day] [time] to create weekly automatic events. Example: !recurring add Wednesday 19:00' },
-        { title: '10. Manage Tactics', desc: 'Use !tactics add [formation] to add formations. Example: !tactics add 3-2-1' },
+        { title: '10. Manage Tactics', desc: 'Use !tactica agregar [formation] to add formations. Example: !tactica agregar 3-2-1' },
         { title: '11. Remove Players', desc: 'Use !kick [userId] to remove a member from the group.' },
         { title: '12. Delete Group', desc: 'Use !delete_group to delete the group and all its data (use with caution).' },
       ],
@@ -102,13 +102,13 @@ const TUTORIALS: Record<Lang, { player: { title: string; steps: { title: string;
       steps: [
         { title: '1. Configura Tu Grupo', desc: 'Añade FootLine Bot a tu grupo de LINE, luego escribe !iniciar para registrar el grupo y convertirte en administrador.' },
         { title: '2. Configura el Tipo de Juego', desc: 'Usa !configurar [5|7|11] para establecer el formato (5, 7 u 11 jugadores).' },
-        { title: '3. Crear un Evento', desc: 'Usa !crear_evento [fecha] [hora] [duracion] [min_jugadores] [equipos]. Ejemplo: !crear_evento 2024-04-20 19:00 90 14 2' },
+        { title: '3. Crear un Evento', desc: 'Usa !crear_evento [fecha] [hora] [duracion] [min_jugadores] [equipos] [max_jugadores]. Ejemplo: !crear_evento 2024-04-20 19:00 90 8 2 14' },
         { title: '4. Permite que los Jugadores se Apunten', desc: 'Los jugadores usan !apuntar para registrarse. Espera a que se unan suficientes jugadores.' },
         { title: '5. Generar Equipos', desc: 'Cuando esté listo, usa !generar para crear equipos balanceados automáticamente según el nivel de los jugadores.' },
         { title: '6. Cerrar Inscripción', desc: 'Usa !cerrar para evitar que nuevos jugadores se registren.' },
         { title: '7. Ver Alineación', desc: 'Usa !alineacion para ver la asignación final de equipos.' },
         { title: '8. Eliminar Evento', desc: 'Usa !borrar_evento [id] para eliminar un evento si es necesario.' },
-        { title: '9. Configurar Eventos Recurrentes', desc: 'Usa !recurrente agregar [día] [hora] para crear eventos semanales automáticos. Ejemplo: !recurrente agregar Jueves 19:00' },
+        { title: '9. Configurar Eventos Recurrentes', desc: 'Usa !recurrente agregar [día] [hora] [duración] [min] [equipos] [max] para eventos automáticos. Ejemplo: !recurrente agregar Jueves 19:00 120 8 3 9' },
         { title: '10. Gestionar Tácticas', desc: 'Usa !tactica agregar [formación] para añadir formaciones. Ejemplo: !tactica agregar 3-2-1' },
         { title: '11. Expulsar Jugadores', desc: 'Usa !expulsar [userId] para eliminar a un miembro del grupo.' },
         { title: '12. Eliminar Grupo', desc: 'Usa !borrar_grupo para eliminar el grupo y todos sus datos (usa con precaución).' },
@@ -120,9 +120,9 @@ const TUTORIALS: Record<Lang, { player: { title: string; steps: { title: string;
       title: 'วิธีใช้ FootLine สำหรับผู้เล่น',
       steps: [
         { title: '1. เข้าร่วมกลุ่ม', desc: 'ขอ ID กลุ่มจากแอดมินแล้วใช้ !join [id] เพื่อเข้าร่วมกลุ่มฟุตบอล' },
-        { title: '2. ตั้งค่าตำแหน่ง', desc: 'ใช้ !ตำแหน่ง [pos1] [pos2] [pos3] เพื่อตั้งค่าตำแหน่งที่ชอบ ตัวอย่าง: !ตำแหน่ง ST CM GK' },
+        { title: '2. ตั้งค่าตำแหน่ง', desc: 'ใช้ !position [pos1] [pos2] [pos3] เพื่อตั้งค่าตำแหน่งที่ชอบ ตัวอย่าง: !position ST CM GK' },
         { title: '3. ลงทะเบียนเข้าร่วม', desc: 'เมื่อมีอีเวนต์เปิดอยู่ ใช้ !ลงทะเบียน เพื่อสมัคร คุณจะได้รับแจ้งเมื่อแอดมินปิดการลงทะเบียน' },
-        { title: '4. ดูรายชื่อทีม', desc: 'หลังจากแอดมินใช้ !จัดทีม แล้ว ใช้ !รายชื่อ เพื่อดูว่าคุณอยู่ทีมไหนและตำแหน่งอะไร' },
+        { title: '4. ดูรายชื่อทีม', desc: 'หลังจากแอดมินใช้ !generate แล้ว ใช้ !lineup เพื่อดูว่าคุณอยู่ทีมไหนและตำแหน่งอะไร' },
         { title: '5. ดูตารางอีเวนต์', desc: 'ใช้ !อีเวนต์ เพื่อดูอีเวนต์ที่กำลังจะมาถึงทั้งหมดในกลุ่ม' },
         { title: '6. ดูโปรไฟล์', desc: 'ใช้ !โปรไฟล์ เพื่อดูสถิติ ระดับ และความชอบตำแหน่ง' },
         { title: '7. ยกเลิกการลงทะเบียน', desc: 'หากไม่สามารถเข้าร่วมได้ ใช้ !ยกเลิก เพื่อถอนการลงทะเบียนก่อนที่แอดมินจะปิด' },
@@ -133,13 +133,13 @@ const TUTORIALS: Record<Lang, { player: { title: string; steps: { title: string;
       steps: [
         { title: '1. ตั้งค่ากลุ่ม', desc: 'เพิ่ม FootLine Bot เข้ากลุ่ม LINE ของคุณ แล้วพิมพ์ !เริ่มต้น เพื่อลงทะเบียนกลุ่มและเป็นแอดมิน' },
         { title: '2. ตั้งค่าประเภทเกม', desc: 'ใช้ !ตั้งค่า [5|7|11] เพื่อตั้งค่ารูปแบบเกม (5, 7 หรือ 11 คน)' },
-        { title: '3. สร้างอีเวนต์', desc: 'ใช้ !สร้าง [วันที่] [เวลา] [ระยะเวลา] [นาที/คู่] [ทีม] ตัวอย่าง: !สร้าง 2024-04-20 19:00 90 14 2' },
+        { title: '3. สร้างอีเวนต์', desc: 'ใช้ !สร้าง [วันที่] [เวลา] [ระยะ] [นาที] [ทีม] [สูงสุด] ตัวอย่าง: !สร้าง 2024-04-20 19:00 90 8 2 14' },
         { title: '4. ให้ผู้เล่นลงทะเบียน', desc: 'ผู้เล่นใช้ !ลงทะเบียน เพื่อสมัคร รอจนมีผู้เล่นเพียงพอ' },
         { title: '5. จัดทีม', desc: 'เมื่อพร้อม ใช้ !จัดทีม เพื่อสร้างทีมอัตโนมัติตามระดับผู้เล่น' },
         { title: '6. ปิดการลงทะเบียน', desc: 'ใช้ !ปิด เพื่อห้ามผู้เล่นใหม่ลงทะเบียน' },
         { title: '7. ดูรายชื่อทีม', desc: 'ใช้ !รายชื่อ เพื่อดูการจัดทีมสุดท้าย' },
         { title: '8. ลบอีเวนต์', desc: 'ใช้ !ลบ [id] เพื่อลบอีเวนต์หากจำเป็น' },
-        { title: '9. ตั้งค่าอีเวนต์ประจำ', desc: 'ใช้ !recurrente เพิ่ม [วัน] [เวลา] เพื่อสร้างอีเวนต์รายสัปดาห์อัตโนมัติ ตัวอย่าง: !recurrente เพิ่ม พุธ 19:00' },
+        { title: '9. ตั้งค่าอีเวนต์ประจำ', desc: 'ใช้ !recurrente เพิ่ม [วัน] [เวลา] [ระยะ] [นาที] [ทีม] [สูงสุด] ตัวอย่าง: !recurrente เพิ่ม พุธ 19:00 120 8 3 9' },
         { title: '10. จัดการกลยุทธ์', desc: 'ใช้ !กลยุทธ์ เพิ่ม [formation] เพื่อเพิ่มการจัดทีม ตัวอย่าง: !กลยุทธ์ เพิ่ม 3-2-1' },
         { title: '11. ลบผู้เล่น', desc: 'ใช้ !kick [userId] เพื่อลบสมาชิกออกจากกลุ่ม' },
         { title: '12. ลบกลุ่ม', desc: 'ใช้ !ลบกลุ่ม เพื่อลบกลุ่มและข้อมูลทั้งหมด (ใช้ด้วยความระมัดระวัง)' },
@@ -173,7 +173,7 @@ const PLAYER_CMDS: Record<Lang, Section[]> = {
       title: 'Profile & Groups',
       cmds: [
         { cmd: '!profile', desc: 'View your profile: position, rating, and stats.', example: '!profile' },
-        { cmd: '!position [pos1] [pos2] [pos3]', desc: 'Set up to 3 preferred positions in priority order. Values: GK, CB, LB, RB, CDM, CM, CAM, LW, RW, ST, CF.', example: '!position ST CM GK' },
+        { cmd: '!posicion / !position [pos1] [pos2] [pos3]', desc: 'Set up to 3 preferred positions in priority order. Values: GK, CB, LB, RB, CDM, CM, CAM, LW, RW, ST, CF.', example: '!posicion ST CM GK' },
         { cmd: '!groups_list', desc: 'List all groups you belong to.', example: '!groups_list' },
         { cmd: '!join [id]', desc: 'Join a group using its ID.', example: '!join abc12345' },
       ],
@@ -227,7 +227,7 @@ const PLAYER_CMDS: Record<Lang, Section[]> = {
       title: 'โปรไฟล์และกลุ่ม',
       cmds: [
         { cmd: '!โปรไฟล์ / !profile', desc: 'ดูตำแหน่งที่ชอบ ระดับ และสถิติ', example: '!profile' },
-        { cmd: '!ตำแหน่ง [pos1] [pos2] [pos3]', desc: 'ตั้งค่า 3 ตำแหน่งตามความถนัด. ค่า: GK, CB, LB, RB, CDM, CM, CAM, LW, RW, ST, CF.', example: '!ตำแหน่ง ST CM GK' },
+        { cmd: '!position / !ตำแหน่ง [pos1] [pos2] [pos3]', desc: 'ตั้งค่า 3 ตำแหน่งตามความถนัด. ค่า: GK, CB, LB, RB, CDM, CM, CAM, LW, RW, ST, CF.', example: '!position ST CM GK' },
         { cmd: '!กลุ่ม / !groups_list', desc: 'ดูรายการกลุ่มที่คุณเข้าร่วม', example: '!groups_list' },
         { cmd: '!join [id]', desc: 'เข้าร่วมกลุ่มด้วย ID', example: '!join abc12345' },
       ],
@@ -246,7 +246,7 @@ const ADMIN_CMDS: Record<Lang, Section[]> = {
     {
       title: 'Match Management',
       cmds: [
-        { cmd: '!create_event [date] [time] [dur] [min] [teams]', desc: 'Create a new match event.', example: '!create_event 2024-04-20 19:00 90 14 2' },
+        { cmd: '!create_event [date] [time] [dur] [min] [teams] [max]', desc: 'Create a new match event.', example: '!create_event 2024-04-20 19:00 90 8 2 14' },
         { cmd: '!generate / !generar', desc: 'Automatically generate balanced teams based on player ratings.', example: '!generate' },
         { cmd: '!close / !cerrar', desc: 'Close registrations. No new sign-ups after this.', example: '!close' },
         { cmd: '!delete_event [id] / !borrar_evento [id]', desc: 'Permanently delete an event by its ID.', example: '!delete_event abc12345' },
@@ -264,7 +264,7 @@ const ADMIN_CMDS: Record<Lang, Section[]> = {
     {
       title: 'Recurring Events',
       cmds: [
-        { cmd: '!recurring add [Day] [Time] / !recurrente agregar [Día] [Hora]', desc: 'Create a weekly match that auto-generates every week.', example: '!recurring add Wednesday 19:00' },
+        { cmd: '!recurring add [Day] [Time] [dur] [min] [teams] [max]', desc: 'Create a weekly match that auto-generates 3 days before.', example: '!recurring add Wednesday 19:00 120 8 3 9' },
         { cmd: '!recurring pause [Day] / !recurrente pausar [Día]', desc: 'Temporarily pause the weekly event.', example: '!recurring pause Wednesday' },
         { cmd: '!recurring resume [Day] / !recurrente reanudar [Día]', desc: 'Resume a paused weekly event.', example: '!recurring resume Wednesday' },
         { cmd: '!recurring list / !recurrente listar', desc: 'Show all configured weekly events.', example: '!recurring list' },
@@ -287,7 +287,7 @@ const ADMIN_CMDS: Record<Lang, Section[]> = {
     {
       title: 'Gestión de Partidos',
       cmds: [
-        { cmd: '!crear_evento [fecha] [hora] [dur] [min] [equipos]', desc: 'Crea un nuevo partido con todos sus parámetros.', example: '!crear_evento 2024-04-20 19:00 90 14 2' },
+        { cmd: '!crear_evento [fecha] [hora] [dur] [min] [equipos] [max]', desc: 'Crea un nuevo partido con todos sus parámetros.', example: '!crear_evento 2024-04-20 19:00 90 8 2 14' },
         { cmd: '!generar / !generate', desc: 'Genera los equipos balanceados automáticamente según el rating de los jugadores.', example: '!generar' },
         { cmd: 'cerrar / !close', desc: 'Cierra las inscripciones. Nadie más podrá apuntarse luego.', example: '!cerrar' },
         { cmd: '!borrar_evento [id] / !delete_event [id]', desc: 'Elimina permanentemente un evento por su ID.', example: '!borrar_evento abc12345' },
@@ -305,7 +305,7 @@ const ADMIN_CMDS: Record<Lang, Section[]> = {
     {
       title: 'Eventos Recurrentes',
       cmds: [
-        { cmd: '!recurrente agregar [Día] [Hora] / !recurring add [Day] [Time]', desc: 'Crea un partido semanal que se convoca automáticamente.', example: '!recurrente agregar Jueves 19:00' },
+        { cmd: '!recurrente agregar [Día] [Hora] [dur] [min] [equipos] [max]', desc: 'Crea un partido semanal que se genera 3 días antes.', example: '!recurrente agregar Jueves 19:00 120 8 3 9' },
         { cmd: '!recurrente pausar [Día] / !recurring pause [Day]', desc: 'Pausa el evento semanal temporalmente.', example: '!recurrente pausar Jueves' },
         { cmd: '!recurrente reanudar [Día] / !recurring resume [Day]', desc: 'Reanuda el evento semanal pausado.', example: '!recurrente reanudar Jueves' },
         { cmd: '!recurrente listar / !recurring list', desc: 'Muestra todos los eventos semanales configurados.', example: '!recurrente listar' },
@@ -328,7 +328,7 @@ const ADMIN_CMDS: Record<Lang, Section[]> = {
     {
       title: 'จัดการอีเวนต์',
       cmds: [
-        { cmd: '!สร้าง / !create_event [วันที่] [เวลา] [ระยะ] [นาที] [ทีม]', desc: 'สร้างอีเวนต์ฟุตบอลใหม่', example: '!สร้าง 2024-04-20 19:00 90 14 2' },
+        { cmd: '!สร้าง / !create_event [วันที่] [เวลา] [ระยะ] [นาที] [ทีม] [สูงสุด]', desc: 'สร้างอีเวนต์ฟุตบอลใหม่', example: '!สร้าง 2024-04-20 19:00 90 8 2 14' },
         { cmd: '!จัดทีม / !generate', desc: 'สร้างรายชื่อทีมอัตโนมัติตามระดับผู้เล่น', example: '!generate' },
         { cmd: '!ปิด / !close', desc: 'ปิดการลงทะเบียน ไม่รับสมัครเพิ่มอีก', example: '!ปิด' },
         { cmd: '!ลบ [id] / !delete_event [id]', desc: 'ลบอีเวนต์ด้วย ID', example: '!ลบ abc12345' },
@@ -346,7 +346,7 @@ const ADMIN_CMDS: Record<Lang, Section[]> = {
     {
       title: 'อีเวนต์ประจำสัปดาห์',
       cmds: [
-        { cmd: '!recurrente เพิ่ม [วัน] [เวลา] / !recurring add [Day] [Time]', desc: 'สร้างอีเวนต์ประจำสัปดาห์อัตโนมัติ', example: '!recurrente เพิ่ม พุธ 19:00' },
+        { cmd: '!recurrente เพิ่ม [วัน] [เวลา] [ระยะ] [นาที] [ทีม] [สูงสุด]', desc: 'สร้างอีเวนต์อัตโนมัติ 3 วันก่อน', example: '!recurrente เพิ่ม พุธ 19:00 120 8 3 9' },
         { cmd: '!recurrente พัก [วัน] / !recurring pause [Day]', desc: 'พักอีเวนต์ประจำชั่วคราว', example: '!recurrente พัก พุธ' },
         { cmd: '!recurrente ต่อ [วัน] / !recurring resume [Day]', desc: 'กลับมาจัดอีเวนต์ที่พักอยู่', example: '!recurrente ต่อ พุธ' },
         { cmd: '!recurrente ดู / !recurring list', desc: 'ดูรายการอีเวนต์ประจำทั้งหมด', example: '!recurrente ดู' },
