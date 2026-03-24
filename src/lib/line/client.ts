@@ -55,11 +55,18 @@ export async function getUserProfile(userId: string): Promise<{
   try {
     return await getLineClient().getProfile(userId);
   } catch (error: any) {
-    // Log the error for debugging
-    console.error(`Failed to get profile for user ${userId}:`, error.message);
+    // Log the error for debugging with full details
+    console.error(`Failed to get profile for user ${userId}:`, {
+      error: error.message,
+      status: error.status,
+      statusCode: error.statusCode,
+      originalError: error.originalError,
+      stack: error.stack
+    });
     
     // If it's a 404 error, return a default profile
-    if (error.status === 404) {
+    if (error.status === 404 || error.statusCode === 404) {
+      console.log(`User ${userId} not found in LINE API, returning default profile`);
       return {
         displayName: 'Unknown User',
         userId: userId,
