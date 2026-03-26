@@ -252,6 +252,9 @@ async function handleMessageEvent(event: LineWebhookEvent): Promise<void> {
   const { command, args } = parsed;
   logger.info(`Command received: ${command}, args: ${args.length}`);
 
+  // Check if user is admin for admin commands
+  const isAdmin = await isUserAdmin(userId);
+
   // Determine language based on command keywords
   // Spanish commands
   const spanishCommands = [
