@@ -1,0 +1,541 @@
+{
+  "summary": {
+    "total": 13,
+    "passed": 13,
+    "failed": 0,
+    "startTime": "2026-03-26T14:33:33.954Z",
+    "endTime": "2026-03-26T14:33:41.763Z"
+  },
+  "logs": [
+    {
+      "timestamp": "2026-03-26T14:33:35.506Z",
+      "type": "CONNECTIVITY",
+      "url": "https://footlinebot.vercel.app/api/line/callback",
+      "status": 200,
+      "duration": 1548
+    },
+    {
+      "timestamp": "2026-03-26T14:33:35.511Z",
+      "type": "REQUEST",
+      "test": "Join Event",
+      "method": "POST",
+      "url": "https://footlinebot.vercel.app/api/line/callback",
+      "headers": {
+        "Content-Type": "application/json",
+        "X-Line-Signature": "6PTQG47rlpTLD4Kq5l4/b2EdABFa9ioiVVjs5JB5HHo=",
+        "Content-Length": 158
+      },
+      "body": "{\"events\":[{\"type\":\"join\",\"replyToken\":\"00000000000000000000000000000000\",\"source\":{\"type\":\"group\",\"groupId\":\"C1234567890abcdef\"},\"timestamp\":1774535615508}]}"
+    },
+    {
+      "timestamp": "2026-03-26T14:33:36.367Z",
+      "type": "RESPONSE",
+      "test": "Join Event",
+      "status": 200,
+      "headers": {
+        "access-control-allow-headers": "Content-Type, Authorization, X-Line-Signature",
+        "access-control-allow-methods": "GET, POST, PUT, DELETE, OPTIONS",
+        "access-control-allow-origin": "*",
+        "cache-control": "public, max-age=0, must-revalidate",
+        "content-type": "application/json",
+        "date": "Thu, 26 Mar 2026 14:33:36 GMT",
+        "server": "Vercel",
+        "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+        "vary": "RSC, Next-Router-State-Tree, Next-Router-Prefetch, Next-Url",
+        "x-matched-path": "/api/line/callback",
+        "x-vercel-cache": "MISS",
+        "x-vercel-id": "sin1::iad1::2rl9r-1774535615417-a94db7666a81",
+        "transfer-encoding": "chunked"
+      },
+      "body": "{\"success\":true}",
+      "responseTime": 1774535616367
+    },
+    {
+      "timestamp": "2026-03-26T14:33:36.368Z",
+      "type": "REQUEST",
+      "test": "Admin Command - Start Voting",
+      "method": "POST",
+      "url": "https://footlinebot.vercel.app/api/line/callback",
+      "headers": {
+        "Content-Type": "application/json",
+        "X-Line-Signature": "j0YzOrf2HtS+RzvMF8hUT6nT4qjisdESVzD88234rrc=",
+        "Content-Length": 273
+      },
+      "body": "{\"events\":[{\"type\":\"message\",\"replyToken\":\"11111111111111111111111111111111\",\"source\":{\"type\":\"group\",\"groupId\":\"C1234567890abcdef\",\"userId\":\"U1234567890abcdef1234567890abcdef\"},\"timestamp\":1774535616368,\"message\":{\"id\":\"m1\",\"type\":\"text\",\"text\":\"!votar partido sabado\"}}]}"
+    },
+    {
+      "timestamp": "2026-03-26T14:33:36.869Z",
+      "type": "RESPONSE",
+      "test": "Admin Command - Start Voting",
+      "status": 200,
+      "headers": {
+        "access-control-allow-headers": "Content-Type, Authorization, X-Line-Signature",
+        "access-control-allow-methods": "GET, POST, PUT, DELETE, OPTIONS",
+        "access-control-allow-origin": "*",
+        "cache-control": "public, max-age=0, must-revalidate",
+        "content-type": "application/json",
+        "date": "Thu, 26 Mar 2026 14:33:36 GMT",
+        "server": "Vercel",
+        "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+        "vary": "RSC, Next-Router-State-Tree, Next-Router-Prefetch, Next-Url",
+        "x-matched-path": "/api/line/callback",
+        "x-vercel-cache": "MISS",
+        "x-vercel-id": "sin1::iad1::4x4rg-1774535616194-2f9a3c23714c",
+        "transfer-encoding": "chunked"
+      },
+      "body": "{\"success\":true}",
+      "responseTime": 1774535616869
+    },
+    {
+      "timestamp": "2026-03-26T14:33:36.872Z",
+      "type": "REQUEST",
+      "test": "Non-Admin Command Rejection",
+      "method": "POST",
+      "url": "https://footlinebot.vercel.app/api/line/callback",
+      "headers": {
+        "Content-Type": "application/json",
+        "X-Line-Signature": "vQIhjuhYUnFNz+UJ7IBj5tMp6bjvE8MgLVHRUuMwg9k=",
+        "Content-Length": 274
+      },
+      "body": "{\"events\":[{\"type\":\"message\",\"replyToken\":\"44444444444444444444444444444444\",\"source\":{\"type\":\"group\",\"groupId\":\"C1234567890abcdef\",\"userId\":\"U9876543210fedcba9876543210fedcba\"},\"timestamp\":1774535616871,\"message\":{\"id\":\"m2\",\"type\":\"text\",\"text\":\"!votar partido domingo\"}}]}"
+    },
+    {
+      "timestamp": "2026-03-26T14:33:37.374Z",
+      "type": "RESPONSE",
+      "test": "Non-Admin Command Rejection",
+      "status": 200,
+      "headers": {
+        "access-control-allow-headers": "Content-Type, Authorization, X-Line-Signature",
+        "access-control-allow-methods": "GET, POST, PUT, DELETE, OPTIONS",
+        "access-control-allow-origin": "*",
+        "cache-control": "public, max-age=0, must-revalidate",
+        "content-type": "application/json",
+        "date": "Thu, 26 Mar 2026 14:33:37 GMT",
+        "server": "Vercel",
+        "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+        "vary": "RSC, Next-Router-State-Tree, Next-Router-Prefetch, Next-Url",
+        "x-matched-path": "/api/line/callback",
+        "x-vercel-cache": "MISS",
+        "x-vercel-id": "sin1::iad1::2rl9r-1774535616700-6d0d9dab8af3",
+        "transfer-encoding": "chunked"
+      },
+      "body": "{\"success\":true}",
+      "responseTime": 1774535617374
+    },
+    {
+      "timestamp": "2026-03-26T14:33:37.375Z",
+      "type": "REQUEST",
+      "test": "Postback Vote - User A",
+      "method": "POST",
+      "url": "https://footlinebot.vercel.app/api/line/callback",
+      "headers": {
+        "Content-Type": "application/json",
+        "X-Line-Signature": "SDKxjH9AawyhF9S/WaRFGzHlm6779CKJEsqZN/gtqOY=",
+        "Content-Length": 250
+      },
+      "body": "{\"events\":[{\"type\":\"postback\",\"replyToken\":\"22222222222222222222222222222222\",\"source\":{\"type\":\"group\",\"groupId\":\"C1234567890abcdef\",\"userId\":\"U9876543210fedcba9876543210fedcba\"},\"timestamp\":1774535617375,\"postback\":{\"data\":\"vote=si&match=sabado\"}}]}"
+    },
+    {
+      "timestamp": "2026-03-26T14:33:37.658Z",
+      "type": "RESPONSE",
+      "test": "Postback Vote - User A",
+      "status": 200,
+      "headers": {
+        "access-control-allow-headers": "Content-Type, Authorization, X-Line-Signature",
+        "access-control-allow-methods": "GET, POST, PUT, DELETE, OPTIONS",
+        "access-control-allow-origin": "*",
+        "cache-control": "public, max-age=0, must-revalidate",
+        "content-type": "application/json",
+        "date": "Thu, 26 Mar 2026 14:33:37 GMT",
+        "server": "Vercel",
+        "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+        "vary": "RSC, Next-Router-State-Tree, Next-Router-Prefetch, Next-Url",
+        "x-matched-path": "/api/line/callback",
+        "x-vercel-cache": "MISS",
+        "x-vercel-id": "sin1::iad1::9zgl8-1774535617204-f29ebbb7d8ab",
+        "transfer-encoding": "chunked"
+      },
+      "body": "{\"success\":true}",
+      "responseTime": 1774535617658
+    },
+    {
+      "timestamp": "2026-03-26T14:33:37.659Z",
+      "type": "REQUEST",
+      "test": "Postback Vote - User B",
+      "method": "POST",
+      "url": "https://footlinebot.vercel.app/api/line/callback",
+      "headers": {
+        "Content-Type": "application/json",
+        "X-Line-Signature": "9kCSurX0p3JXMweCtGsq0fEJYWktRCPxI96LlFFumwM=",
+        "Content-Length": 250
+      },
+      "body": "{\"events\":[{\"type\":\"postback\",\"replyToken\":\"33333333333333333333333333333333\",\"source\":{\"type\":\"group\",\"groupId\":\"C1234567890abcdef\",\"userId\":\"U11111111112222222222333333333344\"},\"timestamp\":1774535617659,\"postback\":{\"data\":\"vote=si&match=sabado\"}}]}"
+    },
+    {
+      "timestamp": "2026-03-26T14:33:37.959Z",
+      "type": "RESPONSE",
+      "test": "Postback Vote - User B",
+      "status": 200,
+      "headers": {
+        "access-control-allow-headers": "Content-Type, Authorization, X-Line-Signature",
+        "access-control-allow-methods": "GET, POST, PUT, DELETE, OPTIONS",
+        "access-control-allow-origin": "*",
+        "cache-control": "public, max-age=0, must-revalidate",
+        "content-type": "application/json",
+        "date": "Thu, 26 Mar 2026 14:33:37 GMT",
+        "server": "Vercel",
+        "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+        "vary": "RSC, Next-Router-State-Tree, Next-Router-Prefetch, Next-Url",
+        "x-matched-path": "/api/line/callback",
+        "x-vercel-cache": "MISS",
+        "x-vercel-id": "sin1::iad1::lhhsp-1774535617487-3fd9e3ea410c",
+        "transfer-encoding": "chunked"
+      },
+      "body": "{\"success\":true}",
+      "responseTime": 1774535617959
+    },
+    {
+      "timestamp": "2026-03-26T14:33:37.960Z",
+      "type": "REQUEST",
+      "test": "Postback Duplicate Vote - User A",
+      "method": "POST",
+      "url": "https://footlinebot.vercel.app/api/line/callback",
+      "headers": {
+        "Content-Type": "application/json",
+        "X-Line-Signature": "77YTc0tzqVXjIGcbcvM++RMMzCSD1Bo0srn4J6M/i5M=",
+        "Content-Length": 250
+      },
+      "body": "{\"events\":[{\"type\":\"postback\",\"replyToken\":\"55555555555555555555555555555555\",\"source\":{\"type\":\"group\",\"groupId\":\"C1234567890abcdef\",\"userId\":\"U9876543210fedcba9876543210fedcba\"},\"timestamp\":1774535617960,\"postback\":{\"data\":\"vote=si&match=sabado\"}}]}"
+    },
+    {
+      "timestamp": "2026-03-26T14:33:38.249Z",
+      "type": "RESPONSE",
+      "test": "Postback Duplicate Vote - User A",
+      "status": 200,
+      "headers": {
+        "access-control-allow-headers": "Content-Type, Authorization, X-Line-Signature",
+        "access-control-allow-methods": "GET, POST, PUT, DELETE, OPTIONS",
+        "access-control-allow-origin": "*",
+        "cache-control": "public, max-age=0, must-revalidate",
+        "content-type": "application/json",
+        "date": "Thu, 26 Mar 2026 14:33:37 GMT",
+        "server": "Vercel",
+        "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+        "vary": "RSC, Next-Router-State-Tree, Next-Router-Prefetch, Next-Url",
+        "x-matched-path": "/api/line/callback",
+        "x-vercel-cache": "MISS",
+        "x-vercel-id": "sin1::iad1::s9kkr-1774535617787-945dc93f3442",
+        "transfer-encoding": "chunked"
+      },
+      "body": "{\"success\":true}",
+      "responseTime": 1774535618249
+    },
+    {
+      "timestamp": "2026-03-26T14:33:38.250Z",
+      "type": "REQUEST",
+      "test": "Admin Close Vote",
+      "method": "POST",
+      "url": "https://footlinebot.vercel.app/api/line/callback",
+      "headers": {
+        "Content-Type": "application/json",
+        "X-Line-Signature": "DyzrGTX76i4YdvdFP0S1HogJH9AhEjfz1amJ58GRVdk=",
+        "Content-Length": 260
+      },
+      "body": "{\"events\":[{\"type\":\"postback\",\"replyToken\":\"66666666666666666666666666666666\",\"source\":{\"type\":\"group\",\"groupId\":\"C1234567890abcdef\",\"userId\":\"U1234567890abcdef1234567890abcdef\"},\"timestamp\":1774535618250,\"postback\":{\"data\":\"action=close_vote&match=sabado\"}}]}"
+    },
+    {
+      "timestamp": "2026-03-26T14:33:38.538Z",
+      "type": "RESPONSE",
+      "test": "Admin Close Vote",
+      "status": 200,
+      "headers": {
+        "access-control-allow-headers": "Content-Type, Authorization, X-Line-Signature",
+        "access-control-allow-methods": "GET, POST, PUT, DELETE, OPTIONS",
+        "access-control-allow-origin": "*",
+        "cache-control": "public, max-age=0, must-revalidate",
+        "content-type": "application/json",
+        "date": "Thu, 26 Mar 2026 14:33:38 GMT",
+        "server": "Vercel",
+        "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+        "vary": "RSC, Next-Router-State-Tree, Next-Router-Prefetch, Next-Url",
+        "x-matched-path": "/api/line/callback",
+        "x-vercel-cache": "MISS",
+        "x-vercel-id": "sin1::iad1::8bbhd-1774535618075-cd497712a129",
+        "transfer-encoding": "chunked"
+      },
+      "body": "{\"success\":true}",
+      "responseTime": 1774535618538
+    },
+    {
+      "timestamp": "2026-03-26T14:33:38.540Z",
+      "type": "REQUEST",
+      "test": "Confirmation Command",
+      "method": "POST",
+      "url": "https://footlinebot.vercel.app/api/line/callback",
+      "headers": {
+        "Content-Type": "application/json",
+        "X-Line-Signature": "Hj/P1haEBreeAM8Nk2/hY77Ull7QufBYHwCV5cUM01g=",
+        "Content-Length": 261
+      },
+      "body": "{\"events\":[{\"type\":\"message\",\"replyToken\":\"77777777777777777777777777777777\",\"source\":{\"type\":\"group\",\"groupId\":\"C1234567890abcdef\",\"userId\":\"U11111111112222222222333333333344\"},\"timestamp\":1774535618540,\"message\":{\"id\":\"m4\",\"type\":\"text\",\"text\":\"!confirmo\"}}]}"
+    },
+    {
+      "timestamp": "2026-03-26T14:33:39.098Z",
+      "type": "RESPONSE",
+      "test": "Confirmation Command",
+      "status": 200,
+      "headers": {
+        "access-control-allow-headers": "Content-Type, Authorization, X-Line-Signature",
+        "access-control-allow-methods": "GET, POST, PUT, DELETE, OPTIONS",
+        "access-control-allow-origin": "*",
+        "cache-control": "public, max-age=0, must-revalidate",
+        "content-type": "application/json",
+        "date": "Thu, 26 Mar 2026 14:33:38 GMT",
+        "server": "Vercel",
+        "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+        "vary": "RSC, Next-Router-State-Tree, Next-Router-Prefetch, Next-Url",
+        "x-matched-path": "/api/line/callback",
+        "x-vercel-cache": "MISS",
+        "x-vercel-id": "sin1::iad1::7k9d4-1774535618370-80c72de34235",
+        "transfer-encoding": "chunked"
+      },
+      "body": "{\"success\":true}",
+      "responseTime": 1774535619098
+    },
+    {
+      "timestamp": "2026-03-26T14:33:39.099Z",
+      "type": "REQUEST",
+      "test": "Leave Event",
+      "method": "POST",
+      "url": "https://footlinebot.vercel.app/api/line/callback",
+      "headers": {
+        "Content-Type": "application/json",
+        "X-Line-Signature": "iMUmbHEQ2G16NJc34ozM54ZnR5+whHTmpYqwc+Cze5k=",
+        "Content-Length": 111
+      },
+      "body": "{\"events\":[{\"type\":\"leave\",\"source\":{\"type\":\"group\",\"groupId\":\"C1234567890abcdef\"},\"timestamp\":1774535619099}]}"
+    },
+    {
+      "timestamp": "2026-03-26T14:33:39.369Z",
+      "type": "RESPONSE",
+      "test": "Leave Event",
+      "status": 200,
+      "headers": {
+        "access-control-allow-headers": "Content-Type, Authorization, X-Line-Signature",
+        "access-control-allow-methods": "GET, POST, PUT, DELETE, OPTIONS",
+        "access-control-allow-origin": "*",
+        "cache-control": "public, max-age=0, must-revalidate",
+        "content-type": "application/json",
+        "date": "Thu, 26 Mar 2026 14:33:39 GMT",
+        "server": "Vercel",
+        "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+        "vary": "RSC, Next-Router-State-Tree, Next-Router-Prefetch, Next-Url",
+        "x-matched-path": "/api/line/callback",
+        "x-vercel-cache": "MISS",
+        "x-vercel-id": "sin1::iad1::fmckw-1774535618926-4bc565f067b1",
+        "transfer-encoding": "chunked"
+      },
+      "body": "{\"success\":true}",
+      "responseTime": 1774535619369
+    },
+    {
+      "timestamp": "2026-03-26T14:33:39.372Z",
+      "type": "REQUEST",
+      "test": "Help Command - Spanish",
+      "method": "POST",
+      "url": "https://footlinebot.vercel.app/api/line/callback",
+      "headers": {
+        "Content-Type": "application/json",
+        "X-Line-Signature": "bT1lJxT1e7ql0GWi+NrP5POa+qWK/zVkt3geU1/1yzc=",
+        "Content-Length": 258
+      },
+      "body": "{\"events\":[{\"type\":\"message\",\"replyToken\":\"88888888888888888888888888888888\",\"source\":{\"type\":\"group\",\"groupId\":\"C1234567890abcdef\",\"userId\":\"U9876543210fedcba9876543210fedcba\"},\"timestamp\":1774535619370,\"message\":{\"id\":\"m5\",\"type\":\"text\",\"text\":\"!ayuda\"}}]}"
+    },
+    {
+      "timestamp": "2026-03-26T14:33:40.071Z",
+      "type": "RESPONSE",
+      "test": "Help Command - Spanish",
+      "status": 200,
+      "headers": {
+        "access-control-allow-headers": "Content-Type, Authorization, X-Line-Signature",
+        "access-control-allow-methods": "GET, POST, PUT, DELETE, OPTIONS",
+        "access-control-allow-origin": "*",
+        "cache-control": "public, max-age=0, must-revalidate",
+        "content-type": "application/json",
+        "date": "Thu, 26 Mar 2026 14:33:39 GMT",
+        "server": "Vercel",
+        "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+        "vary": "RSC, Next-Router-State-Tree, Next-Router-Prefetch, Next-Url",
+        "x-matched-path": "/api/line/callback",
+        "x-vercel-cache": "MISS",
+        "x-vercel-id": "sin1::iad1::x4rll-1774535619197-ca32fc76eff9",
+        "transfer-encoding": "chunked"
+      },
+      "body": "{\"success\":true}",
+      "responseTime": 1774535620070
+    },
+    {
+      "timestamp": "2026-03-26T14:33:40.071Z",
+      "type": "REQUEST",
+      "test": "Help Command - English",
+      "method": "POST",
+      "url": "https://footlinebot.vercel.app/api/line/callback",
+      "headers": {
+        "Content-Type": "application/json",
+        "X-Line-Signature": "bYGU2OetbTNygwoSq+BLYEgI4WzgcMIwSvyK2OzSTZc=",
+        "Content-Length": 257
+      },
+      "body": "{\"events\":[{\"type\":\"message\",\"replyToken\":\"99999999999999999999999999999999\",\"source\":{\"type\":\"group\",\"groupId\":\"C1234567890abcdef\",\"userId\":\"U11111111112222222222333333333344\"},\"timestamp\":1774535620071,\"message\":{\"id\":\"m6\",\"type\":\"text\",\"text\":\"!help\"}}]}"
+    },
+    {
+      "timestamp": "2026-03-26T14:33:40.568Z",
+      "type": "RESPONSE",
+      "test": "Help Command - English",
+      "status": 200,
+      "headers": {
+        "access-control-allow-headers": "Content-Type, Authorization, X-Line-Signature",
+        "access-control-allow-methods": "GET, POST, PUT, DELETE, OPTIONS",
+        "access-control-allow-origin": "*",
+        "cache-control": "public, max-age=0, must-revalidate",
+        "content-type": "application/json",
+        "date": "Thu, 26 Mar 2026 14:33:40 GMT",
+        "server": "Vercel",
+        "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+        "vary": "RSC, Next-Router-State-Tree, Next-Router-Prefetch, Next-Url",
+        "x-matched-path": "/api/line/callback",
+        "x-vercel-cache": "MISS",
+        "x-vercel-id": "sin1::iad1::x4rll-1774535619897-49aa7e787d1c",
+        "transfer-encoding": "chunked"
+      },
+      "body": "{\"success\":true}",
+      "responseTime": 1774535620568
+    },
+    {
+      "timestamp": "2026-03-26T14:33:40.569Z",
+      "type": "REQUEST",
+      "test": "Help Command - Thai",
+      "method": "POST",
+      "url": "https://footlinebot.vercel.app/api/line/callback",
+      "headers": {
+        "Content-Type": "application/json",
+        "X-Line-Signature": "rDLsOegxhtf2OGzF4x1f4N7u7WoZKaX3tihoWsVkbsk=",
+        "Content-Length": 265
+      },
+      "body": "{\"events\":[{\"type\":\"message\",\"replyToken\":\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\",\"source\":{\"type\":\"group\",\"groupId\":\"C1234567890abcdef\",\"userId\":\"U1234567890abcdef1234567890abcdef\"},\"timestamp\":1774535620569,\"message\":{\"id\":\"m7\",\"type\":\"text\",\"text\":\"!ช่วย\"}}]}"
+    },
+    {
+      "timestamp": "2026-03-26T14:33:41.075Z",
+      "type": "RESPONSE",
+      "test": "Help Command - Thai",
+      "status": 200,
+      "headers": {
+        "access-control-allow-headers": "Content-Type, Authorization, X-Line-Signature",
+        "access-control-allow-methods": "GET, POST, PUT, DELETE, OPTIONS",
+        "access-control-allow-origin": "*",
+        "cache-control": "public, max-age=0, must-revalidate",
+        "content-type": "application/json",
+        "date": "Thu, 26 Mar 2026 14:33:40 GMT",
+        "server": "Vercel",
+        "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+        "vary": "RSC, Next-Router-State-Tree, Next-Router-Prefetch, Next-Url",
+        "x-matched-path": "/api/line/callback",
+        "x-vercel-cache": "MISS",
+        "x-vercel-id": "sin1::iad1::5n26s-1774535620393-f21d0d3862dd",
+        "transfer-encoding": "chunked"
+      },
+      "body": "{\"success\":true}",
+      "responseTime": 1774535621075
+    },
+    {
+      "timestamp": "2026-03-26T14:33:41.076Z",
+      "type": "REQUEST",
+      "test": "Register Command",
+      "method": "POST",
+      "url": "https://footlinebot.vercel.app/api/line/callback",
+      "headers": {
+        "Content-Type": "application/json",
+        "X-Line-Signature": "wWmCt7UOBtM7JcmJJ5v8Qp8Z3jMB+Tu9PdARSLVqUJs=",
+        "Content-Length": 261
+      },
+      "body": "{\"events\":[{\"type\":\"message\",\"replyToken\":\"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"source\":{\"type\":\"group\",\"groupId\":\"C1234567890abcdef\",\"userId\":\"U9876543210fedcba9876543210fedcba\"},\"timestamp\":1774535621075,\"message\":{\"id\":\"m8\",\"type\":\"text\",\"text\":\"!register\"}}]}"
+    },
+    {
+      "timestamp": "2026-03-26T14:33:41.762Z",
+      "type": "RESPONSE",
+      "test": "Register Command",
+      "status": 200,
+      "headers": {
+        "access-control-allow-headers": "Content-Type, Authorization, X-Line-Signature",
+        "access-control-allow-methods": "GET, POST, PUT, DELETE, OPTIONS",
+        "access-control-allow-origin": "*",
+        "cache-control": "public, max-age=0, must-revalidate",
+        "content-type": "application/json",
+        "date": "Thu, 26 Mar 2026 14:33:41 GMT",
+        "server": "Vercel",
+        "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+        "vary": "RSC, Next-Router-State-Tree, Next-Router-Prefetch, Next-Url",
+        "x-matched-path": "/api/line/callback",
+        "x-vercel-cache": "MISS",
+        "x-vercel-id": "sin1::iad1::z94rd-1774535620900-545f85629c91",
+        "transfer-encoding": "chunked"
+      },
+      "body": "{\"success\":true}",
+      "responseTime": 1774535621762
+    }
+  ],
+  "signatures": [
+    {
+      "test": "Join Event",
+      "body": "{\"events\":[{\"type\":\"join\",\"replyToken\":\"00000000000000000000000000000000\",\"source\":{\"type\":\"group\",\"...",
+      "signature": "6PTQG47rlpTLD4Kq5l4/b2EdABFa9ioiVVjs5JB5HHo=..."
+    },
+    {
+      "test": "Admin Command - Start Voting",
+      "body": "{\"events\":[{\"type\":\"message\",\"replyToken\":\"11111111111111111111111111111111\",\"source\":{\"type\":\"group...",
+      "signature": "j0YzOrf2HtS+RzvMF8hUT6nT4qjisdESVzD88234rrc=..."
+    },
+    {
+      "test": "Non-Admin Command Rejection",
+      "body": "{\"events\":[{\"type\":\"message\",\"replyToken\":\"44444444444444444444444444444444\",\"source\":{\"type\":\"group...",
+      "signature": "vQIhjuhYUnFNz+UJ7IBj5tMp6bjvE8MgLVHRUuMwg9k=..."
+    }
+  ],
+  "voteState": {
+    "expected": {
+      "uniqueVotes": 2,
+      "duplicateAttempts": 1,
+      "voters": [
+        "U9876543210fedcba9876543210fedcba",
+        "U11111111112222222222333333333344"
+      ]
+    },
+    "actual": {},
+    "duplicates": [
+      {
+        "userId": "U9876543210fedcba9876543210fedcba",
+        "voteData": "vote=si&match=sabado",
+        "shouldIgnore": true
+      }
+    ]
+  },
+  "permissions": {
+    "adminTests": [
+      {
+        "command": "!votar partido sabado",
+        "userId": "U1234567890abcdef1234567890abcdef",
+        "expected": "Accept command and create voting",
+        "result": "Will be verified by response"
+      }
+    ],
+    "nonAdminTests": [
+      {
+        "command": "!votar partido domingo",
+        "userId": "U9876543210fedcba9876543210fedcba",
+        "expected": "Reject with permission error",
+        "result": "Will be verified by response"
+      }
+    ]
+  },
+  "errors": [],
+  "recommendations": []
+}
