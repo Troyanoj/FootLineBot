@@ -1,0 +1,1996 @@
+{
+  "summary": {
+    "total": 34,
+    "passed": 34,
+    "failed": 0,
+    "startTime": "2026-03-26T14:52:44.239Z",
+    "endTime": "2026-03-26T14:53:11.355Z"
+  },
+  "tests": [
+    {
+      "name": "Register Command - English",
+      "status": 200,
+      "duration": 2610,
+      "passed": true,
+      "request": {
+        "headers": {
+          "Content-Type": "application/json",
+          "X-Line-Signature": "/Fjm/eEdYQSRdI0UlCWVvevg+XoBgfjAXY5c7yxjKk0=",
+          "Content-Length": 264
+        },
+        "body": {
+          "events": [
+            {
+              "type": "message",
+              "replyToken": "test17745367642434631",
+              "source": {
+                "type": "group",
+                "groupId": "C1234567890abcdef",
+                "userId": "U9876543210fedcba9876543210fedcba"
+              },
+              "timestamp": 1774536764243,
+              "message": {
+                "id": "msg1774536764243",
+                "type": "text",
+                "text": "!register"
+              }
+            }
+          ]
+        }
+      },
+      "response": {
+        "headers": {
+          "access-control-allow-headers": "Content-Type, Authorization, X-Line-Signature",
+          "access-control-allow-methods": "GET, POST, PUT, DELETE, OPTIONS",
+          "access-control-allow-origin": "*",
+          "cache-control": "public, max-age=0, must-revalidate",
+          "content-type": "application/json",
+          "date": "Thu, 26 Mar 2026 14:52:46 GMT",
+          "server": "Vercel",
+          "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+          "vary": "RSC, Next-Router-State-Tree, Next-Router-Prefetch, Next-Url",
+          "x-matched-path": "/api/line/callback",
+          "x-vercel-cache": "MISS",
+          "x-vercel-id": "sin1::iad1::9n7lr-1774536764251-88fecf9ee603",
+          "transfer-encoding": "chunked"
+        },
+        "body": "{\"success\":true}"
+      },
+      "timestamp": "2026-03-26T14:52:46.855Z"
+    },
+    {
+      "name": "Register Command - Spanish (!apuntar)",
+      "status": 200,
+      "duration": 729,
+      "passed": true,
+      "request": {
+        "headers": {
+          "Content-Type": "application/json",
+          "X-Line-Signature": "avtnLV86St6nj36uX15HvuWRZZ/ELklpz+Y34E4dOwg=",
+          "Content-Length": 263
+        },
+        "body": {
+          "events": [
+            {
+              "type": "message",
+              "replyToken": "test17745367668587343",
+              "source": {
+                "type": "group",
+                "groupId": "C1234567890abcdef",
+                "userId": "U11111111112222222222333333333344"
+              },
+              "timestamp": 1774536766858,
+              "message": {
+                "id": "msg1774536766858",
+                "type": "text",
+                "text": "!apuntar"
+              }
+            }
+          ]
+        }
+      },
+      "response": {
+        "headers": {
+          "access-control-allow-headers": "Content-Type, Authorization, X-Line-Signature",
+          "access-control-allow-methods": "GET, POST, PUT, DELETE, OPTIONS",
+          "access-control-allow-origin": "*",
+          "cache-control": "public, max-age=0, must-revalidate",
+          "content-type": "application/json",
+          "date": "Thu, 26 Mar 2026 14:52:47 GMT",
+          "server": "Vercel",
+          "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+          "vary": "RSC, Next-Router-State-Tree, Next-Router-Prefetch, Next-Url",
+          "x-matched-path": "/api/line/callback",
+          "x-vercel-cache": "MISS",
+          "x-vercel-id": "sin1::iad1::9n7lr-1774536766679-f05333dbaacb",
+          "transfer-encoding": "chunked"
+        },
+        "body": "{\"success\":true}"
+      },
+      "timestamp": "2026-03-26T14:52:47.587Z"
+    },
+    {
+      "name": "Register Command - Thai (!ลงทะเบียน)",
+      "status": 200,
+      "duration": 828,
+      "passed": true,
+      "request": {
+        "headers": {
+          "Content-Type": "application/json",
+          "X-Line-Signature": "t5uBEpIGghaj8Euwu4lte2lXNpl8hfRQvx8I9OPdGwA=",
+          "Content-Length": 283
+        },
+        "body": {
+          "events": [
+            {
+              "type": "message",
+              "replyToken": "test17745367675873884",
+              "source": {
+                "type": "group",
+                "groupId": "C1234567890abcdef",
+                "userId": "U9876543210fedcba9876543210fedcba"
+              },
+              "timestamp": 1774536767587,
+              "message": {
+                "id": "msg1774536767587",
+                "type": "text",
+                "text": "!ลงทะเบียน"
+              }
+            }
+          ]
+        }
+      },
+      "response": {
+        "headers": {
+          "access-control-allow-headers": "Content-Type, Authorization, X-Line-Signature",
+          "access-control-allow-methods": "GET, POST, PUT, DELETE, OPTIONS",
+          "access-control-allow-origin": "*",
+          "cache-control": "public, max-age=0, must-revalidate",
+          "content-type": "application/json",
+          "date": "Thu, 26 Mar 2026 14:52:48 GMT",
+          "server": "Vercel",
+          "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+          "vary": "RSC, Next-Router-State-Tree, Next-Router-Prefetch, Next-Url",
+          "x-matched-path": "/api/line/callback",
+          "x-vercel-cache": "MISS",
+          "x-vercel-id": "sin1::iad1::mh7cf-1774536767409-93836320f062",
+          "transfer-encoding": "chunked"
+        },
+        "body": "{\"success\":true}"
+      },
+      "timestamp": "2026-03-26T14:52:48.416Z"
+    },
+    {
+      "name": "Register Command - Spanish Alternative (!inscribirme)",
+      "status": 200,
+      "duration": 848,
+      "passed": true,
+      "request": {
+        "headers": {
+          "Content-Type": "application/json",
+          "X-Line-Signature": "yHKP1d1xKVMqfcJYZ5ZgW484APBasAURwh+NYniJcIg=",
+          "Content-Length": 267
+        },
+        "body": {
+          "events": [
+            {
+              "type": "message",
+              "replyToken": "test17745367684177453",
+              "source": {
+                "type": "group",
+                "groupId": "C1234567890abcdef",
+                "userId": "U11111111112222222222333333333344"
+              },
+              "timestamp": 1774536768417,
+              "message": {
+                "id": "msg1774536768417",
+                "type": "text",
+                "text": "!inscribirme"
+              }
+            }
+          ]
+        }
+      },
+      "response": {
+        "headers": {
+          "access-control-allow-headers": "Content-Type, Authorization, X-Line-Signature",
+          "access-control-allow-methods": "GET, POST, PUT, DELETE, OPTIONS",
+          "access-control-allow-origin": "*",
+          "cache-control": "public, max-age=0, must-revalidate",
+          "content-type": "application/json",
+          "date": "Thu, 26 Mar 2026 14:52:48 GMT",
+          "server": "Vercel",
+          "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+          "vary": "RSC, Next-Router-State-Tree, Next-Router-Prefetch, Next-Url",
+          "x-matched-path": "/api/line/callback",
+          "x-vercel-cache": "MISS",
+          "x-vercel-id": "sin1::iad1::mh7cf-1774536768240-7b25f9d04741",
+          "transfer-encoding": "chunked"
+        },
+        "body": "{\"success\":true}"
+      },
+      "timestamp": "2026-03-26T14:52:49.268Z"
+    },
+    {
+      "name": "Help - Spanish",
+      "status": 200,
+      "duration": 730,
+      "passed": true,
+      "request": {
+        "headers": {
+          "Content-Type": "application/json",
+          "X-Line-Signature": "WzMCZuzcO6rLwtuBNeqD34N7Lcxh17uMxeaRSeLa+lQ=",
+          "Content-Length": 261
+        },
+        "body": {
+          "events": [
+            {
+              "type": "message",
+              "replyToken": "test17745367692691403",
+              "source": {
+                "type": "group",
+                "groupId": "C1234567890abcdef",
+                "userId": "U9876543210fedcba9876543210fedcba"
+              },
+              "timestamp": 1774536769269,
+              "message": {
+                "id": "msg1774536769269",
+                "type": "text",
+                "text": "!ayuda"
+              }
+            }
+          ]
+        }
+      },
+      "response": {
+        "headers": {
+          "access-control-allow-headers": "Content-Type, Authorization, X-Line-Signature",
+          "access-control-allow-methods": "GET, POST, PUT, DELETE, OPTIONS",
+          "access-control-allow-origin": "*",
+          "cache-control": "public, max-age=0, must-revalidate",
+          "content-type": "application/json",
+          "date": "Thu, 26 Mar 2026 14:52:49 GMT",
+          "server": "Vercel",
+          "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+          "vary": "RSC, Next-Router-State-Tree, Next-Router-Prefetch, Next-Url",
+          "x-matched-path": "/api/line/callback",
+          "x-vercel-cache": "MISS",
+          "x-vercel-id": "sin1::iad1::j77zz-1774536769093-fbecc81299b9",
+          "transfer-encoding": "chunked"
+        },
+        "body": "{\"success\":true}"
+      },
+      "timestamp": "2026-03-26T14:52:50.001Z"
+    },
+    {
+      "name": "Help - Spanish (!help)",
+      "status": 200,
+      "duration": 574,
+      "passed": true,
+      "request": {
+        "headers": {
+          "Content-Type": "application/json",
+          "X-Line-Signature": "dmQQ/XPWgV5If2hUxjyc5AyGTYNKYtCr1jPahICIaTo=",
+          "Content-Length": 260
+        },
+        "body": {
+          "events": [
+            {
+              "type": "message",
+              "replyToken": "test17745367700039858",
+              "source": {
+                "type": "group",
+                "groupId": "C1234567890abcdef",
+                "userId": "U11111111112222222222333333333344"
+              },
+              "timestamp": 1774536770003,
+              "message": {
+                "id": "msg1774536770003",
+                "type": "text",
+                "text": "!help"
+              }
+            }
+          ]
+        }
+      },
+      "response": {
+        "headers": {
+          "access-control-allow-headers": "Content-Type, Authorization, X-Line-Signature",
+          "access-control-allow-methods": "GET, POST, PUT, DELETE, OPTIONS",
+          "access-control-allow-origin": "*",
+          "cache-control": "public, max-age=0, must-revalidate",
+          "content-type": "application/json",
+          "date": "Thu, 26 Mar 2026 14:52:50 GMT",
+          "server": "Vercel",
+          "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+          "vary": "RSC, Next-Router-State-Tree, Next-Router-Prefetch, Next-Url",
+          "x-matched-path": "/api/line/callback",
+          "x-vercel-cache": "MISS",
+          "x-vercel-id": "sin1::iad1::j77zz-1774536769826-d7479bff035d",
+          "transfer-encoding": "chunked"
+        },
+        "body": "{\"success\":true}"
+      },
+      "timestamp": "2026-03-26T14:52:50.579Z"
+    },
+    {
+      "name": "Help - English",
+      "status": 200,
+      "duration": 1105,
+      "passed": true,
+      "request": {
+        "headers": {
+          "Content-Type": "application/json",
+          "X-Line-Signature": "w1IXv6XG/gEEJiL+SH4LCO78wADWd1XEoTu0421o3l0=",
+          "Content-Length": 260
+        },
+        "body": {
+          "events": [
+            {
+              "type": "message",
+              "replyToken": "test17745367705794766",
+              "source": {
+                "type": "group",
+                "groupId": "C1234567890abcdef",
+                "userId": "U9876543210fedcba9876543210fedcba"
+              },
+              "timestamp": 1774536770579,
+              "message": {
+                "id": "msg1774536770579",
+                "type": "text",
+                "text": "!help"
+              }
+            }
+          ]
+        }
+      },
+      "response": {
+        "headers": {
+          "access-control-allow-headers": "Content-Type, Authorization, X-Line-Signature",
+          "access-control-allow-methods": "GET, POST, PUT, DELETE, OPTIONS",
+          "access-control-allow-origin": "*",
+          "cache-control": "public, max-age=0, must-revalidate",
+          "content-type": "application/json",
+          "date": "Thu, 26 Mar 2026 14:52:51 GMT",
+          "server": "Vercel",
+          "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+          "vary": "RSC, Next-Router-State-Tree, Next-Router-Prefetch, Next-Url",
+          "x-matched-path": "/api/line/callback",
+          "x-vercel-cache": "MISS",
+          "x-vercel-id": "sin1::iad1::gthgn-1774536770401-33987f7636c4",
+          "transfer-encoding": "chunked"
+        },
+        "body": "{\"success\":true}"
+      },
+      "timestamp": "2026-03-26T14:52:51.685Z"
+    },
+    {
+      "name": "Help - Thai",
+      "status": 200,
+      "duration": 550,
+      "passed": true,
+      "request": {
+        "headers": {
+          "Content-Type": "application/json",
+          "X-Line-Signature": "6JtVFhmw2M63Wg3qDjMD+hVgV2utyKzL064TJ83zEUE=",
+          "Content-Length": 268
+        },
+        "body": {
+          "events": [
+            {
+              "type": "message",
+              "replyToken": "test17745367716863273",
+              "source": {
+                "type": "group",
+                "groupId": "C1234567890abcdef",
+                "userId": "U11111111112222222222333333333344"
+              },
+              "timestamp": 1774536771686,
+              "message": {
+                "id": "msg1774536771686",
+                "type": "text",
+                "text": "!ช่วย"
+              }
+            }
+          ]
+        }
+      },
+      "response": {
+        "headers": {
+          "access-control-allow-headers": "Content-Type, Authorization, X-Line-Signature",
+          "access-control-allow-methods": "GET, POST, PUT, DELETE, OPTIONS",
+          "access-control-allow-origin": "*",
+          "cache-control": "public, max-age=0, must-revalidate",
+          "content-type": "application/json",
+          "date": "Thu, 26 Mar 2026 14:52:51 GMT",
+          "server": "Vercel",
+          "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+          "vary": "RSC, Next-Router-State-Tree, Next-Router-Prefetch, Next-Url",
+          "x-matched-path": "/api/line/callback",
+          "x-vercel-cache": "MISS",
+          "x-vercel-id": "sin1::iad1::tt2g5-1774536771512-c80c53d4e347",
+          "transfer-encoding": "chunked"
+        },
+        "body": "{\"success\":true}"
+      },
+      "timestamp": "2026-03-26T14:52:52.240Z"
+    },
+    {
+      "name": "Profile - Spanish",
+      "status": 200,
+      "duration": 527,
+      "passed": true,
+      "request": {
+        "headers": {
+          "Content-Type": "application/json",
+          "X-Line-Signature": "PE0jUKt+oLSK1y+4jv2Lr5Q1yl1zlSXWx4tyC/qSCaQ=",
+          "Content-Length": 262
+        },
+        "body": {
+          "events": [
+            {
+              "type": "message",
+              "replyToken": "test17745367722421090",
+              "source": {
+                "type": "group",
+                "groupId": "C1234567890abcdef",
+                "userId": "U9876543210fedcba9876543210fedcba"
+              },
+              "timestamp": 1774536772242,
+              "message": {
+                "id": "msg1774536772242",
+                "type": "text",
+                "text": "!perfil"
+              }
+            }
+          ]
+        }
+      },
+      "response": {
+        "headers": {
+          "access-control-allow-headers": "Content-Type, Authorization, X-Line-Signature",
+          "access-control-allow-methods": "GET, POST, PUT, DELETE, OPTIONS",
+          "access-control-allow-origin": "*",
+          "cache-control": "public, max-age=0, must-revalidate",
+          "content-type": "application/json",
+          "date": "Thu, 26 Mar 2026 14:52:52 GMT",
+          "server": "Vercel",
+          "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+          "vary": "RSC, Next-Router-State-Tree, Next-Router-Prefetch, Next-Url",
+          "x-matched-path": "/api/line/callback",
+          "x-vercel-cache": "MISS",
+          "x-vercel-id": "sin1::iad1::tt2g5-1774536772067-7c3924ab5b3e",
+          "transfer-encoding": "chunked"
+        },
+        "body": "{\"success\":true}"
+      },
+      "timestamp": "2026-03-26T14:52:52.772Z"
+    },
+    {
+      "name": "Profile - Spanish (!profile)",
+      "status": 200,
+      "duration": 517,
+      "passed": true,
+      "request": {
+        "headers": {
+          "Content-Type": "application/json",
+          "X-Line-Signature": "Xp7k2k6hpz4c5WDIIfWgelLuuZc9KS8Hv6YICkfTYFc=",
+          "Content-Length": 263
+        },
+        "body": {
+          "events": [
+            {
+              "type": "message",
+              "replyToken": "test17745367727733577",
+              "source": {
+                "type": "group",
+                "groupId": "C1234567890abcdef",
+                "userId": "U11111111112222222222333333333344"
+              },
+              "timestamp": 1774536772773,
+              "message": {
+                "id": "msg1774536772773",
+                "type": "text",
+                "text": "!profile"
+              }
+            }
+          ]
+        }
+      },
+      "response": {
+        "headers": {
+          "access-control-allow-headers": "Content-Type, Authorization, X-Line-Signature",
+          "access-control-allow-methods": "GET, POST, PUT, DELETE, OPTIONS",
+          "access-control-allow-origin": "*",
+          "cache-control": "public, max-age=0, must-revalidate",
+          "content-type": "application/json",
+          "date": "Thu, 26 Mar 2026 14:52:52 GMT",
+          "server": "Vercel",
+          "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+          "vary": "RSC, Next-Router-State-Tree, Next-Router-Prefetch, Next-Url",
+          "x-matched-path": "/api/line/callback",
+          "x-vercel-cache": "MISS",
+          "x-vercel-id": "sin1::iad1::tt2g5-1774536772595-a04b82463d32",
+          "transfer-encoding": "chunked"
+        },
+        "body": "{\"success\":true}"
+      },
+      "timestamp": "2026-03-26T14:52:53.291Z"
+    },
+    {
+      "name": "Profile - English",
+      "status": 200,
+      "duration": 569,
+      "passed": true,
+      "request": {
+        "headers": {
+          "Content-Type": "application/json",
+          "X-Line-Signature": "FnjFyoKrHztdkl3WbXSGCTNLuy1jJcoLpgvQBhRQL1Y=",
+          "Content-Length": 263
+        },
+        "body": {
+          "events": [
+            {
+              "type": "message",
+              "replyToken": "test17745367732931350",
+              "source": {
+                "type": "group",
+                "groupId": "C1234567890abcdef",
+                "userId": "U9876543210fedcba9876543210fedcba"
+              },
+              "timestamp": 1774536773293,
+              "message": {
+                "id": "msg1774536773293",
+                "type": "text",
+                "text": "!profile"
+              }
+            }
+          ]
+        }
+      },
+      "response": {
+        "headers": {
+          "access-control-allow-headers": "Content-Type, Authorization, X-Line-Signature",
+          "access-control-allow-methods": "GET, POST, PUT, DELETE, OPTIONS",
+          "access-control-allow-origin": "*",
+          "cache-control": "public, max-age=0, must-revalidate",
+          "content-type": "application/json",
+          "date": "Thu, 26 Mar 2026 14:52:53 GMT",
+          "server": "Vercel",
+          "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+          "vary": "RSC, Next-Router-State-Tree, Next-Router-Prefetch, Next-Url",
+          "x-matched-path": "/api/line/callback",
+          "x-vercel-cache": "MISS",
+          "x-vercel-id": "sin1::iad1::9jx56-1774536773120-24404e0b2604",
+          "transfer-encoding": "chunked"
+        },
+        "body": "{\"success\":true}"
+      },
+      "timestamp": "2026-03-26T14:52:53.866Z"
+    },
+    {
+      "name": "Profile - Thai",
+      "status": 200,
+      "duration": 542,
+      "passed": true,
+      "request": {
+        "headers": {
+          "Content-Type": "application/json",
+          "X-Line-Signature": "gAtRRzkuptLCOHjkmpHw8+55vKCKUOroTYwWdGKr+3Q=",
+          "Content-Length": 277
+        },
+        "body": {
+          "events": [
+            {
+              "type": "message",
+              "replyToken": "test17745367738684262",
+              "source": {
+                "type": "group",
+                "groupId": "C1234567890abcdef",
+                "userId": "U11111111112222222222333333333344"
+              },
+              "timestamp": 1774536773868,
+              "message": {
+                "id": "msg1774536773868",
+                "type": "text",
+                "text": "!โปรไฟล์"
+              }
+            }
+          ]
+        }
+      },
+      "response": {
+        "headers": {
+          "access-control-allow-headers": "Content-Type, Authorization, X-Line-Signature",
+          "access-control-allow-methods": "GET, POST, PUT, DELETE, OPTIONS",
+          "access-control-allow-origin": "*",
+          "cache-control": "public, max-age=0, must-revalidate",
+          "content-type": "application/json",
+          "date": "Thu, 26 Mar 2026 14:52:54 GMT",
+          "server": "Vercel",
+          "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+          "vary": "RSC, Next-Router-State-Tree, Next-Router-Prefetch, Next-Url",
+          "x-matched-path": "/api/line/callback",
+          "x-vercel-cache": "MISS",
+          "x-vercel-id": "sin1::iad1::6pbdp-1774536773700-eb7d768be329",
+          "transfer-encoding": "chunked"
+        },
+        "body": "{\"success\":true}"
+      },
+      "timestamp": "2026-03-26T14:52:54.413Z"
+    },
+    {
+      "name": "Position - Spanish",
+      "status": 200,
+      "duration": 509,
+      "passed": true,
+      "request": {
+        "headers": {
+          "Content-Type": "application/json",
+          "X-Line-Signature": "FFR93QwBftsK3YmulmhLfHciEsHMM9cgYhkCzGGgAEE=",
+          "Content-Length": 273
+        },
+        "body": {
+          "events": [
+            {
+              "type": "message",
+              "replyToken": "test17745367744150266",
+              "source": {
+                "type": "group",
+                "groupId": "C1234567890abcdef",
+                "userId": "U9876543210fedcba9876543210fedcba"
+              },
+              "timestamp": 1774536774415,
+              "message": {
+                "id": "msg1774536774415",
+                "type": "text",
+                "text": "!posicion ST CM GK"
+              }
+            }
+          ]
+        }
+      },
+      "response": {
+        "headers": {
+          "access-control-allow-headers": "Content-Type, Authorization, X-Line-Signature",
+          "access-control-allow-methods": "GET, POST, PUT, DELETE, OPTIONS",
+          "access-control-allow-origin": "*",
+          "cache-control": "public, max-age=0, must-revalidate",
+          "content-type": "application/json",
+          "date": "Thu, 26 Mar 2026 14:52:54 GMT",
+          "server": "Vercel",
+          "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+          "vary": "RSC, Next-Router-State-Tree, Next-Router-Prefetch, Next-Url",
+          "x-matched-path": "/api/line/callback",
+          "x-vercel-cache": "MISS",
+          "x-vercel-id": "sin1::iad1::mh7cf-1774536774239-8fc1b0bf887c",
+          "transfer-encoding": "chunked"
+        },
+        "body": "{\"success\":true}"
+      },
+      "timestamp": "2026-03-26T14:52:54.926Z"
+    },
+    {
+      "name": "Position - English",
+      "status": 200,
+      "duration": 1852,
+      "passed": true,
+      "request": {
+        "headers": {
+          "Content-Type": "application/json",
+          "X-Line-Signature": "mgAyTmfJ5DmHY9aI4L0++58TmEu7fOHsaGVqYKDu4+c=",
+          "Content-Length": 273
+        },
+        "body": {
+          "events": [
+            {
+              "type": "message",
+              "replyToken": "test17745367749273499",
+              "source": {
+                "type": "group",
+                "groupId": "C1234567890abcdef",
+                "userId": "U11111111112222222222333333333344"
+              },
+              "timestamp": 1774536774927,
+              "message": {
+                "id": "msg1774536774927",
+                "type": "text",
+                "text": "!position ST CM GK"
+              }
+            }
+          ]
+        }
+      },
+      "response": {
+        "headers": {
+          "access-control-allow-headers": "Content-Type, Authorization, X-Line-Signature",
+          "access-control-allow-methods": "GET, POST, PUT, DELETE, OPTIONS",
+          "access-control-allow-origin": "*",
+          "cache-control": "public, max-age=0, must-revalidate",
+          "content-type": "application/json",
+          "date": "Thu, 26 Mar 2026 14:52:56 GMT",
+          "server": "Vercel",
+          "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+          "vary": "RSC, Next-Router-State-Tree, Next-Router-Prefetch, Next-Url",
+          "x-matched-path": "/api/line/callback",
+          "x-vercel-cache": "MISS",
+          "x-vercel-id": "sin1::iad1::rnq5r-1774536774749-aeec54ba753c",
+          "transfer-encoding": "chunked"
+        },
+        "body": "{\"success\":true}"
+      },
+      "timestamp": "2026-03-26T14:52:56.780Z"
+    },
+    {
+      "name": "Position - Thai",
+      "status": 200,
+      "duration": 618,
+      "passed": true,
+      "request": {
+        "headers": {
+          "Content-Type": "application/json",
+          "X-Line-Signature": "EH8erI/F6cMIHJWh5mvbCVefjueqHDu4EYS8P0Dth04=",
+          "Content-Length": 286
+        },
+        "body": {
+          "events": [
+            {
+              "type": "message",
+              "replyToken": "test17745367767812131",
+              "source": {
+                "type": "group",
+                "groupId": "C1234567890abcdef",
+                "userId": "U9876543210fedcba9876543210fedcba"
+              },
+              "timestamp": 1774536776781,
+              "message": {
+                "id": "msg1774536776781",
+                "type": "text",
+                "text": "!ตำแหน่ง ST CM GK"
+              }
+            }
+          ]
+        }
+      },
+      "response": {
+        "headers": {
+          "access-control-allow-headers": "Content-Type, Authorization, X-Line-Signature",
+          "access-control-allow-methods": "GET, POST, PUT, DELETE, OPTIONS",
+          "access-control-allow-origin": "*",
+          "cache-control": "public, max-age=0, must-revalidate",
+          "content-type": "application/json",
+          "date": "Thu, 26 Mar 2026 14:52:57 GMT",
+          "server": "Vercel",
+          "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+          "vary": "RSC, Next-Router-State-Tree, Next-Router-Prefetch, Next-Url",
+          "x-matched-path": "/api/line/callback",
+          "x-vercel-cache": "MISS",
+          "x-vercel-id": "sin1::iad1::t8sgz-1774536776605-272ad083e463",
+          "transfer-encoding": "chunked"
+        },
+        "body": "{\"success\":true}"
+      },
+      "timestamp": "2026-03-26T14:52:57.400Z"
+    },
+    {
+      "name": "Unregister - Spanish",
+      "status": 200,
+      "duration": 771,
+      "passed": true,
+      "request": {
+        "headers": {
+          "Content-Type": "application/json",
+          "X-Line-Signature": "18Bq1IJtU5GCDiLphhv92ps2FbeGSgJELVBSe1rXF4g=",
+          "Content-Length": 260
+        },
+        "body": {
+          "events": [
+            {
+              "type": "message",
+              "replyToken": "test17745367774066525",
+              "source": {
+                "type": "group",
+                "groupId": "C1234567890abcdef",
+                "userId": "U9876543210fedcba9876543210fedcba"
+              },
+              "timestamp": 1774536777406,
+              "message": {
+                "id": "msg1774536777406",
+                "type": "text",
+                "text": "!baja"
+              }
+            }
+          ]
+        }
+      },
+      "response": {
+        "headers": {
+          "access-control-allow-headers": "Content-Type, Authorization, X-Line-Signature",
+          "access-control-allow-methods": "GET, POST, PUT, DELETE, OPTIONS",
+          "access-control-allow-origin": "*",
+          "cache-control": "public, max-age=0, must-revalidate",
+          "content-type": "application/json",
+          "date": "Thu, 26 Mar 2026 14:52:57 GMT",
+          "server": "Vercel",
+          "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+          "vary": "RSC, Next-Router-State-Tree, Next-Router-Prefetch, Next-Url",
+          "x-matched-path": "/api/line/callback",
+          "x-vercel-cache": "MISS",
+          "x-vercel-id": "sin1::iad1::c8847-1774536777231-5cf7a6eda1e4",
+          "transfer-encoding": "chunked"
+        },
+        "body": "{\"success\":true}"
+      },
+      "timestamp": "2026-03-26T14:52:58.180Z"
+    },
+    {
+      "name": "Unregister - Spanish (!desinscribirme)",
+      "status": 200,
+      "duration": 546,
+      "passed": true,
+      "request": {
+        "headers": {
+          "Content-Type": "application/json",
+          "X-Line-Signature": "vgJctrH7VkWURy9m1CM9EwTqbyKWspZucP6wm+q1t0g=",
+          "Content-Length": 270
+        },
+        "body": {
+          "events": [
+            {
+              "type": "message",
+              "replyToken": "test17745367781829264",
+              "source": {
+                "type": "group",
+                "groupId": "C1234567890abcdef",
+                "userId": "U11111111112222222222333333333344"
+              },
+              "timestamp": 1774536778182,
+              "message": {
+                "id": "msg1774536778182",
+                "type": "text",
+                "text": "!desinscribirme"
+              }
+            }
+          ]
+        }
+      },
+      "response": {
+        "headers": {
+          "access-control-allow-headers": "Content-Type, Authorization, X-Line-Signature",
+          "access-control-allow-methods": "GET, POST, PUT, DELETE, OPTIONS",
+          "access-control-allow-origin": "*",
+          "cache-control": "public, max-age=0, must-revalidate",
+          "content-type": "application/json",
+          "date": "Thu, 26 Mar 2026 14:52:58 GMT",
+          "server": "Vercel",
+          "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+          "vary": "RSC, Next-Router-State-Tree, Next-Router-Prefetch, Next-Url",
+          "x-matched-path": "/api/line/callback",
+          "x-vercel-cache": "MISS",
+          "x-vercel-id": "sin1::iad1::85qcn-1774536778009-a509c014c21a",
+          "transfer-encoding": "chunked"
+        },
+        "body": "{\"success\":true}"
+      },
+      "timestamp": "2026-03-26T14:52:58.731Z"
+    },
+    {
+      "name": "Unregister - English",
+      "status": 200,
+      "duration": 584,
+      "passed": true,
+      "request": {
+        "headers": {
+          "Content-Type": "application/json",
+          "X-Line-Signature": "QoZ+CGosQfV2awRL2lRpHoW9F+898s9jDwr6B6KNamA=",
+          "Content-Length": 266
+        },
+        "body": {
+          "events": [
+            {
+              "type": "message",
+              "replyToken": "test17745367787322629",
+              "source": {
+                "type": "group",
+                "groupId": "C1234567890abcdef",
+                "userId": "U9876543210fedcba9876543210fedcba"
+              },
+              "timestamp": 1774536778732,
+              "message": {
+                "id": "msg1774536778732",
+                "type": "text",
+                "text": "!unregister"
+              }
+            }
+          ]
+        }
+      },
+      "response": {
+        "headers": {
+          "access-control-allow-headers": "Content-Type, Authorization, X-Line-Signature",
+          "access-control-allow-methods": "GET, POST, PUT, DELETE, OPTIONS",
+          "access-control-allow-origin": "*",
+          "cache-control": "public, max-age=0, must-revalidate",
+          "content-type": "application/json",
+          "date": "Thu, 26 Mar 2026 14:52:58 GMT",
+          "server": "Vercel",
+          "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+          "vary": "RSC, Next-Router-State-Tree, Next-Router-Prefetch, Next-Url",
+          "x-matched-path": "/api/line/callback",
+          "x-vercel-cache": "MISS",
+          "x-vercel-id": "sin1::iad1::s8q2g-1774536778553-f45e74c0ef8f",
+          "transfer-encoding": "chunked"
+        },
+        "body": "{\"success\":true}"
+      },
+      "timestamp": "2026-03-26T14:52:59.316Z"
+    },
+    {
+      "name": "Unregister - Thai",
+      "status": 200,
+      "duration": 505,
+      "passed": true,
+      "request": {
+        "headers": {
+          "Content-Type": "application/json",
+          "X-Line-Signature": "aE/2rdmSHZunc0kwvGGgj1sAxnLH+1YtPyO6drn9ufQ=",
+          "Content-Length": 274
+        },
+        "body": {
+          "events": [
+            {
+              "type": "message",
+              "replyToken": "test17745367793173753",
+              "source": {
+                "type": "group",
+                "groupId": "C1234567890abcdef",
+                "userId": "U11111111112222222222333333333344"
+              },
+              "timestamp": 1774536779317,
+              "message": {
+                "id": "msg1774536779317",
+                "type": "text",
+                "text": "!ยกเลิก"
+              }
+            }
+          ]
+        }
+      },
+      "response": {
+        "headers": {
+          "access-control-allow-headers": "Content-Type, Authorization, X-Line-Signature",
+          "access-control-allow-methods": "GET, POST, PUT, DELETE, OPTIONS",
+          "access-control-allow-origin": "*",
+          "cache-control": "public, max-age=0, must-revalidate",
+          "content-type": "application/json",
+          "date": "Thu, 26 Mar 2026 14:52:59 GMT",
+          "server": "Vercel",
+          "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+          "vary": "RSC, Next-Router-State-Tree, Next-Router-Prefetch, Next-Url",
+          "x-matched-path": "/api/line/callback",
+          "x-vercel-cache": "MISS",
+          "x-vercel-id": "sin1::iad1::zpw4b-1774536779141-1ad164034bbe",
+          "transfer-encoding": "chunked"
+        },
+        "body": "{\"success\":true}"
+      },
+      "timestamp": "2026-03-26T14:52:59.824Z"
+    },
+    {
+      "name": "Groups List - Spanish",
+      "status": 200,
+      "duration": 923,
+      "passed": true,
+      "request": {
+        "headers": {
+          "Content-Type": "application/json",
+          "X-Line-Signature": "l0lPsV1llJ/+ccxkmIx1sUk1lU8tNUuEEZPt6Wk2FP0=",
+          "Content-Length": 262
+        },
+        "body": {
+          "events": [
+            {
+              "type": "message",
+              "replyToken": "test17745367798252612",
+              "source": {
+                "type": "group",
+                "groupId": "C1234567890abcdef",
+                "userId": "U9876543210fedcba9876543210fedcba"
+              },
+              "timestamp": 1774536779825,
+              "message": {
+                "id": "msg1774536779825",
+                "type": "text",
+                "text": "!grupos"
+              }
+            }
+          ]
+        }
+      },
+      "response": {
+        "headers": {
+          "access-control-allow-headers": "Content-Type, Authorization, X-Line-Signature",
+          "access-control-allow-methods": "GET, POST, PUT, DELETE, OPTIONS",
+          "access-control-allow-origin": "*",
+          "cache-control": "public, max-age=0, must-revalidate",
+          "content-type": "application/json",
+          "date": "Thu, 26 Mar 2026 14:53:00 GMT",
+          "server": "Vercel",
+          "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+          "vary": "RSC, Next-Router-State-Tree, Next-Router-Prefetch, Next-Url",
+          "x-matched-path": "/api/line/callback",
+          "x-vercel-cache": "MISS",
+          "x-vercel-id": "sin1::iad1::n5zmw-1774536779647-c30594415d85",
+          "transfer-encoding": "chunked"
+        },
+        "body": "{\"success\":true}"
+      },
+      "timestamp": "2026-03-26T14:53:00.750Z"
+    },
+    {
+      "name": "Groups List - English",
+      "status": 200,
+      "duration": 566,
+      "passed": true,
+      "request": {
+        "headers": {
+          "Content-Type": "application/json",
+          "X-Line-Signature": "mOqf0CXPBGySZ4r/JRSrQxsf1RgvzVNethmyj6PD2sA=",
+          "Content-Length": 267
+        },
+        "body": {
+          "events": [
+            {
+              "type": "message",
+              "replyToken": "test17745367807516779",
+              "source": {
+                "type": "group",
+                "groupId": "C1234567890abcdef",
+                "userId": "U11111111112222222222333333333344"
+              },
+              "timestamp": 1774536780751,
+              "message": {
+                "id": "msg1774536780751",
+                "type": "text",
+                "text": "!groups_list"
+              }
+            }
+          ]
+        }
+      },
+      "response": {
+        "headers": {
+          "access-control-allow-headers": "Content-Type, Authorization, X-Line-Signature",
+          "access-control-allow-methods": "GET, POST, PUT, DELETE, OPTIONS",
+          "access-control-allow-origin": "*",
+          "cache-control": "public, max-age=0, must-revalidate",
+          "content-type": "application/json",
+          "date": "Thu, 26 Mar 2026 14:53:00 GMT",
+          "server": "Vercel",
+          "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+          "vary": "RSC, Next-Router-State-Tree, Next-Router-Prefetch, Next-Url",
+          "x-matched-path": "/api/line/callback",
+          "x-vercel-cache": "MISS",
+          "x-vercel-id": "sin1::iad1::n5zmw-1774536780572-f0e1a25de4d8",
+          "transfer-encoding": "chunked"
+        },
+        "body": "{\"success\":true}"
+      },
+      "timestamp": "2026-03-26T14:53:01.319Z"
+    },
+    {
+      "name": "Groups List - Thai",
+      "status": 200,
+      "duration": 935,
+      "passed": true,
+      "request": {
+        "headers": {
+          "Content-Type": "application/json",
+          "X-Line-Signature": "L1TykZrcAV4BtCVzAkehoykZcrZ/i1303Pi9AFI1zCM=",
+          "Content-Length": 271
+        },
+        "body": {
+          "events": [
+            {
+              "type": "message",
+              "replyToken": "test17745367813218434",
+              "source": {
+                "type": "group",
+                "groupId": "C1234567890abcdef",
+                "userId": "U9876543210fedcba9876543210fedcba"
+              },
+              "timestamp": 1774536781321,
+              "message": {
+                "id": "msg1774536781321",
+                "type": "text",
+                "text": "!กลุ่ม"
+              }
+            }
+          ]
+        }
+      },
+      "response": {
+        "headers": {
+          "access-control-allow-headers": "Content-Type, Authorization, X-Line-Signature",
+          "access-control-allow-methods": "GET, POST, PUT, DELETE, OPTIONS",
+          "access-control-allow-origin": "*",
+          "cache-control": "public, max-age=0, must-revalidate",
+          "content-type": "application/json",
+          "date": "Thu, 26 Mar 2026 14:53:01 GMT",
+          "server": "Vercel",
+          "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+          "vary": "RSC, Next-Router-State-Tree, Next-Router-Prefetch, Next-Url",
+          "x-matched-path": "/api/line/callback",
+          "x-vercel-cache": "MISS",
+          "x-vercel-id": "sin1::iad1::zndwf-1774536781144-bc411e6f4075",
+          "transfer-encoding": "chunked"
+        },
+        "body": "{\"success\":true}"
+      },
+      "timestamp": "2026-03-26T14:53:02.259Z"
+    },
+    {
+      "name": "Join Group - Spanish",
+      "status": 200,
+      "duration": 965,
+      "passed": true,
+      "request": {
+        "headers": {
+          "Content-Type": "application/json",
+          "X-Line-Signature": "tD5k9zB0ZzJ6GpfGYYauVyb7jTyLfVhgW0Mggrnzh/I=",
+          "Content-Length": 270
+        },
+        "body": {
+          "events": [
+            {
+              "type": "message",
+              "replyToken": "test17745367822608202",
+              "source": {
+                "type": "group",
+                "groupId": "C1234567890abcdef",
+                "userId": "U11111111112222222222333333333344"
+              },
+              "timestamp": 1774536782260,
+              "message": {
+                "id": "msg1774536782260",
+                "type": "text",
+                "text": "!unirse TEST123"
+              }
+            }
+          ]
+        }
+      },
+      "response": {
+        "headers": {
+          "access-control-allow-headers": "Content-Type, Authorization, X-Line-Signature",
+          "access-control-allow-methods": "GET, POST, PUT, DELETE, OPTIONS",
+          "access-control-allow-origin": "*",
+          "cache-control": "public, max-age=0, must-revalidate",
+          "content-type": "application/json",
+          "date": "Thu, 26 Mar 2026 14:53:02 GMT",
+          "server": "Vercel",
+          "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+          "vary": "RSC, Next-Router-State-Tree, Next-Router-Prefetch, Next-Url",
+          "x-matched-path": "/api/line/callback",
+          "x-vercel-cache": "MISS",
+          "x-vercel-id": "sin1::iad1::gthgn-1774536782085-865b253cf6af",
+          "transfer-encoding": "chunked"
+        },
+        "body": "{\"success\":true}"
+      },
+      "timestamp": "2026-03-26T14:53:03.227Z"
+    },
+    {
+      "name": "Join Group - English",
+      "status": 200,
+      "duration": 893,
+      "passed": true,
+      "request": {
+        "headers": {
+          "Content-Type": "application/json",
+          "X-Line-Signature": "KZEAP4Ps6jY8WEW6q5u7AR9LW807UxNblhl2JOwd338=",
+          "Content-Length": 268
+        },
+        "body": {
+          "events": [
+            {
+              "type": "message",
+              "replyToken": "test17745367832293687",
+              "source": {
+                "type": "group",
+                "groupId": "C1234567890abcdef",
+                "userId": "U9876543210fedcba9876543210fedcba"
+              },
+              "timestamp": 1774536783229,
+              "message": {
+                "id": "msg1774536783229",
+                "type": "text",
+                "text": "!join TEST123"
+              }
+            }
+          ]
+        }
+      },
+      "response": {
+        "headers": {
+          "access-control-allow-headers": "Content-Type, Authorization, X-Line-Signature",
+          "access-control-allow-methods": "GET, POST, PUT, DELETE, OPTIONS",
+          "access-control-allow-origin": "*",
+          "cache-control": "public, max-age=0, must-revalidate",
+          "content-type": "application/json",
+          "date": "Thu, 26 Mar 2026 14:53:03 GMT",
+          "server": "Vercel",
+          "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+          "vary": "RSC, Next-Router-State-Tree, Next-Router-Prefetch, Next-Url",
+          "x-matched-path": "/api/line/callback",
+          "x-vercel-cache": "MISS",
+          "x-vercel-id": "sin1::iad1::mh7cf-1774536783052-0631dab26a65",
+          "transfer-encoding": "chunked"
+        },
+        "body": "{\"success\":true}"
+      },
+      "timestamp": "2026-03-26T14:53:04.124Z"
+    },
+    {
+      "name": "Start - English",
+      "status": 200,
+      "duration": 1165,
+      "passed": true,
+      "request": {
+        "headers": {
+          "Content-Type": "application/json",
+          "X-Line-Signature": "lrvVLCW8KRHCOFapg2uOMHWW7qpATR/+KkfBi/wKr70=",
+          "Content-Length": 261
+        },
+        "body": {
+          "events": [
+            {
+              "type": "message",
+              "replyToken": "test17745367841261924",
+              "source": {
+                "type": "group",
+                "groupId": "C1234567890abcdef",
+                "userId": "U9876543210fedcba9876543210fedcba"
+              },
+              "timestamp": 1774536784126,
+              "message": {
+                "id": "msg1774536784126",
+                "type": "text",
+                "text": "!start"
+              }
+            }
+          ]
+        }
+      },
+      "response": {
+        "headers": {
+          "access-control-allow-headers": "Content-Type, Authorization, X-Line-Signature",
+          "access-control-allow-methods": "GET, POST, PUT, DELETE, OPTIONS",
+          "access-control-allow-origin": "*",
+          "cache-control": "public, max-age=0, must-revalidate",
+          "content-type": "application/json",
+          "date": "Thu, 26 Mar 2026 14:53:04 GMT",
+          "server": "Vercel",
+          "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+          "vary": "RSC, Next-Router-State-Tree, Next-Router-Prefetch, Next-Url",
+          "x-matched-path": "/api/line/callback",
+          "x-vercel-cache": "MISS",
+          "x-vercel-id": "sin1::iad1::tcpzw-1774536783947-cef0b10a6838",
+          "transfer-encoding": "chunked"
+        },
+        "body": "{\"success\":true}"
+      },
+      "timestamp": "2026-03-26T14:53:05.291Z"
+    },
+    {
+      "name": "Start - Spanish",
+      "status": 200,
+      "duration": 826,
+      "passed": true,
+      "request": {
+        "headers": {
+          "Content-Type": "application/json",
+          "X-Line-Signature": "H9m0Re6OXsZR9xFKG1W2W7QTw9YlQBLWHwBFtTaPlsE=",
+          "Content-Length": 263
+        },
+        "body": {
+          "events": [
+            {
+              "type": "message",
+              "replyToken": "test17745367852929120",
+              "source": {
+                "type": "group",
+                "groupId": "C1234567890abcdef",
+                "userId": "U11111111112222222222333333333344"
+              },
+              "timestamp": 1774536785292,
+              "message": {
+                "id": "msg1774536785292",
+                "type": "text",
+                "text": "!iniciar"
+              }
+            }
+          ]
+        }
+      },
+      "response": {
+        "headers": {
+          "access-control-allow-headers": "Content-Type, Authorization, X-Line-Signature",
+          "access-control-allow-methods": "GET, POST, PUT, DELETE, OPTIONS",
+          "access-control-allow-origin": "*",
+          "cache-control": "public, max-age=0, must-revalidate",
+          "content-type": "application/json",
+          "date": "Thu, 26 Mar 2026 14:53:05 GMT",
+          "server": "Vercel",
+          "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+          "vary": "RSC, Next-Router-State-Tree, Next-Router-Prefetch, Next-Url",
+          "x-matched-path": "/api/line/callback",
+          "x-vercel-cache": "MISS",
+          "x-vercel-id": "sin1::iad1::tcpzw-1774536785114-af869686c02d",
+          "transfer-encoding": "chunked"
+        },
+        "body": "{\"success\":true}"
+      },
+      "timestamp": "2026-03-26T14:53:06.120Z"
+    },
+    {
+      "name": "Start - Thai",
+      "status": 200,
+      "duration": 843,
+      "passed": true,
+      "request": {
+        "headers": {
+          "Content-Type": "application/json",
+          "X-Line-Signature": "sz+yGlgGXqUhKXvXCr5+qMTZtdQrmzexyniVNhr2QJ4=",
+          "Content-Length": 271
+        },
+        "body": {
+          "events": [
+            {
+              "type": "message",
+              "replyToken": "test17745367861217650",
+              "source": {
+                "type": "group",
+                "groupId": "C1234567890abcdef",
+                "userId": "U9876543210fedcba9876543210fedcba"
+              },
+              "timestamp": 1774536786121,
+              "message": {
+                "id": "msg1774536786121",
+                "type": "text",
+                "text": "!เริ่ม"
+              }
+            }
+          ]
+        }
+      },
+      "response": {
+        "headers": {
+          "access-control-allow-headers": "Content-Type, Authorization, X-Line-Signature",
+          "access-control-allow-methods": "GET, POST, PUT, DELETE, OPTIONS",
+          "access-control-allow-origin": "*",
+          "cache-control": "public, max-age=0, must-revalidate",
+          "content-type": "application/json",
+          "date": "Thu, 26 Mar 2026 14:53:06 GMT",
+          "server": "Vercel",
+          "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+          "vary": "RSC, Next-Router-State-Tree, Next-Router-Prefetch, Next-Url",
+          "x-matched-path": "/api/line/callback",
+          "x-vercel-cache": "MISS",
+          "x-vercel-id": "sin1::iad1::w5cqk-1774536785945-bd0a03e6e71a",
+          "transfer-encoding": "chunked"
+        },
+        "body": "{\"success\":true}"
+      },
+      "timestamp": "2026-03-26T14:53:06.966Z"
+    },
+    {
+      "name": "Admin Command Rejected - Generate",
+      "status": 200,
+      "duration": 842,
+      "passed": true,
+      "request": {
+        "headers": {
+          "Content-Type": "application/json",
+          "X-Line-Signature": "3u5UbUD1BzXmwJNvWU8EWMUwK/P1KHIbdMNPjXz5MSk=",
+          "Content-Length": 263
+        },
+        "body": {
+          "events": [
+            {
+              "type": "message",
+              "replyToken": "test17745367869679719",
+              "source": {
+                "type": "group",
+                "groupId": "C1234567890abcdef",
+                "userId": "U9876543210fedcba9876543210fedcba"
+              },
+              "timestamp": 1774536786967,
+              "message": {
+                "id": "msg1774536786967",
+                "type": "text",
+                "text": "!generar"
+              }
+            }
+          ]
+        }
+      },
+      "response": {
+        "headers": {
+          "access-control-allow-headers": "Content-Type, Authorization, X-Line-Signature",
+          "access-control-allow-methods": "GET, POST, PUT, DELETE, OPTIONS",
+          "access-control-allow-origin": "*",
+          "cache-control": "public, max-age=0, must-revalidate",
+          "content-type": "application/json",
+          "date": "Thu, 26 Mar 2026 14:53:07 GMT",
+          "server": "Vercel",
+          "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+          "vary": "RSC, Next-Router-State-Tree, Next-Router-Prefetch, Next-Url",
+          "x-matched-path": "/api/line/callback",
+          "x-vercel-cache": "MISS",
+          "x-vercel-id": "sin1::iad1::w5cqk-1774536786788-c32b9d71a8ec",
+          "transfer-encoding": "chunked"
+        },
+        "body": "{\"success\":true}"
+      },
+      "timestamp": "2026-03-26T14:53:07.809Z"
+    },
+    {
+      "name": "Admin Command Rejected - Create Event",
+      "status": 200,
+      "duration": 521,
+      "passed": true,
+      "request": {
+        "headers": {
+          "Content-Type": "application/json",
+          "X-Line-Signature": "icGmrLOSnjIRVxcwEedzSsX9c3ibBRUC6ug3Vd0Ootk=",
+          "Content-Length": 285
+        },
+        "body": {
+          "events": [
+            {
+              "type": "message",
+              "replyToken": "test17745367878096570",
+              "source": {
+                "type": "group",
+                "groupId": "C1234567890abcdef",
+                "userId": "U11111111112222222222333333333344"
+              },
+              "timestamp": 1774536787809,
+              "message": {
+                "id": "msg1774536787809",
+                "type": "text",
+                "text": "!crear_evento 2024-04-20 19:00"
+              }
+            }
+          ]
+        }
+      },
+      "response": {
+        "headers": {
+          "access-control-allow-headers": "Content-Type, Authorization, X-Line-Signature",
+          "access-control-allow-methods": "GET, POST, PUT, DELETE, OPTIONS",
+          "access-control-allow-origin": "*",
+          "cache-control": "public, max-age=0, must-revalidate",
+          "content-type": "application/json",
+          "date": "Thu, 26 Mar 2026 14:53:08 GMT",
+          "server": "Vercel",
+          "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+          "vary": "RSC, Next-Router-State-Tree, Next-Router-Prefetch, Next-Url",
+          "x-matched-path": "/api/line/callback",
+          "x-vercel-cache": "MISS",
+          "x-vercel-id": "sin1::iad1::h68pb-1774536787634-dba4ad05745b",
+          "transfer-encoding": "chunked"
+        },
+        "body": "{\"success\":true}"
+      },
+      "timestamp": "2026-03-26T14:53:08.333Z"
+    },
+    {
+      "name": "Admin Command Rejected - Config",
+      "status": 200,
+      "duration": 555,
+      "passed": true,
+      "request": {
+        "headers": {
+          "Content-Type": "application/json",
+          "X-Line-Signature": "LheNN454er1ylfecH4li2ZToawEtQ7koOk0YIPkoz40=",
+          "Content-Length": 268
+        },
+        "body": {
+          "events": [
+            {
+              "type": "message",
+              "replyToken": "test17745367883344009",
+              "source": {
+                "type": "group",
+                "groupId": "C1234567890abcdef",
+                "userId": "U9876543210fedcba9876543210fedcba"
+              },
+              "timestamp": 1774536788334,
+              "message": {
+                "id": "msg1774536788334",
+                "type": "text",
+                "text": "!configurar 7"
+              }
+            }
+          ]
+        }
+      },
+      "response": {
+        "headers": {
+          "access-control-allow-headers": "Content-Type, Authorization, X-Line-Signature",
+          "access-control-allow-methods": "GET, POST, PUT, DELETE, OPTIONS",
+          "access-control-allow-origin": "*",
+          "cache-control": "public, max-age=0, must-revalidate",
+          "content-type": "application/json",
+          "date": "Thu, 26 Mar 2026 14:53:08 GMT",
+          "server": "Vercel",
+          "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+          "vary": "RSC, Next-Router-State-Tree, Next-Router-Prefetch, Next-Url",
+          "x-matched-path": "/api/line/callback",
+          "x-vercel-cache": "MISS",
+          "x-vercel-id": "sin1::iad1::h68pb-1774536788155-da37171331fc",
+          "transfer-encoding": "chunked"
+        },
+        "body": "{\"success\":true}"
+      },
+      "timestamp": "2026-03-26T14:53:08.889Z"
+    },
+    {
+      "name": "Admin Command Rejected - Close",
+      "status": 200,
+      "duration": 520,
+      "passed": true,
+      "request": {
+        "headers": {
+          "Content-Type": "application/json",
+          "X-Line-Signature": "2Z+dr9O9nwD5/TW3U7ZUe8MnZYfG6brERDU2/mXU53o=",
+          "Content-Length": 262
+        },
+        "body": {
+          "events": [
+            {
+              "type": "message",
+              "replyToken": "test17745367888904091",
+              "source": {
+                "type": "group",
+                "groupId": "C1234567890abcdef",
+                "userId": "U11111111112222222222333333333344"
+              },
+              "timestamp": 1774536788891,
+              "message": {
+                "id": "msg1774536788891",
+                "type": "text",
+                "text": "!cerrar"
+              }
+            }
+          ]
+        }
+      },
+      "response": {
+        "headers": {
+          "access-control-allow-headers": "Content-Type, Authorization, X-Line-Signature",
+          "access-control-allow-methods": "GET, POST, PUT, DELETE, OPTIONS",
+          "access-control-allow-origin": "*",
+          "cache-control": "public, max-age=0, must-revalidate",
+          "content-type": "application/json",
+          "date": "Thu, 26 Mar 2026 14:53:09 GMT",
+          "server": "Vercel",
+          "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+          "vary": "RSC, Next-Router-State-Tree, Next-Router-Prefetch, Next-Url",
+          "x-matched-path": "/api/line/callback",
+          "x-vercel-cache": "MISS",
+          "x-vercel-id": "sin1::iad1::h68pb-1774536788715-037c5836e04a",
+          "transfer-encoding": "chunked"
+        },
+        "body": "{\"success\":true}"
+      },
+      "timestamp": "2026-03-26T14:53:09.413Z"
+    },
+    {
+      "name": "Spanish Command",
+      "status": 200,
+      "duration": 916,
+      "passed": true,
+      "request": {
+        "headers": {
+          "Content-Type": "application/json",
+          "X-Line-Signature": "HCHQatPxQe1BhDcZ4yhmOtE79Ntq03fs0gNpJ1nb+Ts=",
+          "Content-Length": 261
+        },
+        "body": {
+          "events": [
+            {
+              "type": "message",
+              "replyToken": "test17745367894180730",
+              "source": {
+                "type": "group",
+                "groupId": "C1234567890abcdef",
+                "userId": "U9876543210fedcba9876543210fedcba"
+              },
+              "timestamp": 1774536789418,
+              "message": {
+                "id": "msg1774536789418",
+                "type": "text",
+                "text": "!ayuda"
+              }
+            }
+          ]
+        }
+      },
+      "response": {
+        "headers": {
+          "access-control-allow-headers": "Content-Type, Authorization, X-Line-Signature",
+          "access-control-allow-methods": "GET, POST, PUT, DELETE, OPTIONS",
+          "access-control-allow-origin": "*",
+          "cache-control": "public, max-age=0, must-revalidate",
+          "content-type": "application/json",
+          "date": "Thu, 26 Mar 2026 14:53:10 GMT",
+          "server": "Vercel",
+          "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+          "vary": "RSC, Next-Router-State-Tree, Next-Router-Prefetch, Next-Url",
+          "x-matched-path": "/api/line/callback",
+          "x-vercel-cache": "MISS",
+          "x-vercel-id": "sin1::iad1::h68pb-1774536789243-bcc321b1a037",
+          "transfer-encoding": "chunked"
+        },
+        "body": "{\"success\":true}"
+      },
+      "timestamp": "2026-03-26T14:53:10.338Z"
+    },
+    {
+      "name": "English Command",
+      "status": 200,
+      "duration": 496,
+      "passed": true,
+      "request": {
+        "headers": {
+          "Content-Type": "application/json",
+          "X-Line-Signature": "fDwy5mBX7gpE/46TfBrbolg/HEfIDDIbEoQpJEDIxSg=",
+          "Content-Length": 260
+        },
+        "body": {
+          "events": [
+            {
+              "type": "message",
+              "replyToken": "test17745367903405780",
+              "source": {
+                "type": "group",
+                "groupId": "C1234567890abcdef",
+                "userId": "U9876543210fedcba9876543210fedcba"
+              },
+              "timestamp": 1774536790340,
+              "message": {
+                "id": "msg1774536790340",
+                "type": "text",
+                "text": "!help"
+              }
+            }
+          ]
+        }
+      },
+      "response": {
+        "headers": {
+          "access-control-allow-headers": "Content-Type, Authorization, X-Line-Signature",
+          "access-control-allow-methods": "GET, POST, PUT, DELETE, OPTIONS",
+          "access-control-allow-origin": "*",
+          "cache-control": "public, max-age=0, must-revalidate",
+          "content-type": "application/json",
+          "date": "Thu, 26 Mar 2026 14:53:10 GMT",
+          "server": "Vercel",
+          "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+          "vary": "RSC, Next-Router-State-Tree, Next-Router-Prefetch, Next-Url",
+          "x-matched-path": "/api/line/callback",
+          "x-vercel-cache": "MISS",
+          "x-vercel-id": "sin1::iad1::w5cqk-1774536790165-4ca394540611",
+          "transfer-encoding": "chunked"
+        },
+        "body": "{\"success\":true}"
+      },
+      "timestamp": "2026-03-26T14:53:10.839Z"
+    },
+    {
+      "name": "Thai Command",
+      "status": 200,
+      "duration": 513,
+      "passed": true,
+      "request": {
+        "headers": {
+          "Content-Type": "application/json",
+          "X-Line-Signature": "Ntpbh9xQRkQ6RpK9IQ8+VhOPBg5vbwCEAUSH3e+0Rns=",
+          "Content-Length": 268
+        },
+        "body": {
+          "events": [
+            {
+              "type": "message",
+              "replyToken": "test17745367908407394",
+              "source": {
+                "type": "group",
+                "groupId": "C1234567890abcdef",
+                "userId": "U9876543210fedcba9876543210fedcba"
+              },
+              "timestamp": 1774536790840,
+              "message": {
+                "id": "msg1774536790840",
+                "type": "text",
+                "text": "!ช่วย"
+              }
+            }
+          ]
+        }
+      },
+      "response": {
+        "headers": {
+          "access-control-allow-headers": "Content-Type, Authorization, X-Line-Signature",
+          "access-control-allow-methods": "GET, POST, PUT, DELETE, OPTIONS",
+          "access-control-allow-origin": "*",
+          "cache-control": "public, max-age=0, must-revalidate",
+          "content-type": "application/json",
+          "date": "Thu, 26 Mar 2026 14:53:11 GMT",
+          "server": "Vercel",
+          "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+          "vary": "RSC, Next-Router-State-Tree, Next-Router-Prefetch, Next-Url",
+          "x-matched-path": "/api/line/callback",
+          "x-vercel-cache": "MISS",
+          "x-vercel-id": "sin1::iad1::w5l4c-1774536790661-ce3684cc8757",
+          "transfer-encoding": "chunked"
+        },
+        "body": "{\"success\":true}"
+      },
+      "timestamp": "2026-03-26T14:53:11.354Z"
+    }
+  ],
+  "criticalFlow": {
+    "registerCommand": {
+      "tested": true,
+      "success": true,
+      "response": {
+        "headers": {
+          "access-control-allow-headers": "Content-Type, Authorization, X-Line-Signature",
+          "access-control-allow-methods": "GET, POST, PUT, DELETE, OPTIONS",
+          "access-control-allow-origin": "*",
+          "cache-control": "public, max-age=0, must-revalidate",
+          "content-type": "application/json",
+          "date": "Thu, 26 Mar 2026 14:52:46 GMT",
+          "server": "Vercel",
+          "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+          "vary": "RSC, Next-Router-State-Tree, Next-Router-Prefetch, Next-Url",
+          "x-matched-path": "/api/line/callback",
+          "x-vercel-cache": "MISS",
+          "x-vercel-id": "sin1::iad1::9n7lr-1774536764251-88fecf9ee603",
+          "transfer-encoding": "chunked"
+        },
+        "body": "{\"success\":true}"
+      },
+      "error": null
+    }
+  },
+  "userCommands": {
+    "total": 34,
+    "passed": 34,
+    "failed": 0,
+    "details": [
+      {
+        "command": "!register",
+        "userId": "U9876543210fedcba9876543210fedcba",
+        "passed": true,
+        "duration": 2610
+      },
+      {
+        "command": "!apuntar",
+        "userId": "U11111111112222222222333333333344",
+        "passed": true,
+        "duration": 729
+      },
+      {
+        "command": "!ลงทะเบียน",
+        "userId": "U9876543210fedcba9876543210fedcba",
+        "passed": true,
+        "duration": 828
+      },
+      {
+        "command": "!inscribirme",
+        "userId": "U11111111112222222222333333333344",
+        "passed": true,
+        "duration": 848
+      },
+      {
+        "command": "!ayuda",
+        "userId": "U9876543210fedcba9876543210fedcba",
+        "passed": true,
+        "duration": 730
+      },
+      {
+        "command": "!help",
+        "userId": "U11111111112222222222333333333344",
+        "passed": true,
+        "duration": 574
+      },
+      {
+        "command": "!help",
+        "userId": "U9876543210fedcba9876543210fedcba",
+        "passed": true,
+        "duration": 1105
+      },
+      {
+        "command": "!ช่วย",
+        "userId": "U11111111112222222222333333333344",
+        "passed": true,
+        "duration": 550
+      },
+      {
+        "command": "!perfil",
+        "userId": "U9876543210fedcba9876543210fedcba",
+        "passed": true,
+        "duration": 527
+      },
+      {
+        "command": "!profile",
+        "userId": "U11111111112222222222333333333344",
+        "passed": true,
+        "duration": 517
+      },
+      {
+        "command": "!profile",
+        "userId": "U9876543210fedcba9876543210fedcba",
+        "passed": true,
+        "duration": 569
+      },
+      {
+        "command": "!โปรไฟล์",
+        "userId": "U11111111112222222222333333333344",
+        "passed": true,
+        "duration": 542
+      },
+      {
+        "command": "!posicion ST CM GK",
+        "userId": "U9876543210fedcba9876543210fedcba",
+        "passed": true,
+        "duration": 509
+      },
+      {
+        "command": "!position ST CM GK",
+        "userId": "U11111111112222222222333333333344",
+        "passed": true,
+        "duration": 1852
+      },
+      {
+        "command": "!ตำแหน่ง ST CM GK",
+        "userId": "U9876543210fedcba9876543210fedcba",
+        "passed": true,
+        "duration": 618
+      },
+      {
+        "command": "!baja",
+        "userId": "U9876543210fedcba9876543210fedcba",
+        "passed": true,
+        "duration": 771
+      },
+      {
+        "command": "!desinscribirme",
+        "userId": "U11111111112222222222333333333344",
+        "passed": true,
+        "duration": 546
+      },
+      {
+        "command": "!unregister",
+        "userId": "U9876543210fedcba9876543210fedcba",
+        "passed": true,
+        "duration": 584
+      },
+      {
+        "command": "!ยกเลิก",
+        "userId": "U11111111112222222222333333333344",
+        "passed": true,
+        "duration": 505
+      },
+      {
+        "command": "!grupos",
+        "userId": "U9876543210fedcba9876543210fedcba",
+        "passed": true,
+        "duration": 923
+      },
+      {
+        "command": "!groups_list",
+        "userId": "U11111111112222222222333333333344",
+        "passed": true,
+        "duration": 566
+      },
+      {
+        "command": "!กลุ่ม",
+        "userId": "U9876543210fedcba9876543210fedcba",
+        "passed": true,
+        "duration": 935
+      },
+      {
+        "command": "!unirse TEST123",
+        "userId": "U11111111112222222222333333333344",
+        "passed": true,
+        "duration": 965
+      },
+      {
+        "command": "!join TEST123",
+        "userId": "U9876543210fedcba9876543210fedcba",
+        "passed": true,
+        "duration": 893
+      },
+      {
+        "command": "!start",
+        "userId": "U9876543210fedcba9876543210fedcba",
+        "passed": true,
+        "duration": 1165
+      },
+      {
+        "command": "!iniciar",
+        "userId": "U11111111112222222222333333333344",
+        "passed": true,
+        "duration": 826
+      },
+      {
+        "command": "!เริ่ม",
+        "userId": "U9876543210fedcba9876543210fedcba",
+        "passed": true,
+        "duration": 843
+      },
+      {
+        "command": "!generar",
+        "userId": "U9876543210fedcba9876543210fedcba",
+        "passed": true,
+        "duration": 842
+      },
+      {
+        "command": "!crear_evento 2024-04-20 19:00",
+        "userId": "U11111111112222222222333333333344",
+        "passed": true,
+        "duration": 521
+      },
+      {
+        "command": "!configurar 7",
+        "userId": "U9876543210fedcba9876543210fedcba",
+        "passed": true,
+        "duration": 555
+      },
+      {
+        "command": "!cerrar",
+        "userId": "U11111111112222222222333333333344",
+        "passed": true,
+        "duration": 520
+      },
+      {
+        "command": "!ayuda",
+        "userId": "U9876543210fedcba9876543210fedcba",
+        "passed": true,
+        "duration": 916
+      },
+      {
+        "command": "!help",
+        "userId": "U9876543210fedcba9876543210fedcba",
+        "passed": true,
+        "duration": 496
+      },
+      {
+        "command": "!ช่วย",
+        "userId": "U9876543210fedcba9876543210fedcba",
+        "passed": true,
+        "duration": 513
+      }
+    ]
+  },
+  "languageDetection": {
+    "spanish": {
+      "tested": 5,
+      "passed": 5
+    },
+    "english": {
+      "tested": 7,
+      "passed": 7
+    },
+    "thai": {
+      "tested": 5,
+      "passed": 5
+    }
+  },
+  "errors": []
+}
