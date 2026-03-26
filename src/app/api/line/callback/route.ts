@@ -252,35 +252,67 @@ async function handleMessageEvent(event: LineWebhookEvent): Promise<void> {
   const { command, args } = parsed;
   logger.info(`Command received: ${command}, args: ${args.length}`);
 
-  // Check if user is admin for admin commands
-  const isAdmin = await isUserAdmin(userId);
-
-  // Determine if this is an admin command
-  const adminCommands = [
-    'crear_evento', 'configurar', 'tactica', 'generar', 'cerrar', 'borrar_evento', 'expulsar', 'recurrente', 'recurring', 'borrar_grupo',
-    'กลยุทธ์', 'จัดทีม', 'สร้าง', 'ตั้งค่า', 'ปิด', 'ลบ', 'ลบกลุ่ม',
-    'create_event', 'config', 'tactics', 'generate', 'close', 'delete_event', 'kick', 'recurring_events', 'delete_group', 'delete-group'
+  // Determine language based on command keywords
+  // Spanish commands
+  const spanishCommands = [
+    'apuntar', 'inscribirme', 'baja', 'desinscribirme', 'perfil', 'alineacion', 'horario', 'grupos', 'unirse',
+    'posicion', 'ayuda', 'crear_evento', 'configurar', 'tactica', 'generar', 'cerrar', 'borrar_evento', 'expulsar',
+    'recurrente', 'borrar_grupo', 'iniciar', 'setup', 'config_group'
+  ];
+  
+  // English commands
+  const englishCommands = [
+    'register', 'unregister', 'profile', 'lineup', 'schedule', 'groups_list', 'join',
+    'position', 'help', 'create_event', 'config', 'tactics', 'generate', 'close', 'delete_event', 'kick',
+    'recurring', 'recurring_events', 'delete_group', 'delete-group', 'setup', 'config_group'
+  ];
+  
+  // Thai commands
+  const thaiCommands = [
+    'ลงทะเบียน', 'สมัคร', 'ยกเลิก', 'โปรไฟล์', 'รายชื่อ', 'ไลน์อัพ', 'อีเวนต์', 'ตาราง', 'กลุ่ม', 'เข้าร่วม',
+    'ตำแหน่ง', 'ช่วย', 'help', 'สร้าง', 'ตั้งค่า', 'กลยุทธ์', 'จัดทีม', 'ปิด', 'ลบ', 'kick', 'expulsar',
+    'recurrente', 'recurring', 'เริ่ม', 'start', 'setup', 'iniciar'
   ];
 
-  // Check if it's a Spanish command based on keywords
-  const isSpanish = [
-    'crear_evento', 'configurar', 'tactica', 'generar', 'cerrar', 'borrar_evento', 'expulsar', 'recurrente', 'recurring', 'borrar_grupo',
-    'ayuda', 'apuntar', 'inscribirme', 'baja', 'desinscribirme', 'perfil', 'alineacion', 'horario', 'grupos', 'unirse',
-    'posicion', 'iniciar',
-  ].includes(command);
+  let lang: 'es' | 'en' | 'th' = 'th'; // Default to Thai
+  
+  // Check language based on command
+  if (spanishCommands.includes(command)) {
+    lang = 'es';
+  } else if (thaiCommands.includes(command)) {
+    lang = 'th';
+  } else if (englishCommands.includes(command)) {
+    lang = 'en';
+  }
 
-  const isEnglish = [
-    'create_event', 'config', 'tactics', 'generate', 'close', 'delete_event', 'kick', 'recurring_events', 'delete_group', 'delete-group',
-    'help', 'register', 'unregister', 'profile', 'lineup', 'schedule', 'groups_list', 'join',
-    'position', 'setup', 'config_group',
-  ].includes(command);
+  // Define admin commands in all languages
+  const adminCommands = [
+    // Spanish
+    'crear_evento', 'configurar', 'tactica', 'táctica', 'generar', 'cerrar', 'borrar_evento', 'expulsar',
+    'recurrente', 'borrar_grupo', 'iniciar', 'setup', 'config_group',
+    // English
+    'create_event', 'config', 'tactics', 'generate', 'close', 'delete_event', 'kick',
+    'recurring', 'recurring_events', 'delete_group', 'delete-group',
+    // Thai
+    'สร้าง', 'ตั้งค่า', 'จัดทีม', 'ปิด', 'ลบ', 'ลบกลุ่ม', 'เริ่มต้น'
+  ];
 
-  let lang: 'es' | 'en' | 'th' = 'th';
-  if (isSpanish) lang = 'es';
-  else if (isEnglish) lang = 'en';
+  // User commands for registering to events (NOT admin-only)
+  const userEventCommands = [
+    // Spanish
+    'apuntar', 'inscribirme', 'baja', 'desinscribirme',
+    // English  
+    'register', 'unregister',
+    // Thai
+    'ลงทะเบียน', 'สมัคร', 'ยกเลิก'
+  ];
+
+  logger.debug(`Language detected: ${lang}, isAdmin: ${isAdmin}, command: ${command}`);
 
   let result: HandlerResult;
-  if (adminCommands.includes(command)) {
+  
+  // Check if it's an admin command AND not a user event command
+  if (adminCommands.includes(command) && !userEventCommands.includes(command)) {
     // Handle admin command
     if (!isAdmin) {
       const msgFile = lang === 'es' ? msgEs : (lang === 'en' ? msgEn : msgTh);
@@ -299,7 +331,7 @@ async function handleMessageEvent(event: LineWebhookEvent): Promise<void> {
       result = await handleAdminCommand(command, args, context as any);
     }
   } else {
-    // Handle user command
+    // Handle user command (including event registration)
     const context: HandlerContext & { lang: 'es' | 'en' | 'th' } = {
       userId,
       groupId,
@@ -317,33 +349,35 @@ async function handleMessageEvent(event: LineWebhookEvent): Promise<void> {
 /** Handle postback event - process quick reply actions */
 async function handlePostbackEvent(event: LineWebhookEvent): Promise<void> {
   const { replyToken, postback } = event;
-  
+
   if (!replyToken || !postback?.data) {
     return;
   }
-  
+
   const data = postback.data;
   const userId = event.source.userId;
-  
-  console.log(`Received postback from ${userId}: ${data}`);
-  
+  const groupId = event.source.groupId || event.source.roomId || undefined;
+
+  logger.debug(`Received postback from ${userId}: ${data}`);
+
   // Parse postback data and handle accordingly
-  // Example: action=register, eventId=xxx
   try {
     const params = new URLSearchParams(data);
     const action = params.get('action');
-    
+
     if (action === 'register' && userId && replyToken) {
-      // Handle quick reply registration
-      const context: HandlerContext = {
+      // Handle quick reply registration - default to Thai language
+      const context: HandlerContext & { lang: 'es' | 'en' | 'th' } = {
         userId,
+        groupId,
         replyToken,
+        lang: 'th', // Default to Thai for postbacks
       };
-      const result = await handleUserCommand('apuntar', [], context);
+      const result = await handleUserCommand('register', [], context);
       await sendResponse(replyToken, result);
     }
   } catch (error) {
-    console.error('Error handling postback:', error);
+    logger.error('Error handling postback:', error);
   }
 }
 

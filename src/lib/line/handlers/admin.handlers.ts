@@ -916,49 +916,50 @@ export async function handleAdminCommand(
   
   switch (normalizedCommand) {
     case 'crear_evento':
-    case '?????':
+    case 'สร้าง':
     case 'create_event':
       return handleCrearEvento(context, args);
-    
+
     case 'configurar':
-    case '???????':
+    case 'ตั้งค่า':
     case 'config':
       return handleConfigurar(context, args);
-    
+
     case 'tactica':
-    case '???????':
+    case 'táctica':
+    case 'กลยุทธ์':
     case 'tactics':
       return handleTactica(context, args);
-    
+
     case 'generar':
     case 'generate':
-    case '??????':
+    case 'จัดทีม':
       return handleGenerar(context);
-    
+
     case 'cerrar':
-    case '???':
+    case 'ปิด':
     case 'close':
       return handleCerrar(context);
-    
+
     case 'borrar_evento':
-    case '??':
+    case 'ลบ':
     case 'delete_event':
       return handleBorrarEvento(context, args[0]);
-    
+
     case 'expulsar':
     case 'kick':
       return handleExpulsar(context, args[0]);
-    
+
     case 'borrar_grupo':
     case 'delete_group':
-    case '???????':
+    case 'ลบกลุ่ม':
       return handleBorrarGrupo(context);
-    
+
     case 'recurrente':
     case 'recurring':
     case 'recurring_events':
       return handleRecurrente(context, args);
-    
+
     default:
       return {
         success: false,

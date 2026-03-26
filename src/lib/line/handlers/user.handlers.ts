@@ -461,65 +461,86 @@ export async function handleUserCommand(
   const normalizedCommand = command.toLowerCase().replace(/^!/, '');
 
   switch (normalizedCommand) {
+    // ============================================================
+    // EVENT REGISTRATION COMMANDS (All users, NOT admin-only)
+    // ============================================================
     case 'apuntar':
     case 'inscribirme':
-    case 'unregister':
-    case 'ยกเลิก':
-      return handleApuntar(context);
-    
     case 'register':
-    case 'setup':
-    case 'iniciar':
-    case 'config_group':
     case 'ลงทะเบียน':
-      return handleRegisterGroup(context);
-    
+    case 'สมัคร':
+      return handleApuntar(context);
+
     case 'baja':
     case 'desinscribirme':
     case 'unregister':
     case 'ยกเลิก':
       return handleBaja(context);
-    
+
+    // ============================================================
+    // PROFILE & POSITION COMMANDS
+    // ============================================================
     case 'perfil':
     case 'profile':
     case 'โปรไฟล์':
       return handlePerfil(context);
-    
-    case 'alineacion':
-    case 'lineup':
-    case 'รายชื่อ':
-      return handleAlineacion(context);
-    
-    case 'horario':
-    case 'schedule':
-    case 'อีเวนต์':
-      return handleHorario(context);
-    
-    case 'grupos':
-    case 'groups_list':
-    case 'กลุ่ม':
-      return handleGrupos(context);
-    
-    case 'unirse':
-    case 'join':
-      return handleUnirse(context, args[0]);
-    
+
     case 'posicion':
     case 'position':
     case 'ตำแหน่ง':
       return handlePosicion(context, args);
-    
+
+    // ============================================================
+    // EVENT INFO COMMANDS
+    // ============================================================
+    case 'alineacion':
+    case 'lineup':
+    case 'รายชื่อ':
+    case 'ไลน์อัพ':
+      return handleAlineacion(context);
+
+    case 'horario':
+    case 'schedule':
+    case 'อีเวนต์':
+    case 'ตาราง':
+      return handleHorario(context);
+
+    // ============================================================
+    // GROUP COMMANDS
+    // ============================================================
+    case 'grupos':
+    case 'groups_list':
+    case 'กลุ่ม':
+      return handleGrupos(context);
+
+    case 'unirse':
+    case 'join':
+    case 'เข้าร่วม':
+      return handleUnirse(context, args[0]);
+
+    // ============================================================
+    // HELP & WELCOME COMMANDS
+    // ============================================================
     case 'ayuda':
     case 'help':
     case 'ช่วย':
       return handleAyuda(context);
-    
+
     case 'start':
     case 'iniciar':
     case 'เริ่ม':
       return handleStart(context);
-    
-    
+
+    // ============================================================
+    // GROUP REGISTRATION (Admin-only, but handled here for setup)
+    // ============================================================
+    case 'setup':
+    case 'config_group':
+    case 'iniciar':
+    case 'เริ่มต้น':
+    case 'ลงทะเบียนกลุ่ม':
+      return handleRegisterGroup(context);
+
     default:
       logger.warn(`Unknown command: "${normalizedCommand}"`);
       return {
