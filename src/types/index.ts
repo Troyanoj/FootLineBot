@@ -56,6 +56,7 @@ export interface UpdateUserInput {
 // Group types
 export interface Group {
   id: string;
+  lineGroupId?: string; // LINE group ID for push notifications
   name: string;
   country?: string;
   adminUserId?: string;
@@ -70,6 +71,7 @@ export interface CreateGroupInput {
   country?: string;
   defaultGameType?: GameType;
   id?: string;
+  lineGroupId?: string;
 }
 
 export interface UpdateGroupInput {
@@ -77,6 +79,7 @@ export interface UpdateGroupInput {
   country?: string;
   defaultGameType?: GameType;
   tactics?: Record<string, unknown>;
+  lineGroupId?: string;
 }
 
 // Group Member types
@@ -163,7 +166,7 @@ export interface Lineup {
   id: string;
   eventId: string;
   teamNumber: number;
-  positionAssignments: Record<string, string[]>; // position -> player IDs
+  positionAssignments: Record<string, string[]> | any; // JSON from Prisma
   createdAt: Date;
 }
 

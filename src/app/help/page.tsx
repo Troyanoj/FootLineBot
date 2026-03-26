@@ -4,6 +4,9 @@ import { useState, useEffect, Suspense } from 'react';
 import Head from 'next/head';
 import { useSearchParams } from 'next/navigation';
 
+// Force dynamic rendering to avoid SSG timeout issues
+export const dynamic = 'force-dynamic';
+
 // ============================================================
 // DATA
 // ============================================================

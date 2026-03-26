@@ -13,6 +13,7 @@ import type { LineWebhookBody, LineWebhookEvent } from '@/types';
 import * as msgTh from '@/lib/line/messages';
 import * as msgEs from '@/lib/line/messages.es';
 import * as msgEn from '@/lib/line/messages.en';
+import { logger, webhookLogger, commandLogger } from '@/lib/logger';
 
 // ============================================================================
 // Helper Functions
@@ -20,54 +21,48 @@ import * as msgEn from '@/lib/line/messages.en';
 
 /** Parse command and arguments from text message */
 function parseCommand(text: string): { command: string; args: string[] } | null {
-  // Check if message starts with command prefix
   const trimmed = text.trim();
   const commandPrefix = /^(!|\/|！)/;
-  
+
   if (!commandPrefix.test(trimmed)) {
     return null;
   }
-  
-  // Remove prefix and split by spaces
+
   const withoutPrefix = trimmed.replace(commandPrefix, '');
   const parts = withoutPrefix.split(/\s+/);
-  
+
   if (parts.length === 0 || !parts[0]) {
     return null;
   }
-  
+
   const command = parts[0].toLowerCase();
   const args = parts.slice(1);
-  
+
   return { command, args };
 }
 
-/** Check if user is admin (placeholder - checks group admin status) */
+/** Check if user is admin */
 async function isUserAdmin(userId: string): Promise<boolean> {
   try {
-    console.log(`[DEBUG] Checking admin status for userId: ${userId}`);
+    logger.debug(`Checking admin status for userId: ${userId}`);
     const user = await userService.findByLineUserId(userId);
-    
+
     if (!user) {
-      console.log(`[DEBUG] User not found in database for LINE userId: ${userId}`);
+      logger.debug(`User not found in database for LINE userId: ${userId}`);
       return false;
     }
-    
-    console.log(`[DEBUG] User found: ${user.id}, ${user.displayName}`);
+
     const groups = await groupService.getByUserId(user.id);
-    console.log(`[DEBUG] User is member of ${groups.length} groups`);
     
     for (const group of groups) {
-      console.log(`[DEBUG] Checking if user is admin of group: ${group.id}, ${group.name}`);
       if (await groupService.isAdmin(group.id, user.id)) {
-        console.log(`[DEBUG] User IS admin of group: ${group.id}`);
+        logger.debug(`User IS admin of group: ${group.id}`);
         return true;
       }
     }
-    console.log(`[DEBUG] User is NOT admin of any group`);
     return false;
   } catch (error) {
-    console.error(`[DEBUG] Error in isUserAdmin:`, error);
+    logger.error(`Error in isUserAdmin:`, error);
     return false;
   }
 }
@@ -76,34 +71,33 @@ async function isUserAdmin(userId: string): Promise<boolean> {
 async function ensureUserExists(lineUserId: string): Promise<void> {
   try {
     let user = await userService.findByLineUserId(lineUserId);
-    
+
     if (!user) {
-      // Get LINE profile
       const lineProfile = await getUserProfile(lineUserId);
-      
-      // Create user with default values
+
       await userService.create({
         lineUserId,
         displayName: lineProfile.displayName,
-        position1: 'CM', // Default position
+        position1: 'CM',
       });
+      logger.info(`Created new user: ${lineUserId}`);
     }
   } catch (error) {
-    console.error('Error ensuring user exists:', error);
+    logger.error('Error ensuring user exists:', error);
   }
 }
 
 /** Send response to user via LINE */
 async function sendResponse(replyToken: string, result: HandlerResult): Promise<void> {
   try {
-    console.log(`[DEBUG] Sending reply to LINE with token: ${replyToken?.substring(0, 10)}...`);
+    logger.debug(`Sending reply to LINE with token: ${replyToken?.substring(0, 10)}...`);
     await replyMessage(replyToken, {
       type: 'text',
       text: result.message,
     });
-    console.log(`[DEBUG] Reply sent successfully`);
+    logger.debug(`Reply sent successfully`);
   } catch (error) {
-    console.error('[DEBUG] Error sending response:', error);
+    logger.error('Error sending response:', error);
   }
 }
 
@@ -151,76 +145,123 @@ async function handleUnfollowEvent(event: LineWebhookEvent): Promise<void> {
 /** Handle join event - bot added to group/room */
 async function handleJoinEvent(event: LineWebhookEvent): Promise<void> {
   const groupId = event.source.groupId || event.source.roomId;
-  console.log(`Bot joined group/room: ${groupId}`);
+  if (!groupId) {
+    logger.debug('[JoinEvent] Bot joined but no groupId/roomId found');
+    return;
+  }
   
-  // Send welcome message
+  logger.info(`[JoinEvent] Bot joined group/room: ${groupId}`);
+
+  // AUTO-REGISTER GROUP IN DATABASE
   try {
-    // Get the bot's display name
-    const welcomeText = "สวัสดีครับ! ⚽ ผมคือ FootLineBot ผู้ช่วยจัดการแมตซ็อกเกอร์ฟุตบอลของคุณ\n\nใช้คำสั่งต่อไปนี้:\n• !help - ดูคำสั่งทั้งหมด\n• !register - ลงทะเบียนกลุ่มนี้\n• !ช่วย - ดูคำสั่งภาษาไทย\n\nยินดีช่วยจัดการแมตซ์ของคุณครับ!";
-    
-    // Note: In group chats, we need to use pushMessage instead of replyMessage
-    // But we need a userId to push. For now, just log.
-    console.log('Bot joined group, welcome message ready');
+    // Check if group already exists in DB
+    const existingGroup = await groupService.getGroupById(groupId);
+
+    if (!existingGroup) {
+      // Group doesn't exist - create it automatically with lineGroupId
+      const autoGroupName = `Football Group ${groupId.substring(0, 8)}`;
+
+      // First, ensure we have a system placeholder user
+      let systemUser = await userService.findByLineUserId('system-placeholder');
+      if (!systemUser) {
+        systemUser = await userService.create({
+          lineUserId: 'system-placeholder',
+          displayName: 'System Placeholder',
+          position1: 'CM',
+        });
+      }
+
+      // Create the group with system placeholder as temporary admin
+      // The first admin to use !register will take over
+      const newGroup = await groupService.createGroup(
+        autoGroupName,
+        systemUser.id,
+        'Auto-registered',
+        '7',
+        undefined, // internal id (uuid will be generated)
+        groupId    // lineGroupId for push notifications
+      );
+
+      logger.info(`[JoinEvent] Auto-registered group: ${newGroup.id} (${newGroup.name}) with lineGroupId: ${groupId}`);
+
+      // Send welcome message to the group using pushMessage
+      try {
+        const welcomeMessage = {
+          type: 'text' as const,
+          text: `🎉 Welcome to FootLine Bot!\n\n` +
+                `Your group has been registered with ID: ${groupId.substring(0, 8)}\n\n` +
+                `📋 *Quick Start:*\n` +
+                `1. Admin: Use !setup to claim admin rights\n` +
+                `2. Players: Use !join ${groupId.substring(0, 8)} to join\n` +
+                `3. Admin: Use !create_event to create a match\n` +
+                `4. Players: Use !register to sign up\n\n` +
+                `Type !help for all commands.`
+        };
+
+        // Push message to the group
+        await pushMessage(groupId, welcomeMessage);
+        logger.info(`[JoinEvent] Welcome message sent to group ${groupId}`);
+      } catch (msgError) {
+        logger.error(`[JoinEvent] Failed to send welcome message:`, msgError);
+      }
+    } else {
+      logger.info(`[JoinEvent] Group already exists: ${existingGroup.name}`);
+      
+      // Update lineGroupId if it's missing
+      if (!existingGroup.lineGroupId) {
+        await groupService.update(existingGroup.id, { lineGroupId: groupId });
+        logger.info(`[JoinEvent] Updated lineGroupId for existing group: ${existingGroup.id}`);
+      }
+    }
   } catch (error) {
-    console.error('Error sending welcome message:', error);
+    logger.error(`[JoinEvent] Error auto-registering group:`, error);
+    // Don't fail the event - just log the error
   }
 }
 
 /** Handle leave event - bot removed from group/room */
 async function handleLeaveEvent(event: LineWebhookEvent): Promise<void> {
   const groupId = event.source.groupId || event.source.roomId;
-  console.log(`Bot left group/room: ${groupId}`);
-  
-  // Could clean up group data here
+  logger.info(`Bot left group/room: ${groupId}`);
 }
 
 /** Handle message event - process user commands */
 async function handleMessageEvent(event: LineWebhookEvent): Promise<void> {
   const { source, message, replyToken } = event;
-  
+
   if (!source.userId || !message || message.type !== 'text' || !replyToken) {
-    console.log(`[DEBUG] Missing required fields: userId=${!!source.userId}, message=${!!message}, type=${message?.type}, replyToken=${!!replyToken}`);
+    logger.debug(`Missing required fields for message event`);
     return;
   }
-  
-  // DEBUG: Log raw message object to diagnose undefined command issue
-  console.log(`[DEBUG] Raw message object:`, JSON.stringify(message));
-  console.log(`[DEBUG] message.text type: ${typeof message.text}, value: ${message.text}`);
-  
+
   const text = message.text?.trim() || '';
   const userId = source.userId;
   const groupId = source.groupId || source.roomId || undefined;
-  
-  console.log(`[DEBUG] Processed text: "${text}", userId: ${userId}, groupId: ${groupId}`);
-  
+
+  logger.debug(`Processing message: "${text.substring(0, 50)}" from userId: ${userId}`);
+
   // Parse command from message
   const parsed = parseCommand(text);
-  
-  // DEBUG: Log parse result
-  console.log(`[DEBUG] parseCommand result:`, parsed);
-  
+
   if (!parsed) {
     // Not a command - ignore the message completely
-    // The bot should only respond to commands that start with ! or /
-    console.log(`[DEBUG] Ignoring non-command message: "${text}"`);
+    logger.debug(`Ignoring non-command message: "${text.substring(0, 50)}"`);
     return;
   }
-  
+
   const { command, args } = parsed;
-  
-  console.log(`[DEBUG] Command: ${command}, Args: ${JSON.stringify(args)}`);
-  
+  logger.info(`Command received: ${command}, args: ${args.length}`);
+
   // Check if user is admin for admin commands
   const isAdmin = await isUserAdmin(userId);
-  console.log(`[DEBUG] isAdmin result: ${isAdmin}`);
-  
+
   // Determine if this is an admin command
   const adminCommands = [
     'crear_evento', 'configurar', 'tactica', 'generar', 'cerrar', 'borrar_evento', 'expulsar', 'recurrente', 'recurring', 'borrar_grupo',
     'กลยุทธ์', 'จัดทีม', 'สร้าง', 'ตั้งค่า', 'ปิด', 'ลบ', 'ลบกลุ่ม',
     'create_event', 'config', 'tactics', 'generate', 'close', 'delete_event', 'kick', 'recurring_events', 'delete_group', 'delete-group'
   ];
-  
+
   // Check if it's a Spanish command based on keywords
   const isSpanish = [
     'crear_evento', 'configurar', 'tactica', 'generar', 'cerrar', 'borrar_evento', 'expulsar', 'recurrente', 'recurring', 'borrar_grupo',
@@ -233,11 +274,11 @@ async function handleMessageEvent(event: LineWebhookEvent): Promise<void> {
     'help', 'register', 'unregister', 'profile', 'lineup', 'schedule', 'groups_list', 'join',
     'position', 'setup', 'config_group',
   ].includes(command);
-  
+
   let lang: 'es' | 'en' | 'th' = 'th';
   if (isSpanish) lang = 'es';
   else if (isEnglish) lang = 'en';
-  
+
   let result: HandlerResult;
   if (adminCommands.includes(command)) {
     // Handle admin command
@@ -247,6 +288,7 @@ async function handleMessageEvent(event: LineWebhookEvent): Promise<void> {
         success: false,
         message: msgFile.adminRequiredMessage(),
       };
+      logger.warn(`Admin command ${command} rejected for non-admin user ${userId}`);
     } else {
       const context: HandlerContext & { lang: 'es' | 'en' | 'th' } = {
         userId,
@@ -254,7 +296,6 @@ async function handleMessageEvent(event: LineWebhookEvent): Promise<void> {
         replyToken,
         lang,
       };
-      console.log(`[DEBUG] Admin context: userId=${userId}, groupId=${groupId}`);
       result = await handleAdminCommand(command, args, context as any);
     }
   } else {
@@ -265,14 +306,12 @@ async function handleMessageEvent(event: LineWebhookEvent): Promise<void> {
       replyToken,
       lang,
     };
-    console.log(`[DEBUG] User context: userId=${userId}, groupId=${groupId}`);
     result = await handleUserCommand(command, args, context as any);
   }
-  
+
   // Send response
-  console.log(`[DEBUG] Sending response: success=${result.success}, message=${result.message.substring(0, 100)}...`);
+  logger.debug(`Sending response: success=${result.success}`);
   await sendResponse(replyToken, result);
-  console.log(`[DEBUG] Response sent`);
 }
 
 /** Handle postback event - process quick reply actions */

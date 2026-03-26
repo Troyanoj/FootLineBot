@@ -303,7 +303,9 @@ export class EventService {
           id: event.id,
           title: event.title,
           date: dateStr,
-          time: event.startTime,
+          time: event.startTime instanceof Date 
+            ? event.startTime.toISOString().split('T')[1].split('.')[0]
+            : event.startTime,
           dayOfWeek: dayNames[eventDate.getDay()],
           status: event.status as EventStatus,
           registered: event._count.registrations,
@@ -314,7 +316,9 @@ export class EventService {
           id: event.id,
           title: event.title,
           date: dateStr,
-          time: event.startTime,
+          time: event.startTime instanceof Date 
+            ? event.startTime.toISOString().split('T')[1].split('.')[0]
+            : event.startTime,
           status: event.status as EventStatus,
         });
       }
@@ -464,7 +468,7 @@ export class EventService {
     groupId: string;
     title: string | null;
     eventDate: Date;
-    startTime: string;
+    startTime: Date | string;
     totalDurationMinutes: number;
     minutesPerMatch: number;
     teamsCount: number;
@@ -475,12 +479,17 @@ export class EventService {
     createdAt: Date;
     updatedAt: Date;
   }): Event {
+    // Convert startTime from Date to string if needed
+    const startTimeStr = event.startTime instanceof Date 
+      ? event.startTime.toISOString().split('T')[1].split('.')[0] // Extract HH:mm:ss
+      : event.startTime;
+
     return {
       id: event.id,
       groupId: event.groupId,
       title: event.title || undefined,
       eventDate: event.eventDate,
-      startTime: event.startTime,
+      startTime: startTimeStr,
       totalDurationMinutes: event.totalDurationMinutes,
       minutesPerMatch: event.minutesPerMatch,
       teamsCount: event.teamsCount,

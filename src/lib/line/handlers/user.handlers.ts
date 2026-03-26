@@ -13,6 +13,7 @@ import * as msgEn from '@/lib/line/messages.en';
 import type { User, Group, Event, Position } from '@/types';
 import prisma from '@/lib/db/prisma';
 import { isValidPosition, getPositionName, VALID_POSITIONS } from '@/lib/positions';
+import { logger, commandLogger } from '@/lib/logger';
 
 const getMsg = (context: any) => {
   if (!context || !context.lang) {
@@ -455,18 +456,23 @@ export async function handleUserCommand(
   args: string[],
   context: HandlerContext
 ): Promise<HandlerResult> {
-  // DEBUG: Log incoming command details
-  console.log(`[DEBUG handleUserCommand] Received command: "${command}", args: ${JSON.stringify(args)}, context.lang: ${context.lang}`);
-  
+  logger.debug(`Received command: "${command}", args: ${JSON.stringify(args)}, lang: ${context.lang}`);
+
   const normalizedCommand = command.toLowerCase().replace(/^!/, '');
-  console.log(`[DEBUG handleUserCommand] normalizedCommand: "${normalizedCommand}"`);
-  
+
   switch (normalizedCommand) {
     case 'apuntar':
     case 'inscribirme':
-    case 'register':
-    case 'ลงทะเบียน':
+    case 'unregister':
+    case 'ยกเลิก':
       return handleApuntar(context);
+    
+    case 'register':
+    case 'setup':
+    case 'iniciar':
+    case 'config_group':
+    case 'ลงทะเบียน':
+      return handleRegisterGroup(context);
     
     case 'baja':
     case 'desinscribirme':
@@ -513,15 +519,9 @@ export async function handleUserCommand(
     case 'เริ่ม':
       return handleStart(context);
     
-    case 'setup':
-    case 'iniciar':
-    case 'config_group':
-      console.log(`[DEBUG] Handling setup command, groupId: ${context.groupId}`);
-      return handleRegisterGroup(context);
     
     default:
-      // DEBUG: Log unknown command
-      console.log(`[DEBUG] Unknown command reached default case: "${normalizedCommand}"`);
+      logger.warn(`Unknown command: "${normalizedCommand}"`);
       return {
         success: false,
         message: getMsg(context).invalidCommandMessage(),

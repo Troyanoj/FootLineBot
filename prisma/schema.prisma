@@ -35,6 +35,7 @@ model User {
 // Groups table - football groups managed by admins
 model Group {
   id              String    @id @default(uuid())
+  lineGroupId     String?   @unique @map("line_group_id") // LINE group ID for push notifications
   name            String
   country         String?
   adminUserId     String?   @unique @map("admin_user_id")
@@ -49,6 +50,7 @@ model Group {
   events          Event[]
   recurringEvents RecurringEvent[]
 
+  @@index([lineGroupId])
   @@map("groups")
 }
 

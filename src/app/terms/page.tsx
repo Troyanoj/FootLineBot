@@ -4,6 +4,9 @@ import { useState, useEffect, Suspense } from 'react';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 
+// Force dynamic rendering to avoid SSG timeout issues
+export const dynamic = 'force-dynamic';
+
 const LANGS = ['en', 'es', 'th'] as const;
 type Lang = (typeof LANGS)[number];
 

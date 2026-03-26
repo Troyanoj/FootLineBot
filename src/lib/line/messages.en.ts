@@ -181,7 +181,13 @@ export const groupNotRegisteredMessage = (): string => {
 };
 
 export const groupNotFoundMessage = (groupId?: string): string => {
-  return `❌ *Group not found*\n\nUse !groups to see available groups.`;
+  let msg = `❌ *Group not found*\n\n`;
+  msg += `No group found with ID: ${groupId || 'not specified'}\n\n`;
+  msg += `📋 *Solution:*\n`;
+  msg += `1. Ask the group admin to execute !register or !setup in the LINE group\n`;
+  msg += `2. Then use !join [ID] again\n\n`;
+  msg += `Use !groups to see available groups.`;
+  return msg;
 };
 
 export const alreadyMemberMessage = (groupName: string): string => {

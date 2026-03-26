@@ -196,7 +196,13 @@ export const groupNotRegisteredMessage = (): string => {
 
 /** Group not found message */
 export const groupNotFoundMessage = (groupId?: string): string => {
-  return `❌ *ไม่พบกลุ่ม*\n\nใช้คำสั่ง !groups เพื่อดูกลุ่มที่มีอยู่ครับ`;
+  let msg = `❌ *ไม่พบกลุ่ม*\n\n`;
+  msg += `ไม่พบกลุ่มที่มี ID: ${groupId || 'ไม่ระบุ'}\n\n`;
+  msg += `📋 *วิธีแก้ไข:*\n`;
+  msg += `1. ให้แอดมินของกลุ่มใช้คำสั่ง !register หรือ !setup ในกลุ่ม LINE ก่อน\n`;
+  msg += `2. จากนั้นใช้ !join [ID] อีกครั้ง\n\n`;
+  msg += `ใช้คำสั่ง !groups เพื่อดูกลุ่มที่มีอยู่ครับ`;
+  return msg;
 };
 
 /** Already member message */

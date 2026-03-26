@@ -4,6 +4,9 @@ import { useState, useEffect, Suspense } from 'react';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 
+// Force dynamic rendering to avoid SSG timeout issues
+export const dynamic = 'force-dynamic';
+
 const LANGS = ['en', 'es', 'th'] as const;
 type Lang = (typeof LANGS)[number];
 
@@ -193,7 +196,7 @@ function PageContent() {
            display: flex; justify-content: center; gap: 0.5rem; margin-top: 2rem;
         }
         .lang-nav a {
-          text-decoration: none; padding: 0.4rem 1rem; border-radius: 50px; font-size: 0.75rem; 
+          text-decoration: none; padding: 0.4rem 1rem; border-radius: 50px; font-size: 0.75rem;
           border: 1px solid rgba(255,255,255,0.08); color: #4a5568; transition: all 0.2s;
         }
         .lang-nav a.active { background: rgba(66, 153, 225, 0.15); color: #63b3ed; border-color: rgba(66,153,225,0.3); }
@@ -206,7 +209,7 @@ function PageContent() {
         <h1>{ui.hero}</h1>
         <p className="subtitle">{ui.subtitle}</p>
         <Link href={`/help?lang=${lang}`} className="hero-cta">{ui.cta}</Link>
-        
+
         <nav className="lang-nav">
           <Link href="/?lang=en" className={lang === 'en' ? 'active' : ''}>ENG</Link>
           <Link href="/?lang=es" className={lang === 'es' ? 'active' : ''}>ESP</Link>

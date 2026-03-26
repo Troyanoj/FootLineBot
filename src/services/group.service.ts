@@ -15,7 +15,8 @@ export class GroupService {
     adminUserId: string,
     country?: string,
     defaultGameType?: GameType,
-    id?: string
+    id?: string,
+    lineGroupId?: string
   ): Promise<Group> {
     try {
       // First, ensure the admin user exists
@@ -30,6 +31,7 @@ export class GroupService {
       const group = await prisma.group.create({
         data: {
           id,
+          lineGroupId,
           name,
           country,
           defaultGameType,
@@ -91,7 +93,7 @@ export class GroupService {
         group: true,
       },
     });
-    return memberships.map((m: { group: { id: string; name: string; country: string | null; adminUserId: string | null; defaultGameType: string | null; tactics: unknown; createdAt: Date; updatedAt: Date; } }) => this.mapToGroup(m.group));
+    return memberships.map((m: { group: { id: string; lineGroupId: string | null; name: string; country: string | null; adminUserId: string | null; defaultGameType: string | null; tactics: unknown; createdAt: Date; updatedAt: Date; } }) => this.mapToGroup(m.group));
   }
 
   /**
@@ -105,7 +107,8 @@ export class GroupService {
           name: data.name,
           country: data.country,
           defaultGameType: data.defaultGameType,
-          tactics: data.tactics,
+          tactics: data.tactics as any, // Cast to Prisma.InputJsonValue
+          lineGroupId: data.lineGroupId,
         },
       });
       return this.mapToGroup(group);
@@ -301,7 +304,7 @@ export class GroupService {
       const updatedGroup = await prisma.group.update({
         where: { id: groupId },
         data: {
-          tactics: updatedTactics,
+          tactics: updatedTactics as any, // Cast to Prisma.InputJsonValue
         },
       });
 
@@ -473,6 +476,7 @@ export class GroupService {
    */
   private mapToGroup(group: {
     id: string;
+    lineGroupId: string | null;
     name: string;
     country: string | null;
     adminUserId: string | null;
@@ -483,6 +487,7 @@ export class GroupService {
   }): Group {
     return {
       id: group.id,
+      lineGroupId: group.lineGroupId || undefined,
       name: group.name,
       country: group.country || undefined,
       adminUserId: group.adminUserId || undefined,

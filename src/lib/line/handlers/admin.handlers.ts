@@ -450,11 +450,11 @@ export async function handleRecurrente(
     
     // Parse action (Thai or Spanish/English)
     const thaiActions: Record<string, string> = {
-      '?????': 'agregar',
-      '???': 'pausar',
-      '???': 'reanudar',
-      '??': 'listar',
-      '??': 'eliminar',
+      'เพิ่ม': 'agregar',
+      'พัก': 'pausar',
+      'ต่อ': 'reanudar',
+      'ดู': 'listar',
+      'ลบ': 'eliminar',
     };
     
     const spanishActions: Record<string, string> = {
@@ -952,7 +952,6 @@ export async function handleAdminCommand(
     case 'borrar_grupo':
     case 'delete_group':
     case '???????':
-    case 'delete-group':
       return handleBorrarGrupo(context);
     
     case 'recurrente':
