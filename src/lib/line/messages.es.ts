@@ -56,7 +56,7 @@ export const helpMessage = (): string => {
 🔹 !recurrente o !recurring - Eventos automáticos
 
 📖 *Guía detallada con imágenes:*
-https://app-omega-sand-14.vercel.app/help?lang=es`;
+https://footlinebot.vercel.app/help?lang=es`;
 };
 
 // ============================================================================

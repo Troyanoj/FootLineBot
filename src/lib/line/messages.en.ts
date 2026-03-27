@@ -56,7 +56,7 @@ export const helpMessage = (): string => {
 🔹 !recurring - Automate events
 
 📖 *Detailed guide with images:*
-https://app-omega-sand-14.vercel.app/help?lang=en`;
+https://footlinebot.vercel.app/help?lang=en`;
 };
 
 // ============================================================================

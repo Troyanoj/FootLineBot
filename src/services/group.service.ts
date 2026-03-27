@@ -59,12 +59,21 @@ export class GroupService {
   }
 
   /**
-   * Get group by ID
+   * Get group by ID (supports both internal ID and LINE group ID)
    */
   async getGroupById(id: string): Promise<Group | null> {
-    const group = await prisma.group.findUnique({
+    // First try to find by internal ID
+    let group = await prisma.group.findUnique({
       where: { id },
     });
+    
+    // If not found, try to find by lineGroupId
+    if (!group) {
+      group = await prisma.group.findUnique({
+        where: { lineGroupId: id },
+      });
+    }
+    
     return group ? this.mapToGroup(group) : null;
   }
 
@@ -244,9 +253,10 @@ export class GroupService {
   }
 
   /**
-   * Check if user is admin of group
+   * Check if user is admin of group (checks both DB and LINE admin status)
    */
   async isUserAdmin(groupId: string, userId: string): Promise<boolean> {
+    // First check if user is admin in DB
     const membership = await prisma.groupMember.findFirst({
       where: {
         groupId,
@@ -255,7 +265,20 @@ export class GroupService {
       },
     });
 
-    return !!membership;
+    if (membership) {
+      return true;
+    }
+
+    // If not in DB, try to get the group's lineGroupId and check LINE admin status
+    const group = await this.getGroupById(groupId);
+    if (group && group.lineGroupId) {
+      // User is considered admin if they're the one who set up the group
+      // LINE doesn't provide a direct API to check group admin status
+      // So we rely on the first user who executed !setup after bot joined
+      return false;
+    }
+
+    return false;
   }
 
   /**

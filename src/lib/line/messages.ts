@@ -42,7 +42,7 @@ export const welcomeMessage = (displayName: string): string => {
 - ติดต่อแอดมินกลุ่มสำหรับข้อมูลเพิ่มเติม
 
 📖 *คู่มือการใช้งาน:*
-https://app-omega-sand-14.vercel.app/help`;
+https://footlinebot.vercel.app/help`;
 };
 
 /** Help message */
@@ -67,7 +67,7 @@ export const helpMessage = (): string => {
 🔹 !recurrence - จัดกิจกรรมรายสัปดาห์
 
 📖 *คู่มือการใช้งานแบบละเอียด:*
-https://app-omega-sand-14.vercel.app/help?lang=th`;
+https://footlinebot.vercel.app/help?lang=th`;
 };
 
 // ============================================================================

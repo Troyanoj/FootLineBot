@@ -552,7 +552,7 @@ export async function handleUserCommand(
 
 /**
  * Handle !setup / !iniciar / !config_group command
- * Register current group in the database
+ * Register current group in the database and make user the admin
  */
 export async function handleRegisterGroup(context: HandlerContext): Promise<HandlerResult> {
   try {
@@ -564,25 +564,69 @@ export async function handleRegisterGroup(context: HandlerContext): Promise<Hand
       };
     }
 
+    // Get sender profile to make them admin
+    const user = await getOrCreateUser(context.userId);
+
     // Check if group already exists
     const existingGroup = await groupService.getGroupById(groupId);
+    
     if (existingGroup) {
+      // Group exists - check if current user is already admin
+      const isUserAdmin = await groupService.isAdmin(existingGroup.id, user.id);
+      
+      if (isUserAdmin) {
+        // User is already admin
+        return {
+          success: false,
+          message: getMsg(context).groupAlreadyRegisteredMessage(existingGroup.name),
+        };
+      }
+      
+      // Check if group has placeholder admin (auto-created when bot joined)
+      // If so, transfer admin rights to current user
+      const placeholderAdminId = await userService.findByLineUserId('system-placeholder');
+      
+      if (existingGroup.adminUserId === placeholderAdminId?.id) {
+        // Transfer admin rights to current user by updating the group's adminUserId
+        const prisma = (await import('@/lib/db/prisma')).default;
+        await prisma.group.update({
+          where: { id: existingGroup.id },
+          data: { adminUserId: user.id },
+        });
+        
+        // Update group member role to admin
+        await groupService.updateMemberRole(existingGroup.id, user.id, 'admin');
+        
+        // Remove placeholder admin membership
+        if (placeholderAdminId) {
+          try {
+            await groupService.removeMember(existingGroup.id, placeholderAdminId.id);
+          } catch (e) {
+            // Ignore if already removed
+          }
+        }
+        
+        return {
+          success: true,
+          message: getMsg(context).groupRegisteredMessage(existingGroup.name, existingGroup.id),
+        };
+      }
+      
+      // Group exists with real admin - current user is not admin
       return {
         success: false,
-        message: getMsg(context).groupAlreadyRegisteredMessage(existingGroup.name),
+        message: getMsg(context).adminRequiredMessage(),
       };
     }
 
-    // Get sender profile to make them admin
-    const user = await getOrCreateUser(context.userId);
-    
-    // Create the group using LINE groupId as DB id
+    // Group doesn't exist - create it with current user as admin
     const group = await groupService.createGroup(
       getMsg(context).defaultGroupName(),
       user.id,
       getMsg(context).defaultRegion(),
       '7',
-      groupId
+      undefined, // internal ID (auto-generated)
+      groupId    // lineGroupId
     );
 
     return {
@@ -590,7 +634,7 @@ export async function handleRegisterGroup(context: HandlerContext): Promise<Hand
       message: getMsg(context).groupRegisteredMessage(group.name, group.id),
     };
   } catch (error) {
-    console.error('Error in handleRegisterGroup:', error);
+    logger.error('Error in handleRegisterGroup:', error);
     return {
       success: false,
       message: getMsg(context).errorMessage(),
