@@ -241,4 +241,80 @@ export async function getUserProfile(userId: string): Promise<{
   }
 }
 
+// Get group member profile (includes role in group)
+export async function getGroupMemberProfile(
+  groupId: string,
+  userId: string
+): Promise<{
+  displayName: string;
+  userId: string;
+  pictureUrl?: string;
+  role?: 'member' | 'admin';
+}> {
+  try {
+    console.log(`[INFO] [getGroupMemberProfile] Fetching profile for userId: ${userId} in group: ${groupId}`);
+    const profile = await getLineClient().getGroupMemberProfile(groupId, userId);
+    console.log(`[INFO] [getGroupMemberProfile] Successfully fetched profile: ${profile.displayName}`);
+    return profile;
+  } catch (error: any) {
+    const errorDetails = {
+      groupId,
+      userId,
+      message: error?.message || 'Unknown error',
+      status: error?.status,
+      statusCode: error?.statusCode,
+      code: error?.code,
+      details: error?.details,
+      timestamp: new Date().toISOString(),
+    };
+
+    // Handle 404 - User/Group not found
+    const is404 = error.status === 404 || error.statusCode === 404;
+    if (is404) {
+      console.warn(`[WARN] [getGroupMemberProfile] User or group not found (404): userId=${userId}, groupId=${groupId}`);
+      return {
+        displayName: 'Unknown User',
+        userId: userId,
+        pictureUrl: undefined,
+        role: undefined,
+      };
+    }
+
+    // Handle 401 - Invalid/expired access token
+    const is401 = error.status === 401 || error.statusCode === 401;
+    if (is401) {
+      console.error(`[ERROR] [getGroupMemberProfile] LINE API authentication failed (401). Check LINE_ACCESS_TOKEN.`);
+      console.error(`[ERROR] [getGroupMemberProfile] Error details:`, errorDetails);
+      return {
+        displayName: 'Unknown User',
+        userId: userId,
+        pictureUrl: undefined,
+        role: undefined,
+      };
+    }
+
+    // Handle 403 - Insufficient permissions
+    const is403 = error.status === 403 || error.statusCode === 403;
+    if (is403) {
+      console.error(`[ERROR] [getGroupMemberProfile] LINE API permission denied (403). Bot may not have group permission.`);
+      console.error(`[ERROR] [getGroupMemberProfile] Error details:`, errorDetails);
+      return {
+        displayName: 'Unknown User',
+        userId: userId,
+        pictureUrl: undefined,
+        role: undefined,
+      };
+    }
+
+    // For any other error, log and return default
+    console.error(`[ERROR] [getGroupMemberProfile] Unexpected error:`, errorDetails);
+    return {
+      displayName: 'Unknown User',
+      userId: userId,
+      pictureUrl: undefined,
+      role: undefined,
+    };
+  }
+}
+
 export default getLineClient;

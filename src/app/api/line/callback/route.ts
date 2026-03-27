@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { validateSignature } from '@/lib/line/signature';
-import { replyMessage, pushMessage, getUserProfile } from '@/lib/line/client';
+import { replyMessage, pushMessage, getUserProfile, getGroupMemberProfile } from '@/lib/line/client';
 import {
   handleUserCommand,
   handleAdminCommand,
@@ -42,9 +42,9 @@ function parseCommand(text: string): { command: string; args: string[] } | null 
 }
 
 /** Check if user is admin */
-async function isUserAdmin(userId: string): Promise<boolean> {
+async function isUserAdmin(userId: string, groupId?: string): Promise<boolean> {
   try {
-    console.log(`[DEBUG] Checking admin status for userId: ${userId}`);
+    console.log(`[DEBUG] Checking admin status for userId: ${userId}, groupId: ${groupId}`);
     const user = await userService.findByLineUserId(userId);
 
     if (!user) {
@@ -52,14 +52,43 @@ async function isUserAdmin(userId: string): Promise<boolean> {
       return false;
     }
 
+    // First check database for admin status
     const groups = await groupService.getByUserId(user.id);
     
     for (const group of groups) {
       if (await groupService.isAdmin(group.id, user.id)) {
-        console.log(`[DEBUG] User IS admin of group: ${group.id}`);
+        console.log(`[DEBUG] User IS admin of group (DB): ${group.id}`);
         return true;
       }
     }
+
+    // If not admin in DB, check LINE API for group admin status
+    if (groupId) {
+      console.log(`[DEBUG] Checking LINE API for admin status in group: ${groupId}`);
+      const lineProfile = await getGroupMemberProfile(groupId, userId);
+      
+      if (lineProfile.role === 'admin') {
+        console.log(`[INFO] User IS admin in LINE group: ${groupId}`);
+        
+        // Find the group in DB and add user as admin
+        const group = await groupService.getGroupById(groupId);
+        if (group) {
+          // Check if user is already a member
+          const isMember = await groupService.isMember(group.id, user.id);
+          if (!isMember) {
+            // Add user as admin member
+            await groupService.addMember(group.id, user.id, 'admin');
+            console.log(`[INFO] Added user ${userId} as admin to group ${group.id}`);
+          } else {
+            // Update existing member role to admin
+            await groupService.updateMemberRole(group.id, user.id, 'admin');
+            console.log(`[INFO] Updated user ${userId} to admin in group ${group.id}`);
+          }
+          return true;
+        }
+      }
+    }
+
     return false;
   } catch (error) {
     console.error(`[ERROR] Error in isUserAdmin:`, error);
@@ -271,7 +300,7 @@ async function handleMessageEvent(event: LineWebhookEvent): Promise<void> {
   console.log(`[INFO] Command received: ${command}, args: ${args.length}`);
 
   // Check if user is admin for admin commands
-  const isAdmin = await isUserAdmin(userId);
+  const isAdmin = await isUserAdmin(userId, groupId);
 
   // Determine language based on command keywords
   // Spanish commands

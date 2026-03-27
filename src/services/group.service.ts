@@ -1,6 +1,7 @@
 import prisma from '@/lib/db/prisma';
 import type { CreateGroupInput, UpdateGroupInput, Group, GroupMember, MemberRole, GameType, TacticName } from '@/types';
 import { AppError } from './user.service';
+import { getGroupMemberProfile } from '@/lib/line/client';
 
 export class GroupService {
   // ============================================
@@ -269,13 +270,33 @@ export class GroupService {
       return true;
     }
 
-    // If not in DB, try to get the group's lineGroupId and check LINE admin status
+    // If not in DB, check LINE API for group admin status
     const group = await this.getGroupById(groupId);
     if (group && group.lineGroupId) {
-      // User is considered admin if they're the one who set up the group
-      // LINE doesn't provide a direct API to check group admin status
-      // So we rely on the first user who executed !setup after bot joined
-      return false;
+      try {
+        console.log(`[DEBUG] Checking LINE API for admin status in group: ${group.lineGroupId}`);
+        const lineProfile = await getGroupMemberProfile(group.lineGroupId, userId);
+        
+        if (lineProfile.role === 'admin') {
+          console.log(`[INFO] User IS admin in LINE group: ${group.lineGroupId}`);
+          
+          // Check if user is already a member
+          const isMember = await this.isGroupMember(groupId, userId);
+          if (!isMember) {
+            // Add user as admin member
+            await this.addMemberToGroup(groupId, userId, 'admin');
+            console.log(`[INFO] Added user ${userId} as admin to group ${groupId}`);
+          } else {
+            // Update existing member role to admin
+            await this.updateMemberRole(groupId, userId, 'admin');
+            console.log(`[INFO] Updated user ${userId} to admin in group ${groupId}`);
+          }
+          return true;
+        }
+      } catch (error) {
+        console.error(`[ERROR] Error checking LINE admin status:`, error);
+        // Fall through to return false
+      }
     }
 
     return false;
