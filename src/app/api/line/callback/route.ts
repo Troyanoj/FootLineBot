@@ -213,8 +213,13 @@ async function handleJoinEvent(event: LineWebhookEvent): Promise<void> {
         logger.info(`[JoinEvent] Updated lineGroupId for existing group: ${existingGroup.id}`);
       }
     }
-  } catch (error) {
-    logger.error(`[JoinEvent] Error auto-registering group:`, error);
+  } catch (error: any) {
+    // Ignore duplicate group errors - this is expected if bot leaves/joins multiple times
+    if (error?.code === 'DUPLICATE_GROUP' || error?.message?.includes('already exists')) {
+      logger.debug(`[JoinEvent] Group already registered, ignoring duplicate`);
+    } else {
+      logger.error(`[JoinEvent] Error auto-registering group:`, error);
+    }
     // Don't fail the event - just log the error
   }
 }

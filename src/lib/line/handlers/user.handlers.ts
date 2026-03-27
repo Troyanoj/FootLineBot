@@ -13,7 +13,7 @@ import * as msgEn from '@/lib/line/messages.en';
 import type { User, Group, Event, Position } from '@/types';
 import prisma from '@/lib/db/prisma';
 import { isValidPosition, getPositionName, VALID_POSITIONS } from '@/lib/positions';
-import { logger, commandLogger } from '@/lib/logger';
+import { logger } from '@/lib/logger';
 
 const getMsg = (context: any) => {
   if (!context || !context.lang) {
