@@ -13,7 +13,7 @@ import type { LineWebhookBody, LineWebhookEvent } from '@/types';
 import * as msgTh from '@/lib/line/messages';
 import * as msgEs from '@/lib/line/messages.es';
 import * as msgEn from '@/lib/line/messages.en';
-import { logger, webhookLogger, commandLogger } from '@/lib/logger';
+
 
 // ============================================================================
 // Helper Functions
@@ -44,11 +44,11 @@ function parseCommand(text: string): { command: string; args: string[] } | null 
 /** Check if user is admin */
 async function isUserAdmin(userId: string): Promise<boolean> {
   try {
-    logger.debug(`Checking admin status for userId: ${userId}`);
+    console.log(`[DEBUG] Checking admin status for userId: ${userId}`);
     const user = await userService.findByLineUserId(userId);
 
     if (!user) {
-      logger.debug(`User not found in database for LINE userId: ${userId}`);
+      console.log(`[DEBUG] User not found in database for LINE userId: ${userId}`);
       return false;
     }
 
@@ -56,13 +56,13 @@ async function isUserAdmin(userId: string): Promise<boolean> {
     
     for (const group of groups) {
       if (await groupService.isAdmin(group.id, user.id)) {
-        logger.debug(`User IS admin of group: ${group.id}`);
+        console.log(`[DEBUG] User IS admin of group: ${group.id}`);
         return true;
       }
     }
     return false;
   } catch (error) {
-    logger.error(`Error in isUserAdmin:`, error);
+    console.error(`[ERROR] Error in isUserAdmin:`, error);
     return false;
   }
 }
@@ -80,24 +80,24 @@ async function ensureUserExists(lineUserId: string): Promise<void> {
         displayName: lineProfile.displayName,
         position1: 'CM',
       });
-      logger.info(`Created new user: ${lineUserId}`);
+      console.log(`[INFO] Created new user: ${lineUserId}`);
     }
   } catch (error) {
-    logger.error('Error ensuring user exists:', error);
+    console.error('[ERROR] Error ensuring user exists:', error);
   }
 }
 
 /** Send response to user via LINE */
 async function sendResponse(replyToken: string, result: HandlerResult): Promise<void> {
   try {
-    logger.debug(`Sending reply to LINE with token: ${replyToken?.substring(0, 10)}...`);
+    console.log(`[DEBUG] Sending reply to LINE with token: ${replyToken?.substring(0, 10)}...`);
     await replyMessage(replyToken, {
       type: 'text',
       text: result.message,
     });
-    logger.debug(`Reply sent successfully`);
+    console.log(`[DEBUG] Reply sent successfully`);
   } catch (error) {
-    logger.error('Error sending response:', error);
+    console.error('[ERROR] Error sending response:', error);
   }
 }
 
@@ -146,11 +146,11 @@ async function handleUnfollowEvent(event: LineWebhookEvent): Promise<void> {
 async function handleJoinEvent(event: LineWebhookEvent): Promise<void> {
   const groupId = event.source.groupId || event.source.roomId;
   if (!groupId) {
-    logger.debug('[JoinEvent] Bot joined but no groupId/roomId found');
+    console.log('[DEBUG] [JoinEvent] Bot joined but no groupId/roomId found');
     return;
   }
   
-  logger.info(`[JoinEvent] Bot joined group/room: ${groupId}`);
+  console.log(`[INFO] [JoinEvent] Bot joined group/room: ${groupId}`);
 
   // AUTO-REGISTER GROUP IN DATABASE
   try {
@@ -182,7 +182,7 @@ async function handleJoinEvent(event: LineWebhookEvent): Promise<void> {
         groupId    // lineGroupId for push notifications
       );
 
-      logger.info(`[JoinEvent] Auto-registered group: ${newGroup.id} (${newGroup.name}) with lineGroupId: ${groupId}`);
+      console.log(`[INFO] [JoinEvent] Auto-registered group: ${newGroup.id} (${newGroup.name}) with lineGroupId: ${groupId}`);
 
       // Send welcome message to the group using pushMessage
       try {
@@ -200,25 +200,25 @@ async function handleJoinEvent(event: LineWebhookEvent): Promise<void> {
 
         // Push message to the group
         await pushMessage(groupId, welcomeMessage);
-        logger.info(`[JoinEvent] Welcome message sent to group ${groupId}`);
+        console.log(`[INFO] [JoinEvent] Welcome message sent to group ${groupId}`);
       } catch (msgError) {
-        logger.error(`[JoinEvent] Failed to send welcome message:`, msgError);
+        console.error(`[ERROR] [JoinEvent] Failed to send welcome message:`, msgError);
       }
     } else {
-      logger.info(`[JoinEvent] Group already exists: ${existingGroup.name}`);
+      console.log(`[INFO] [JoinEvent] Group already exists: ${existingGroup.name}`);
       
       // Update lineGroupId if it's missing
       if (!existingGroup.lineGroupId) {
         await groupService.update(existingGroup.id, { lineGroupId: groupId });
-        logger.info(`[JoinEvent] Updated lineGroupId for existing group: ${existingGroup.id}`);
+        console.log(`[INFO] [JoinEvent] Updated lineGroupId for existing group: ${existingGroup.id}`);
       }
     }
   } catch (error: any) {
     // Ignore duplicate group errors - this is expected if bot leaves/joins multiple times
     if (error?.code === 'DUPLICATE_GROUP' || error?.message?.includes('already exists')) {
-      logger.debug(`[JoinEvent] Group already registered, ignoring duplicate`);
+      console.log(`[DEBUG] [JoinEvent] Group already registered, ignoring duplicate`);
     } else {
-      logger.error(`[JoinEvent] Error auto-registering group:`, error);
+      console.error(`[ERROR] [JoinEvent] Error auto-registering group:`, error);
     }
     // Don't fail the event - just log the error
   }
@@ -227,7 +227,7 @@ async function handleJoinEvent(event: LineWebhookEvent): Promise<void> {
 /** Handle leave event - bot removed from group/room */
 async function handleLeaveEvent(event: LineWebhookEvent): Promise<void> {
   const groupId = event.source.groupId || event.source.roomId;
-  logger.info(`Bot left group/room: ${groupId}`);
+  console.log(`[INFO] Bot left group/room: ${groupId}`);
 }
 
 /** Handle message event - process user commands */
@@ -235,15 +235,15 @@ async function handleMessageEvent(event: LineWebhookEvent): Promise<void> {
   const { source, message, replyToken } = event;
 
   // DEBUG: Log full source object to diagnose groupId issues
-  logger.info('=== WEBHOOK DEBUG ===');
-  logger.info('Source type:', event.source.type);
-  logger.info('Source groupId:', (event.source as any).groupId);
-  logger.info('Source roomId:', (event.source as any).roomId);
-  logger.info('Source userId:', event.source.userId);
-  logger.info('Reply token present:', !!replyToken);
+  console.log('[INFO] === WEBHOOK DEBUG ===');
+  console.log('[INFO] Source type:', event.source.type);
+  console.log('[INFO] Source groupId:', (event.source as any).groupId);
+  console.log('[INFO] Source roomId:', (event.source as any).roomId);
+  console.log('[INFO] Source userId:', event.source.userId);
+  console.log('[INFO] Reply token present:', !!replyToken);
 
   if (!source.userId || !message || message.type !== 'text' || !replyToken) {
-    logger.warn(`Missing required fields for message event`, {
+    console.warn(`[WARN] Missing required fields for message event`, {
       hasUserId: !!source.userId,
       hasMessage: !!message,
       messageType: message?.type,
@@ -256,19 +256,19 @@ async function handleMessageEvent(event: LineWebhookEvent): Promise<void> {
   const userId = source.userId;
   const groupId = source.groupId || source.roomId || undefined;
 
-  logger.debug(`Processing message: "${text.substring(0, 50)}" from userId: ${userId}`);
+  console.log(`[DEBUG] Processing message: "${text.substring(0, 50)}" from userId: ${userId}`);
 
   // Parse command from message
   const parsed = parseCommand(text);
 
   if (!parsed) {
     // Not a command - ignore the message completely
-    logger.debug(`Ignoring non-command message: "${text.substring(0, 50)}"`);
+    console.log(`[DEBUG] Ignoring non-command message: "${text.substring(0, 50)}"`);
     return;
   }
 
   const { command, args } = parsed;
-  logger.info(`Command received: ${command}, args: ${args.length}`);
+  console.log(`[INFO] Command received: ${command}, args: ${args.length}`);
 
   // Check if user is admin for admin commands
   const isAdmin = await isUserAdmin(userId);
@@ -328,7 +328,7 @@ async function handleMessageEvent(event: LineWebhookEvent): Promise<void> {
     'ลงทะเบียน', 'สมัคร', 'ยกเลิก'
   ];
 
-  logger.debug(`Language detected: ${lang}, isAdmin: ${isAdmin}, command: ${command}`);
+  console.log(`[DEBUG] Language detected: ${lang}, isAdmin: ${isAdmin}, command: ${command}`);
 
   let result: HandlerResult;
   
@@ -341,7 +341,7 @@ async function handleMessageEvent(event: LineWebhookEvent): Promise<void> {
         success: false,
         message: msgFile.adminRequiredMessage(),
       };
-      logger.warn(`Admin command ${command} rejected for non-admin user ${userId}`);
+      console.warn(`[WARN] Admin command ${command} rejected for non-admin user ${userId}`);
     } else {
       const context: HandlerContext & { lang: 'es' | 'en' | 'th' } = {
         userId,
@@ -363,7 +363,7 @@ async function handleMessageEvent(event: LineWebhookEvent): Promise<void> {
   }
 
   // Send response
-  logger.debug(`Sending response: success=${result.success}`);
+  console.log(`[DEBUG] Sending response: success=${result.success}`);
   await sendResponse(replyToken, result);
 }
 
@@ -379,7 +379,7 @@ async function handlePostbackEvent(event: LineWebhookEvent): Promise<void> {
   const userId = event.source.userId;
   const groupId = event.source.groupId || event.source.roomId || undefined;
 
-  logger.debug(`Received postback from ${userId}: ${data}`);
+  console.log(`[DEBUG] Received postback from ${userId}: ${data}`);
 
   // Parse postback data and handle accordingly
   try {
@@ -398,7 +398,7 @@ async function handlePostbackEvent(event: LineWebhookEvent): Promise<void> {
       await sendResponse(replyToken, result);
     }
   } catch (error) {
-    logger.error('Error handling postback:', error);
+    console.error('[ERROR] Error handling postback:', error);
   }
 }
 

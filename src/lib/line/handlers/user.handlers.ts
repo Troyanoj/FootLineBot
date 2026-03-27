@@ -13,7 +13,7 @@ import * as msgEn from '@/lib/line/messages.en';
 import type { User, Group, Event, Position } from '@/types';
 import prisma from '@/lib/db/prisma';
 import { isValidPosition, getPositionName, VALID_POSITIONS } from '@/lib/positions';
-import { logger } from '@/lib/logger';
+
 
 const getMsg = (context: any) => {
   if (!context || !context.lang) {
@@ -467,7 +467,7 @@ export async function handleUserCommand(
   args: string[],
   context: HandlerContext
 ): Promise<HandlerResult> {
-  logger.debug(`Received command: "${command}", args: ${JSON.stringify(args)}, lang: ${context.lang}`);
+  console.log(`[DEBUG] Received command: "${command}", args: ${JSON.stringify(args)}, lang: ${context.lang}`);
 
   const normalizedCommand = command.toLowerCase().replace(/^!/, '');
 
@@ -557,7 +557,7 @@ export async function handleUserCommand(
       return handleStart(context);
 
     default:
-      logger.warn(`Unknown command: "${normalizedCommand}"`);
+      console.warn(`[WARN] Unknown command: "${normalizedCommand}"`);
       return {
         success: false,
         message: getMsg(context).invalidCommandMessage(),
@@ -641,7 +641,7 @@ export async function handleRegisterGroup(context: HandlerContext): Promise<Hand
       message: getMsg(context).groupRegisteredMessage(group.name, group.id),
     };
   } catch (error) {
-    logger.error('Error in handleRegisterGroup:', error);
+    console.error('[ERROR] Error in handleRegisterGroup:', error);
     return {
       success: false,
       message: getMsg(context).errorMessage(),
