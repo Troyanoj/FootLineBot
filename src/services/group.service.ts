@@ -75,6 +75,20 @@ export class GroupService {
       });
     }
     
+    // If still not found, try by first 8 characters of internal ID
+    if (!group) {
+      group = await prisma.group.findFirst({
+        where: { id: { startsWith: id } },
+      });
+    }
+    
+    // If still not found, try by first 8 characters of lineGroupId
+    if (!group) {
+      group = await prisma.group.findFirst({
+        where: { lineGroupId: { startsWith: id } },
+      });
+    }
+    
     return group ? this.mapToGroup(group) : null;
   }
 

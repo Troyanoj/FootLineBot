@@ -837,8 +837,11 @@ export const groupsListMessage = (groups: Group[]): string => {
   }
   let msg = `📋 *กลุ่มที่คุณเข้าร่วม:*\n\n`;
   groups.forEach((g, i) => {
-    msg += `${i+1}. ${(g as any).name || 'กลุ่ม'} (ID: ${g.id.substring(0,8)})\n`;
+    // Show both internal ID and LINE group ID for easier joining
+    const lineId = (g as any).lineGroupId ? `(LINE: ${(g as any).lineGroupId.substring(0, 8)}...)` : '';
+    msg += `${i+1}. ${(g as any).name || 'กลุ่ม'} (ID: ${g.id.substring(0,8)}) ${lineId}\n`;
   });
+  msg += `\n💡 ใช้คำสั่ง !join [ID] เพื่อเข้าร่วม โดยใช้ ID ด้านบน`;
   return msg;
 };
 
