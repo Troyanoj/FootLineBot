@@ -404,7 +404,7 @@ export async function handleUnirse(context: HandlerContext, groupId: string): Pr
     }
     
     // Check if already a member
-    const isMember = await groupService.isMember(groupId, user.id);
+    const isMember = await groupService.isMember(group.id, user.id);
     if (isMember) {
       return {
         success: false,
@@ -412,15 +412,31 @@ export async function handleUnirse(context: HandlerContext, groupId: string): Pr
       };
     }
     
-    // Add user to group
-    await groupService.addMember(groupId, user.id, 'member');
+    // Add user to group using the actual group ID from database
+    await groupService.addMember(group.id, user.id, 'member');
     
     return {
       success: true,
       message: getMsg(context).joinedGroupMessage(group),
     };
-  } catch (error) {
-    console.error('Error in handleUnirse:', error);
+  } catch (error: any) {
+    console.error('[ERROR] Error in handleUnirse:', error);
+    
+    // Handle specific error cases
+    if (error?.statusCode === 404 || error?.code === 'GROUP_NOT_FOUND') {
+      return {
+        success: false,
+        message: getMsg(context).groupNotFoundMessage(groupId),
+      };
+    }
+    
+    if (error?.code === 'ALREADY_MEMBER' || error?.message?.includes('already a member')) {
+      return {
+        success: false,
+        message: 'ℹ️ *Ya eres miembro de este grupo*',
+      };
+    }
+    
     return {
       success: false,
       message: getMsg(context).errorMessage(),
