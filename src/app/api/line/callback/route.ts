@@ -229,8 +229,21 @@ async function handleLeaveEvent(event: LineWebhookEvent): Promise<void> {
 async function handleMessageEvent(event: LineWebhookEvent): Promise<void> {
   const { source, message, replyToken } = event;
 
+  // DEBUG: Log full source object to diagnose groupId issues
+  logger.info('=== WEBHOOK DEBUG ===');
+  logger.info('Source type:', event.source.type);
+  logger.info('Source groupId:', (event.source as any).groupId);
+  logger.info('Source roomId:', (event.source as any).roomId);
+  logger.info('Source userId:', event.source.userId);
+  logger.info('Reply token present:', !!replyToken);
+
   if (!source.userId || !message || message.type !== 'text' || !replyToken) {
-    logger.debug(`Missing required fields for message event`);
+    logger.warn(`Missing required fields for message event`, {
+      hasUserId: !!source.userId,
+      hasMessage: !!message,
+      messageType: message?.type,
+      hasReplyToken: !!replyToken,
+    });
     return;
   }
 

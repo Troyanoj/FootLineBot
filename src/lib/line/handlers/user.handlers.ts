@@ -381,14 +381,25 @@ export async function handleUnirse(context: HandlerContext, groupId: string): Pr
     
     // Get or create user
     const user = await getOrCreateUser(context.userId);
-    
-    // Check if group exists
+
+    // Check if group exists (supports both internal ID and LINE group ID)
     const group = await groupService.findById(groupId);
-    
+
     if (!group) {
+      // Get user's groups to show available options
+      const userGroups = await groupService.getByUserId(user.id);
+      
+      let helpText = '';
+      if (userGroups.length > 0) {
+        helpText = `\n\n📋 *Tus grupos disponibles:*\n` + 
+          userGroups.map((g, i) => `${i + 1}. ${g.name} (ID: ${g.id.substring(0, 8)})`).join('\n');
+      } else {
+        helpText = `\n\n💡 *Consejo:* Usa !groups_list para ver tus grupos disponibles.`;
+      }
+      
       return {
         success: false,
-        message: getMsg(context).groupNotFoundMessage(groupId),
+        message: getMsg(context).groupNotFoundMessage(groupId) + helpText,
       };
     }
     
@@ -463,14 +474,29 @@ export async function handleUserCommand(
   switch (normalizedCommand) {
     // ============================================================
     // EVENT REGISTRATION COMMANDS (All users, NOT admin-only)
+    // IMPORTANT: !register is for EVENT registration, NOT group setup
     // ============================================================
     case 'apuntar':
     case 'inscribirme':
-    case 'register':
+    case 'register':  // This is for EVENT registration (English)
     case 'ลงทะเบียน':
     case 'สมัคร':
       return handleApuntar(context);
 
+    // ============================================================
+    // GROUP SETUP COMMANDS (Admin-only, for registering group)
+    // ============================================================
+    case 'setup':
+    case 'config_group':
+    case 'iniciar':
+    case 'iniciar_grupo':
+    case 'เริ่มต้น':
+    case 'ลงทะเบียนกลุ่ม':
+      return handleRegisterGroup(context);
+
+    // ============================================================
+    // UNREGISTER COMMANDS
+    // ============================================================
     case 'baja':
     case 'desinscribirme':
     case 'unregister':
@@ -527,19 +553,8 @@ export async function handleUserCommand(
       return handleAyuda(context);
 
     case 'start':
-    case 'iniciar':
     case 'เริ่ม':
       return handleStart(context);
-
-    // ============================================================
-    // GROUP REGISTRATION (Admin-only, but handled here for setup)
-    // ============================================================
-    case 'setup':
-    case 'config_group':
-    case 'iniciar':
-    case 'เริ่มต้น':
-    case 'ลงทะเบียนกลุ่ม':
-      return handleRegisterGroup(context);
 
     default:
       logger.warn(`Unknown command: "${normalizedCommand}"`);

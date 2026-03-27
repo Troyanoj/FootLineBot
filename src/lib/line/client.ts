@@ -138,7 +138,7 @@ export async function broadcastMessage(
   await getLineClient().broadcast(Array.isArray(messages) ? messages : [messages]);
 }
 
-// Get user profile with comprehensive error handling
+// Get user profile with comprehensive error handling and logging
 export async function getUserProfile(userId: string): Promise<{
   displayName: string;
   userId: string;
@@ -146,12 +146,26 @@ export async function getUserProfile(userId: string): Promise<{
   statusMessage?: string;
 }> {
   try {
-    return await getLineClient().getProfile(userId);
+    logger.info(`[getUserProfile] Fetching profile for userId: ${userId}`);
+    const profile = await getLineClient().getProfile(userId);
+    logger.info(`[getUserProfile] Successfully fetched profile: ${profile.displayName}`);
+    return profile;
   } catch (error: any) {
+    // Detailed error logging for diagnosis
+    const errorDetails = {
+      userId,
+      message: error?.message || 'Unknown error',
+      status: error?.status,
+      statusCode: error?.statusCode,
+      code: error?.code,
+      details: error?.details,
+      timestamp: new Date().toISOString(),
+    };
+
     // Handle 404 - User not found in LINE API
     const is404 = error.status === 404 || error.statusCode === 404;
     if (is404) {
-      console.warn(`[UserProfile] User ${userId} not found in LINE API (404) - using default profile`);
+      logger.warn(`[getUserProfile] User not found in LINE API (404): ${userId}`);
       return {
         displayName: 'Unknown User',
         userId: userId,
@@ -163,28 +177,21 @@ export async function getUserProfile(userId: string): Promise<{
     // Handle 401 - Invalid/expired access token
     const is401 = error.status === 401 || error.statusCode === 401;
     if (is401) {
-      console.error(`[UserProfile] LINE API authentication failed (401) for user ${userId}. Token may be expired. Attempting refresh...`);
-      
-      // Try to refresh the token
-      try {
-        refreshLineClient();
-        // Retry once with new token
-        return await getLineClient().getProfile(userId);
-      } catch (retryError: any) {
-        console.error(`[UserProfile] Retry also failed: ${retryError.message}`);
-        return {
-          displayName: 'Unknown User',
-          userId: userId,
-          pictureUrl: undefined,
-          statusMessage: undefined,
-        };
-      }
+      logger.error(`[getUserProfile] LINE API authentication failed (401) for user ${userId}. Check LINE_ACCESS_TOKEN in Vercel.`);
+      logger.error(`[getUserProfile] Error details:`, errorDetails);
+      return {
+        displayName: 'Unknown User',
+        userId: userId,
+        pictureUrl: undefined,
+        statusMessage: undefined,
+      };
     }
 
     // Handle 403 - Insufficient permissions
     const is403 = error.status === 403 || error.statusCode === 403;
     if (is403) {
-      console.warn(`[UserProfile] LINE API permission denied (403) for user ${userId}. Bot may not have profile permission in this context.`);
+      logger.error(`[getUserProfile] LINE API permission denied (403) for user ${userId}. Bot may not have profile permission.`);
+      logger.error(`[getUserProfile] Error details:`, errorDetails);
       return {
         displayName: 'Unknown User',
         userId: userId,
@@ -194,13 +201,13 @@ export async function getUserProfile(userId: string): Promise<{
     }
 
     // Handle timeout and network errors
-    const isNetworkError = error.code === 'ETIMEDOUT' || 
-                           error.code === 'ECONNRESET' || 
+    const isNetworkError = error.code === 'ETIMEDOUT' ||
+                           error.code === 'ECONNRESET' ||
                            error.code === 'ECONNREFUSED' ||
                            error.message?.includes('timeout') ||
                            error.message?.includes('network');
     if (isNetworkError) {
-      console.warn(`[UserProfile] Network error for user ${userId}: ${error.message} - using default profile`);
+      logger.warn(`[getUserProfile] Network error for user ${userId}: ${error.message}`);
       return {
         displayName: 'Unknown User',
         userId: userId,
@@ -212,7 +219,7 @@ export async function getUserProfile(userId: string): Promise<{
     // Handle rate limiting (429)
     const is429 = error.status === 429 || error.statusCode === 429;
     if (is429) {
-      console.warn(`[UserProfile] LINE API rate limited (429) for user ${userId} - using default profile`);
+      logger.warn(`[getUserProfile] LINE API rate limited (429) for user ${userId}`);
       return {
         displayName: 'Unknown User',
         userId: userId,
@@ -221,13 +228,8 @@ export async function getUserProfile(userId: string): Promise<{
       };
     }
 
-    // For any other error, log details and return default profile instead of throwing
-    console.error(`[UserProfile] Unexpected error for user ${userId}:`, {
-      message: error?.message || 'Unknown error',
-      status: error?.status,
-      statusCode: error?.statusCode,
-      code: error?.code,
-    });
+    // For any other error, log full details and return default profile
+    logger.error(`[getUserProfile] Unexpected error for user ${userId}:`, errorDetails);
 
     // Return default profile for any unhandled error to ensure the bot continues working
     return {
