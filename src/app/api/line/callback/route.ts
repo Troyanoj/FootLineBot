@@ -339,12 +339,17 @@ async function handleMessageEvent(event: LineWebhookEvent): Promise<void> {
   const adminCommands = [
     // Spanish
     'crear_evento', 'configurar', 'tactica', 'táctica', 'generar', 'cerrar', 'borrar_evento', 'expulsar',
-    'recurrente', 'borrar_grupo', 'iniciar', 'setup', 'config_group',
+    'recurrente', 'borrar_grupo',
     // English
     'create_event', 'config', 'tactics', 'generate', 'close', 'delete_event', 'kick',
     'recurring', 'recurring_events', 'delete_group', 'delete-group',
     // Thai
-    'สร้าง', 'ตั้งค่า', 'จัดทีม', 'ปิด', 'ลบ', 'ลบกลุ่ม', 'เริ่มต้น'
+    'สร้าง', 'ตั้งค่า', 'กลยุทธ์', 'ปิด', 'ลบ', 'ลบกลุ่ม', 'เริ่มต้น'
+  ];
+
+  // Group setup commands - These should NOT require admin status because they're used to CLAIM admin rights
+  const groupSetupCommands = [
+    'setup', 'config_group', 'iniciar', 'iniciar_grupo', 'เริ่มต้น', 'ลงทะเบียนกลุ่ม'
   ];
 
   // User commands for registering to events (NOT admin-only)
@@ -361,8 +366,19 @@ async function handleMessageEvent(event: LineWebhookEvent): Promise<void> {
 
   let result: HandlerResult;
   
-  // Check if it's an admin command AND not a user event command
-  if (adminCommands.includes(command) && !userEventCommands.includes(command)) {
+  // Check if it's a group setup command - these should NOT require admin status initially
+  // because they're used to CLAIM admin rights
+  if (groupSetupCommands.includes(command)) {
+    // For group setup commands, we still check LINE API to see if user is actually admin in the group
+    // If they are, we grant them admin rights
+    const context: HandlerContext & { lang: 'es' | 'en' | 'th' } = {
+      userId,
+      groupId,
+      replyToken,
+      lang,
+    };
+    result = await handleUserCommand(command, args, context as any);
+  } else if (adminCommands.includes(command) && !userEventCommands.includes(command)) {
     // Handle admin command
     if (!isAdmin) {
       const msgFile = lang === 'es' ? msgEs : (lang === 'en' ? msgEn : msgTh);
