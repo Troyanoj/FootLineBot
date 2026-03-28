@@ -316,21 +316,47 @@ export class GroupService {
     return false;
   }
 
-  /**
-   * Check if user is member of group
-   */
-  async isGroupMember(groupId: string, userId: string): Promise<boolean> {
-    const membership = await prisma.groupMember.findUnique({
+/**
+ * Check if user is member of group
+ */
+async isGroupMember(groupId: string, userId: string): Promise<boolean> {
+  // First try to find by internal ID and user ID
+  let membership = await prisma.groupMember.findUnique({
+    where: {
+      groupId_userId: {
+        groupId,
+        userId,
+      },
+    },
+  });
+  
+  if (membership) {
+    return true;
+  }
+  
+  // If not found, try to find by lineGroupId and user ID
+  // First, get the group by its lineGroupId to get the internal ID
+  const group = await prisma.group.findFirst({
+    where: {
+      lineGroupId: groupId,
+    },
+  });
+  
+  if (group) {
+    membership = await prisma.groupMember.findUnique({
       where: {
         groupId_userId: {
-          groupId,
+          groupId: group.id,
           userId,
         },
       },
     });
-
+    
     return !!membership;
   }
+  
+  return false;
+}
 
   /**
    * Update group tactics

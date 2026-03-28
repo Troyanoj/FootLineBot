@@ -28,10 +28,12 @@ function parseCommand(text: string): { command: string; args: string[] } | null 
     return null;
   }
 
-  const withoutPrefix = trimmed.replace(commandPrefix, '');
-  const parts = withoutPrefix.split(/\s+/);
+  const withoutPrefix = trimmed.replace(commandPrefix, '').trim();
+  // Remove zero-width characters and other invisible formatting characters that can cause comparison issues
+  const cleaned = withoutPrefix.replace(/[\u200B-\u200D\uFEFF]/g, '');
+  const parts = cleaned.split(/\s+/).filter(part => part.length > 0);
 
-  if (parts.length === 0 || !parts[0]) {
+  if (parts.length === 0) {
     return null;
   }
 
@@ -117,16 +119,39 @@ async function ensureUserExists(lineUserId: string): Promise<void> {
 }
 
 /** Send response to user via LINE */
-async function sendResponse(replyToken: string, result: HandlerResult): Promise<void> {
+async function sendResponse(
+  replyToken: string, 
+  result: HandlerResult,
+  context?: { 
+    userId?: string; 
+    groupId?: string; 
+    isAdmin?: boolean; 
+    lang?: 'es' | 'en' | 'th'
+  }
+): Promise<void> {
   try {
-    console.log(`[DEBUG] Sending reply to LINE with token: ${replyToken?.substring(0, 10)}...`);
+    const userType = context?.isAdmin ? 'admin' : (context?.userId ? 'normal' : 'unknown');
+    const chatType = context?.groupId ? 'group' : '1:1';
+    const userId = context?.userId || 'unknown';
+    
+    console.log(`[DEBUG] Sending reply to LINE [${userType}|${chatType}|${userId.substring(0, 8)}...] with token: ${replyToken?.substring(0, 10)}...`);
     await replyMessage(replyToken, {
       type: 'text',
       text: result.message,
     });
-    console.log(`[DEBUG] Reply sent successfully`);
+    console.log(`[DEBUG] Reply sent successfully [${userType}|${chatType}|${userId}]`);
   } catch (error) {
-    console.error('[ERROR] Error sending response:', error);
+    const userType = context?.isAdmin ? 'admin' : (context?.userId ? 'normal' : 'unknown');
+    const chatType = context?.groupId ? 'group' : '1:1';
+    const userId = context?.userId || 'unknown';
+    
+    console.error(`[ERROR] Failed to send response [${userType}|${chatType}|${userId}]:`, {
+      error: error?.message || 'Unknown error',
+      status: error?.status,
+      statusCode: error?.statusCode,
+      code: error?.code,
+      timestamp: new Date().toISOString()
+    });
   }
 }
 
@@ -285,6 +310,27 @@ async function handleMessageEvent(event: LineWebhookEvent): Promise<void> {
   const userId = source.userId;
   const groupId = source.groupId || source.roomId || undefined;
 
+  // Auto-add user as group member if they're sending a message in a group
+  // and the group exists in our database but they're not yet a member
+  if (groupId) {
+    try {
+      // Check if group exists in our database
+      const group = await groupService.getGroupById(groupId);
+      if (group) {
+        // Check if user is already a member of this group
+        const isMember = await groupService.isMember(groupId, userId);
+        if (!isMember) {
+          // Add user as a regular member
+          await groupService.addMember(groupId, userId, 'member');
+          console.log(`[INFO] Auto-added user ${userId} as member to group ${groupId}`);
+        }
+      }
+    } catch (error) {
+      console.error(`[ERROR] Failed to auto-add user to group:`, error);
+      // Continue processing even if this fails
+    }
+  }
+
   console.log(`[DEBUG] Processing message: "${text.substring(0, 50)}" from userId: ${userId}`);
 
   // Parse command from message
@@ -364,6 +410,14 @@ async function handleMessageEvent(event: LineWebhookEvent): Promise<void> {
 
   console.log(`[DEBUG] Language detected: ${lang}, isAdmin: ${isAdmin}, command: ${command}`);
 
+  // Initialize context that will be used throughout the function
+  const context: HandlerContext & { lang: 'es' | 'en' | 'th' } = {
+    userId,
+    groupId,
+    replyToken,
+    lang,
+  };
+  
   let result: HandlerResult;
   
   // Check if it's a group setup command - these should NOT require admin status initially
@@ -371,13 +425,7 @@ async function handleMessageEvent(event: LineWebhookEvent): Promise<void> {
   if (groupSetupCommands.includes(command)) {
     // For group setup commands, we still check LINE API to see if user is actually admin in the group
     // If they are, we grant them admin rights
-    const context: HandlerContext & { lang: 'es' | 'en' | 'th' } = {
-      userId,
-      groupId,
-      replyToken,
-      lang,
-    };
-    result = await handleUserCommand(command, args, context as any);
+    result = await handleUserCommand(command, args, context);
   } else if (adminCommands.includes(command) && !userEventCommands.includes(command)) {
     // Handle admin command
     if (!isAdmin) {
@@ -388,28 +436,16 @@ async function handleMessageEvent(event: LineWebhookEvent): Promise<void> {
       };
       console.warn(`[WARN] Admin command ${command} rejected for non-admin user ${userId}`);
     } else {
-      const context: HandlerContext & { lang: 'es' | 'en' | 'th' } = {
-        userId,
-        groupId,
-        replyToken,
-        lang,
-      };
-      result = await handleAdminCommand(command, args, context as any);
+      result = await handleAdminCommand(command, args, context);
     }
   } else {
     // Handle user command (including event registration)
-    const context: HandlerContext & { lang: 'es' | 'en' | 'th' } = {
-      userId,
-      groupId,
-      replyToken,
-      lang,
-    };
-    result = await handleUserCommand(command, args, context as any);
+    result = await handleUserCommand(command, args, context);
   }
 
   // Send response
   console.log(`[DEBUG] Sending response: success=${result.success}`);
-  await sendResponse(replyToken, result);
+  await sendResponse(replyToken, result, context);
 }
 
 /** Handle postback event - process quick reply actions */
@@ -440,7 +476,7 @@ async function handlePostbackEvent(event: LineWebhookEvent): Promise<void> {
         lang: 'th', // Default to Thai for postbacks
       };
       const result = await handleUserCommand('register', [], context);
-      await sendResponse(replyToken, result);
+      await sendResponse(replyToken, result, context);
     }
   } catch (error) {
     console.error('[ERROR] Error handling postback:', error);
