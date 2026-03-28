@@ -153,22 +153,15 @@ export class GroupService {
     role: MemberRole = 'member'
   ): Promise<GroupMember> {
     try {
-      // Verify group exists (supports both internal ID and LINE group ID)
-      let group = await prisma.group.findUnique({
+      // Verify group exists
+      const group = await prisma.group.findUnique({
         where: { id: groupId },
       });
-      
-      // If not found by internal ID, try to find by LINE group ID
-      if (!group) {
-        group = await prisma.group.findUnique({
-          where: { lineGroupId: groupId },
-        });
-      }
 
       if (!group) {
         throw new AppError('Group not found', 404, 'GROUP_NOT_FOUND');
       }
-      
+
       // Verify user exists
       const user = await prisma.user.findUnique({
         where: { id: userId },
@@ -180,7 +173,7 @@ export class GroupService {
 
       const membership = await prisma.groupMember.create({
         data: {
-          groupId: group.id, // Use the internal group ID for the relationship
+          groupId,
           userId,
           role,
         },
@@ -270,7 +263,7 @@ export class GroupService {
         },
       },
     });
-    
+
     return group?.admin || null;
   }
 
@@ -323,47 +316,47 @@ export class GroupService {
     return false;
   }
 
-  /**
-   * Check if user is member of group
-   */
-  async isGroupMember(groupId: string, userId: string): Promise<boolean> {
-    // First try to find by internal ID and user ID
-    let membership = await prisma.groupMember.findUnique({
+/**
+ * Check if user is member of group
+ */
+async isGroupMember(groupId: string, userId: string): Promise<boolean> {
+  // First try to find by internal ID and user ID
+  let membership = await prisma.groupMember.findUnique({
+    where: {
+      groupId_userId: {
+        groupId,
+        userId,
+      },
+    },
+  });
+  
+  if (membership) {
+    return true;
+  }
+  
+  // If not found, try to find by lineGroupId and user ID
+  // First, get the group by its lineGroupId to get the internal ID
+  const group = await prisma.group.findFirst({
+    where: {
+      lineGroupId: groupId,
+    },
+  });
+  
+  if (group) {
+    membership = await prisma.groupMember.findUnique({
       where: {
         groupId_userId: {
-          groupId,
+          groupId: group.id,
           userId,
         },
       },
     });
     
-    if (membership) {
-      return true;
-    }
-    
-    // If not found, try to find by lineGroupId and user ID
-    // First, get the group by its lineGroupId to get the internal ID
-    const group = await prisma.group.findFirst({
-      where: {
-        lineGroupId: groupId,
-      },
-    });
-    
-    if (group) {
-      membership = await prisma.groupMember.findUnique({
-        where: {
-          groupId_userId: {
-            groupId: group.id,
-            userId,
-          },
-        },
-      });
-      
-      return !!membership;
-    }
-    
-    return false;
+    return !!membership;
   }
+  
+  return false;
+}
 
   /**
    * Update group tactics
@@ -438,7 +431,7 @@ export class GroupService {
       id: group.id,
       name: group.name,
       country: group.country || undefined,
-      defaultGameType: group.defaultGameType as GameType | undefined,
+      defaultGameType: group.defaultGameType as GameType || undefined,
       tactics,
       memberCount: group._count.members,
       adminId: group.adminUserId || undefined,
