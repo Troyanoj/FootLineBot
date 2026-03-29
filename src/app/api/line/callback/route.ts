@@ -326,6 +326,9 @@ async function handleMessageEvent(event: LineWebhookEvent): Promise<void> {
         console.log(`[INFO] Created new user: ${userId}`);
       }
       
+      // Use internal user ID for group operations
+      const internalUserId = user.id;
+      
       // Check if group exists in our database
       const existingGroup = await groupService.getGroupById(groupId);
       
@@ -377,10 +380,10 @@ async function handleMessageEvent(event: LineWebhookEvent): Promise<void> {
         }
       } else {
         // Group exists, check if user is already a member
-        const isMember = await groupService.isMember(groupId, userId);
+        const isMember = await groupService.isMember(groupId, internalUserId);
         if (!isMember) {
           // Add user as a regular member
-          await groupService.addMember(existingGroup.id, userId, 'member');
+          await groupService.addMember(existingGroup.id, internalUserId, 'member');
           console.log(`[INFO] Auto-added user ${userId} as member to group ${groupId}`);
         }
       }

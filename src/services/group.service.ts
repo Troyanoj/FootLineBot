@@ -289,7 +289,16 @@ export class GroupService {
     if (group && group.lineGroupId) {
       try {
         console.log(`[DEBUG] Checking LINE API for admin status in group: ${group.lineGroupId}`);
-        const lineProfile = await getGroupMemberProfile(group.lineGroupId, userId);
+        // Get the user's LINE ID from the database
+        const user = await prisma.user.findUnique({
+          where: { id: userId },
+        });
+        
+        if (!user) {
+          throw new Error('User not found');
+        }
+        
+        const lineProfile = await getGroupMemberProfile(group.lineGroupId, user.lineUserId);
         
         if (lineProfile.role === 'admin') {
           console.log(`[INFO] User IS admin in LINE group: ${group.lineGroupId}`);
