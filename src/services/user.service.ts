@@ -65,15 +65,32 @@ export class UserService {
  */
 async updateUser(id: string, data: UpdateUserInput): Promise<User> {
   try {
+    // Only update fields that are provided (not undefined)
+    const updateData: Prisma.UserUpdateInput = {};
+    
+    if (data.email !== undefined) {
+      updateData.email = data.email;
+    }
+    
+    if (data.displayName !== undefined) {
+      updateData.displayName = data.displayName;
+    }
+    
+    if (data.position1 !== undefined) {
+      updateData.position1 = data.position1;
+    }
+    
+    if (data.position2 !== undefined) {
+      updateData.position2 = data.position2;
+    }
+    
+    if (data.position3 !== undefined) {
+      updateData.position3 = data.position3;
+    }
+    
     const user = await prisma.user.update({
       where: { id },
-      data: {
-        email: data.email,
-        displayName: data.displayName,
-        position1: data.position1,
-        position2: data.position2,
-        position3: data.position3,
-      },
+      data: updateData,
     });
     return this.mapToUser(user);
   } catch (error: unknown) {
