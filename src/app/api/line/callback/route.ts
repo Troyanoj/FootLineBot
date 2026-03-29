@@ -314,6 +314,18 @@ async function handleMessageEvent(event: LineWebhookEvent): Promise<void> {
   // AND AUTO-ADD USER AS MEMBER IF NEEDED
   if (groupId) {
     try {
+      // First, ensure the user exists in our database
+      let user = await userService.findByLineUserId(userId);
+      if (!user) {
+        const lineProfile = await getUserProfile(userId);
+        user = await userService.create({
+          lineUserId: userId,
+          displayName: lineProfile.displayName,
+          position1: 'CM', // Default position
+        });
+        console.log(`[INFO] Created new user: ${userId}`);
+      }
+      
       // Check if group exists in our database
       const existingGroup = await groupService.getGroupById(groupId);
       
@@ -329,7 +341,7 @@ async function handleMessageEvent(event: LineWebhookEvent): Promise<void> {
             position1: 'CM',
           });
         }
-
+        
         // Create the group with system placeholder as temporary admin
         const autoGroupName = `Football Group ${groupId.substring(0, 8)}`;
         const newGroup = await groupService.createGroup(
@@ -340,7 +352,7 @@ async function handleMessageEvent(event: LineWebhookEvent): Promise<void> {
           undefined, // internal id (uuid will be generated)
           groupId    // lineGroupId for push notifications
         );
-
+        
         console.log(`[INFO] [MessageEvent] Auto-created group: ${newGroup.id} (${newGroup.name}) with lineGroupId: ${groupId}`);
         
         // Send welcome message to the group using pushMessage
@@ -356,22 +368,22 @@ async function handleMessageEvent(event: LineWebhookEvent): Promise<void> {
                   `4. Players: Use !register to sign up\n\n` +
                   `Type !help for all commands.`,
           };
-
+          
           // Push message to the group
           await pushMessage(groupId, welcomeMessage);
           console.log(`[INFO] [MessageEvent] Welcome message sent to group ${groupId}`);
         } catch (msgError) {
           console.error(`[ERROR] [MessageEvent] Failed to send welcome message:`, msgError);
         }
-  } else {
-    // Group exists, check if user is already a member
-    const isMember = await groupService.isMember(groupId, userId);
-    if (!isMember) {
-      // Add user as a regular member
-      await groupService.addMember(existingGroup.id, userId, 'member');
-      console.log(`[INFO] Auto-added user ${userId} as member to group ${groupId}`);
-    }
-  }
+      } else {
+        // Group exists, check if user is already a member
+        const isMember = await groupService.isMember(groupId, userId);
+        if (!isMember) {
+          // Add user as a regular member
+          await groupService.addMember(existingGroup.id, userId, 'member');
+          console.log(`[INFO] Auto-added user ${userId} as member to group ${groupId}`);
+        }
+      }
     } catch (error) {
       console.error(`[ERROR] Failed to ensure group exists or add user as member:`, error);
       // Continue processing even if this fails
