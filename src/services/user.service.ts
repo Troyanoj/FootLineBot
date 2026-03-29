@@ -139,30 +139,40 @@ async updateUser(id: string, data: UpdateUserInput): Promise<User> {
     };
   }
 
-  /**
-   * Update position preferences
-   */
-  async updatePositions(
-    id: string,
-    positions: [Position, Position?, Position?]
-  ): Promise<User> {
-    try {
-      const user = await prisma.user.update({
-        where: { id },
-        data: {
-          position1: positions[0],
-          position2: positions[1] || null,
-          position3: positions[2] || null,
-        },
-      });
-      return this.mapToUser(user);
-    } catch (error: unknown) {
-      if (error instanceof Error && 'code' in error && error.code === 'P2025') {
-        throw new AppError('User not found', 404, 'USER_NOT_FOUND');
-      }
-      throw new AppError('Failed to update positions', 500);
+/**
+ * Update position preferences
+ */
+async updatePositions(
+  id: string,
+  positions: [Position, Position?, Position?]
+): Promise<User> {
+  try {
+    // First get the current user to preserve other fields like displayName
+    const currentUser = await prisma.user.findUnique({
+      where: { id },
+    });
+
+    if (!currentUser) {
+      throw new AppError('User not found', 404, 'USER_NOT_FOUND');
     }
+
+    // Only update the position fields, preserving everything else
+    const user = await prisma.user.update({
+      where: { id },
+      data: {
+        position1: positions[0],
+        position2: positions[1] || null,
+        position3: positions[2] || null,
+      },
+    });
+    return this.mapToUser(user);
+  } catch (error: unknown) {
+    if (error instanceof Error && 'code' in error && error.code === 'P2025') {
+      throw new AppError('User not found', 404, 'USER_NOT_FOUND');
+    }
+    throw new AppError('Failed to update positions', 500);
   }
+}
 
   /**
    * Get multiple users by IDs
