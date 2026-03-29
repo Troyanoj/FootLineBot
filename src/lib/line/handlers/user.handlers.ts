@@ -71,7 +71,7 @@ async function getOrCreateUser(lineUserId: string): Promise<User> {
       // If user doesn't exist and we can't get LINE profile, create with default name
       user = await userService.create({
         lineUserId,
-        displayName: 'Unknown User', // Fallback name
+        displayName: "", // Empty string instead of 'Unknown User'
         position1: 'CM', // Default position
       });
     }
