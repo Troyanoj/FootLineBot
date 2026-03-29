@@ -382,8 +382,8 @@ async function handleMessageEvent(event: LineWebhookEvent): Promise<void> {
         // Group exists, check if user is already a member
         const isMember = await groupService.isMember(groupId, internalUserId);
         if (!isMember) {
-          // Add user as a regular member
-          await groupService.addMember(existingGroup.id, internalUserId, 'member');
+          // Add user as a regular member (skip user check since we already verified the user exists)
+          await groupService.addMemberToGroup(existingGroup.id, internalUserId, 'member', true);
           console.log(`[INFO] Auto-added user ${userId} as member to group ${groupId}`);
         }
       }

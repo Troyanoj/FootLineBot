@@ -150,7 +150,8 @@ export class GroupService {
   async addMemberToGroup(
     groupId: string,
     userId: string,
-    role: MemberRole = 'member'
+    role: MemberRole = 'member',
+    skipUserCheck: boolean = false
   ): Promise<GroupMember> {
     try {
       // Verify group exists
@@ -162,13 +163,15 @@ export class GroupService {
         throw new AppError('Group not found', 404, 'GROUP_NOT_FOUND');
       }
 
-      // Verify user exists
-      const user = await prisma.user.findUnique({
-        where: { id: userId },
-      });
+      // Verify user exists (unless skipped)
+      if (!skipUserCheck) {
+        const user = await prisma.user.findUnique({
+          where: { id: userId },
+        });
 
-      if (!user) {
-        throw new AppError('User not found', 404, 'USER_NOT_FOUND');
+        if (!user) {
+          throw new AppError('User not found', 404, 'USER_NOT_FOUND');
+        }
       }
 
       const membership = await prisma.groupMember.create({
