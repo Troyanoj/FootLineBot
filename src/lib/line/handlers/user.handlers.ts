@@ -46,16 +46,36 @@ export interface HandlerResult {
 async function getOrCreateUser(lineUserId: string): Promise<User> {
   let user = await userService.findByLineUserId(lineUserId);
   
-  if (!user) {
-    // Get LINE profile
+  try {
+    // Get the current LINE profile to ensure we have the latest display name
     const lineProfile = await getUserProfile(lineUserId);
     
-    // Create user with default values
-    user = await userService.create({
-      lineUserId,
-      displayName: lineProfile.displayName,
-      position1: 'CM', // Default position
-    });
+    if (!user) {
+      // Create new user with LINE profile data
+      user = await userService.create({
+        lineUserId,
+        displayName: lineProfile.displayName,
+        position1: 'CM', // Default position
+      });
+    } else if (user.displayName !== lineProfile.displayName) {
+      // Update display name if it has changed
+      await userService.update(user.id, {
+        displayName: lineProfile.displayName
+      });
+      // Refresh the user object
+      user = await userService.findByLineUserId(lineUserId);
+    }
+  } catch (error) {
+    // If we can't get the LINE profile, use existing user data or create with default
+    if (!user) {
+      // If user doesn't exist and we can't get LINE profile, create with default name
+      user = await userService.create({
+        lineUserId,
+        displayName: 'Unknown User', // Fallback name
+        position1: 'CM', // Default position
+      });
+    }
+    // If user exists but we can't get LINE profile, we keep the existing data
   }
   
   return user;

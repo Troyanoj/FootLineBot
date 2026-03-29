@@ -48,6 +48,7 @@ export interface CreateUserInput {
 
 export interface UpdateUserInput {
   email?: string;
+  displayName?: string;
   position1?: Position;
   position2?: Position;
   position3?: Position;

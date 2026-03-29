@@ -60,28 +60,29 @@ export class UserService {
     return user ? this.mapToUser(user) : null;
   }
 
-  /**
-   * Update user profile
-   */
-  async updateUser(id: string, data: UpdateUserInput): Promise<User> {
-    try {
-      const user = await prisma.user.update({
-        where: { id },
-        data: {
-          email: data.email,
-          position1: data.position1,
-          position2: data.position2,
-          position3: data.position3,
-        },
-      });
-      return this.mapToUser(user);
-    } catch (error: unknown) {
-      if (error instanceof Error && 'code' in error && error.code === 'P2025') {
-        throw new AppError('User not found', 404, 'USER_NOT_FOUND');
-      }
-      throw new AppError('Failed to update user', 500);
+/**
+ * Update user profile
+ */
+async updateUser(id: string, data: UpdateUserInput): Promise<User> {
+  try {
+    const user = await prisma.user.update({
+      where: { id },
+      data: {
+        email: data.email,
+        displayName: data.displayName,
+        position1: data.position1,
+        position2: data.position2,
+        position3: data.position3,
+      },
+    });
+    return this.mapToUser(user);
+  } catch (error: unknown) {
+    if (error instanceof Error && 'code' in error && error.code === 'P2025') {
+      throw new AppError('User not found', 404, 'USER_NOT_FOUND');
     }
+    throw new AppError('Failed to update user', 500);
   }
+}
 
   /**
    * Get formatted user profile for display
