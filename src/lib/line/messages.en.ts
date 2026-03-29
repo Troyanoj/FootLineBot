@@ -65,7 +65,9 @@ https://footlinebot.vercel.app/help?lang=en`;
 
 export const registrationSuccessMessage = (event: Event): string => {
   const date = new Date(event.eventDate).toLocaleDateString('en-US', { weekday: 'long', day: 'numeric', month: 'long' });
-  const time = new Date(event.startTime).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false });
+  // Fix: Properly combine date and time for correct parsing
+  const dateTimeString = `${event.eventDate}T${event.startTime}`;
+  const time = new Date(dateTimeString).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false });
   return `✅ *Registration Successful!*
 
 📅 *Event:* ${event.title || 'Football Match'}
@@ -549,7 +551,20 @@ export const lineupMessage = (
   }
   let message = `⚽ *Official Formations*\n\n`;
   
-  const teamsCount = lineups.length || 2;
+  // Get player names from teamAssignments
+  const playerNames: Record<string, string> = {};
+  if (teamAssignments) {
+    teamAssignments.forEach((team: any) => {
+      if (team.playerIds) {
+        team.playerIds.forEach((playerId: string, idx: number) => {
+          // Try to get actual user display names if possible
+          playerNames[playerId] = `Player${idx + 1}`; // Fallback, ideally we'd fetch real names
+        });
+      }
+    });
+  }
+  
+  const teamsCount = lineups.length;
   for (let i = 1; i <= teamsCount; i++) {
     const lineup = lineups.find((l: any) => l.teamNumber === i);
     if (!lineup) continue;
@@ -557,10 +572,24 @@ export const lineupMessage = (
     message += `🏟️ *Team ${i}:*\n`;
     for (const [pos, ids] of Object.entries(assignments)) {
       const posName = getPositionEn(pos);
-      message += `• ${posName}: ${(ids as string[]).length} Player(s)\n`;
+      // Show actual player names if available, otherwise show count
+      if (ids && Array.isArray(ids) && ids.length > 0) {
+        // For now, we'll show player names as Player1, Player2, etc.
+        // In a real implementation, we'd fetch actual user names from the database
+        const playerList = ids.map((id: string, index: number) => {
+          // Try to get real name from playerNames or fallback
+          const name = playerNames[id] || `Player${index + 1}`;
+          return name;
+        }).join(', ');
+        message += `• ${posName}: ${playerList}\n`;
+      } else {
+        message += `• ${posName}: No players assigned\n`;
+      }
     }
     message += '\n';
   }
+  
+  // Note about viewing full list - we could enhance this later with actual URL
   message += `\n*Note:* View the full list by opening the event URL.`;
   return message;
 };

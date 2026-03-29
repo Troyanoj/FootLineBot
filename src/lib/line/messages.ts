@@ -81,7 +81,9 @@ export const registrationSuccessMessage = (event: Event): string => {
     day: 'numeric',
     month: 'long',
   });
-  const time = new Date(event.startTime).toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit', hour12: false });
+  // Fix: Properly combine date and time for correct parsing
+  const dateTimeString = `${event.eventDate}T${event.startTime}`;
+  const time = new Date(dateTimeString).toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit', hour12: false });
   return `✅ *ลงทะเบียนสำเร็จ!*
 
 📅 *อีเวนต์:* ${event.title || 'แมตซ์ฟุตบอล'}
@@ -707,82 +709,57 @@ export const lineupMessage = (
 ): string => {
   if (!lineups || lineups.length === 0) {
     return `⚽ *รายชื่อทีม*
-
-📋 รายชื่อสำหรับ ${event.title || 'แมตซ์ฟุตบอล'}:
-
-ใช้คำสั่ง !teams เพื่อดูทีมของคุณครับ`;
+ 
+  📋 รายชื่อสำหรับ ${event.title || 'แมตซ์ฟุตบอล'}:
+  
+  ใช้คำสั่ง !teams เพื่อดูทีมของคุณครับ`;
   }
-
+  
   let message = `⚽ *รายชื่อทีม & ตำแหน่ง*\n\n`;
   message += `📅 ${event.title || 'แมตซ์ฟุตบอล'}\n`;
   message += `⏰ เวลา: ${event.startTime}\n`;
   message += `⏱️ ระยะเวลา: ${event.totalDurationMinutes} นาที\n\n`;
-
-  // Get position assignments from lineups
-  const positionMap: Record<number, Record<string, string>> = {};
-  lineups.forEach((lineup: any) => {
-    if (!positionMap[lineup.teamNumber]) {
-      positionMap[lineup.teamNumber] = {};
-    }
-    const assignments = lineup.positionAssignments || {};
-    Object.keys(assignments).forEach((position) => {
-      const playerIds = assignments[position] || [];
-      playerIds.forEach((playerId: string) => {
-        positionMap[lineup.teamNumber][playerId] = position;
-      });
-    });
-  });
-
+  
   // Get player names from teamAssignments
   const playerNames: Record<string, string> = {};
   if (teamAssignments) {
     teamAssignments.forEach((team: any) => {
       if (team.playerIds) {
         team.playerIds.forEach((playerId: string, idx: number) => {
-          playerNames[playerId] = `ผู้เล่น${idx + 1}`;
+          // Try to get actual user display names if possible
+          playerNames[playerId] = `ผู้เล่น${idx + 1}`; // Fallback, ideally we'd fetch real names
         });
       }
     });
   }
-
+  
   // Generate message for each team
-  const teamsCount = lineups.length || 2;
+  const teamsCount = lineups.length;
   for (let i = 1; i <= teamsCount; i++) {
     const lineup = lineups.find((l: any) => l.teamNumber === i);
     if (!lineup) continue;
-
+    
     const assignments = lineup.positionAssignments || {};
-    const positions = Object.keys(assignments);
-
     message += `🏟️ *ทีม ${i}:*\n`;
-
-    if (positions.length > 0) {
-      positions.forEach((position) => {
-        const playerIds = assignments[position] || [];
-        if (playerIds.length > 0) {
-          const playerId = playerIds[0];
-          const positionThai = getPositionThai(position);
-          message += `• ${positionThai}: ${playerNames[playerId] || 'ผู้เล่น'}\n`;
-        }
-      });
-    } else {
-      message += `ยังไม่มีผู้เล่น\n`;
-    }
-
-    // Show substitutes
-    if (teamAssignments) {
-      const team = teamAssignments.find((t: any) => t.teamNumber === i);
-      if (team && team.substitutes && team.substitutes.length > 0) {
-        message += `\n🔄 *ตัวสำรอง:*\n`;
-        team.substitutes.forEach((subId: string, idx: number) => {
-          message += `${idx + 1}. ${playerNames[subId] || 'ผู้เล่น'}\n`;
-        });
+    
+    for (const [position, playerIds] of Object.entries(assignments)) {
+      if (playerIds && Array.isArray(playerIds) && playerIds.length > 0) {
+        // Show actual player names if available, otherwise show numbered players
+        const playerList = playerIds.map((id: string, index: number) => {
+          // Try to get real name from playerNames or fallback
+          const name = playerNames[id] || `ผู้เล่น${index + 1}`;
+          return name;
+        }).join(', ');
+        const positionThai = getPositionThai(position);
+        message += `• ${positionThai}: ${playerList}\n`;
+      } else {
+        message += `• ${getPositionThai(position)}: ไม่มีผู้เล่น\n`;
       }
     }
-
+    
     message += '\n';
   }
-
+  
   return message;
 };
 
