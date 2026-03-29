@@ -276,6 +276,15 @@ export async function handleAlineacion(context: HandlerContext): Promise<Handler
     const teamAssignments = await lineupService.getTeamAssignments(currentEvent.id);
     const lineups = await lineupService.getByEventId(currentEvent.id);
     
+    // Fetch user names for all players in teamAssignments
+    const allPlayerIds = Array.from(new Set(
+      teamAssignments.flatMap(ta => [...ta.playerIds, ...ta.substitutes])
+    ));
+    const users = await userService.getUsersByIds(allPlayerIds);
+    const userNameMap: Record<string, string> = Object.fromEntries(
+      users.map(user => [user.id, user.displayName])
+    );
+
     if (teamAssignments.length === 0) {
       return {
         success: false,
@@ -285,7 +294,7 @@ export async function handleAlineacion(context: HandlerContext): Promise<Handler
     
     return {
       success: true,
-      message: getMsg(context).lineupMessage(currentEvent, teamAssignments, lineups, user.id),
+      message: getMsg(context).lineupMessage(currentEvent, teamAssignments, lineups, user.id, userNameMap),
     };
   } catch (error) {
     console.error('Error in handleAlineacion:', error);

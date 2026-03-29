@@ -542,25 +542,23 @@ export const lineupMessage = (
   event: Event,
   teamAssignments?: any[],
   lineups?: any[],
-  userId?: string
+  userId?: string,
+  userNameMap?: Record<string, string>
 ): string => {
   if (!lineups || lineups.length === 0) {
     return `⚽ *Alineaciones aún no generadas. Dile al Administrador que use !generar*`;
   }
   let message = `⚽ *Formaciones Oficiales*\n\n`;
   
-  // Get player names from teamAssignments
-  const playerNames: Record<string, string> = {};
-  if (teamAssignments) {
-    teamAssignments.forEach((team: any) => {
-      if (team.playerIds) {
-        team.playerIds.forEach((playerId: string, idx: number) => {
-          // Try to get actual user display names if possible
-          playerNames[playerId] = `Jugador${idx + 1}`; // Fallback, ideally we'd fetch real names
-        });
-      }
-    });
-  }
+  // Get player names from teamAssignments, with fallback to userNameMap or generic names
+  const getPlayerName = (playerId: string): string => {
+    // First try the provided userNameMap
+    if (userNameMap && userNameMap[playerId]) {
+      return userNameMap[playerId];
+    }
+    // Fallback to generic naming
+    return `Jugador${playerId.substring(0, 4)}`; // Use first 4 chars of ID for uniqueness
+  };
   
   const teamsCount = lineups.length;
   for (let i = 1; i <= teamsCount; i++) {
@@ -570,15 +568,9 @@ export const lineupMessage = (
     message += `🏟️ *Equipo ${i}:*\n`;
     for (const [pos, ids] of Object.entries(assignments)) {
       const posName = getPositionEs(pos);
-      // Show actual player names if available, otherwise show count
+      // Show actual player names
       if (ids && Array.isArray(ids) && ids.length > 0) {
-        // For now, we'll show player names as Jugador1, Jugador2, etc.
-        // In a real implementation, we'd fetch actual user names from the database
-        const playerList = ids.map((id: string, index: number) => {
-          // Try to get real name from playerNames or fallback
-          const name = playerNames[id] || `Jugador${index + 1}`;
-          return name;
-        }).join(', ');
+        const playerList = ids.map(id => getPlayerName(id)).join(', ');
         message += `• ${posName}: ${playerList}\n`;
       } else {
         message += `• ${posName}: No jugadores asignados\n`;

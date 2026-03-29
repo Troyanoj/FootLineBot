@@ -705,7 +705,8 @@ export const lineupMessage = (
   event: Event,
   teamAssignments?: any[],
   lineups?: any[],
-  userId?: string
+  userId?: string,
+  userNameMap?: Record<string, string>
 ): string => {
   if (!lineups || lineups.length === 0) {
     return `⚽ *รายชื่อทีม*
@@ -720,18 +721,15 @@ export const lineupMessage = (
   message += `⏰ เวลา: ${event.startTime}\n`;
   message += `⏱️ ระยะเวลา: ${event.totalDurationMinutes} นาที\n\n`;
   
-  // Get player names from teamAssignments
-  const playerNames: Record<string, string> = {};
-  if (teamAssignments) {
-    teamAssignments.forEach((team: any) => {
-      if (team.playerIds) {
-        team.playerIds.forEach((playerId: string, idx: number) => {
-          // Try to get actual user display names if possible
-          playerNames[playerId] = `ผู้เล่น${idx + 1}`; // Fallback, ideally we'd fetch real names
-        });
-      }
-    });
-  }
+  // Get player names from teamAssignments, with fallback to userNameMap or generic names
+  const getPlayerName = (playerId: string): string => {
+    // First try the provided userNameMap
+    if (userNameMap && userNameMap[playerId]) {
+      return userNameMap[playerId];
+    }
+    // Fallback to generic naming
+    return `ผู้เล่น${playerId.substring(0, 4)}`; // Use first 4 chars of ID for uniqueness
+  };
   
   // Generate message for each team
   const teamsCount = lineups.length;
@@ -744,12 +742,8 @@ export const lineupMessage = (
     
     for (const [position, playerIds] of Object.entries(assignments)) {
       if (playerIds && Array.isArray(playerIds) && playerIds.length > 0) {
-        // Show actual player names if available, otherwise show numbered players
-        const playerList = playerIds.map((id: string, index: number) => {
-          // Try to get real name from playerNames or fallback
-          const name = playerNames[id] || `ผู้เล่น${index + 1}`;
-          return name;
-        }).join(', ');
+        // Show actual player names
+        const playerList = playerIds.map(id => getPlayerName(id)).join(', ');
         const positionThai = getPositionThai(position);
         message += `• ${positionThai}: ${playerList}\n`;
       } else {
