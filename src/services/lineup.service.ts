@@ -116,6 +116,8 @@ export class LineupService {
 
   /**
    * Generate complete lineups for an event
+   * Note: Each LINE group represents ONE team, so we always generate for exactly 1 team
+   * The teamsCount parameter is preserved for scheduling calculations but not used for lineup distribution
    */
   async generateLineups(options: LineupGenerationOptions): Promise<LineupGenerationResult> {
     const { eventId, gameType, tactic, teamsCount, tieBreaker = 'rating' } = options;
@@ -131,11 +133,13 @@ export class LineupService {
     const tacticPositions = this.getTacticPositions(tactic, gameType);
     const spotsPerTeam = tacticPositions.length;
 
-    // 3. Calculate total spots needed
-    const totalSpots = spotsPerTeam * teamsCount;
+    // 3. Calculate total spots needed (always for 1 team since each LINE group is one team)
+    const effectiveTeamsCount = 1;
+    const totalSpots = spotsPerTeam * effectiveTeamsCount;
 
     // 4. Handle rotation (distribute players to teams, substitutes, and resting)
-    const distribution = await this.handleRotation(registeredPlayers, teamsCount, spotsPerTeam, tieBreaker);
+    // We use effectiveTeamsCount = 1 for distribution, but preserve original teamsCount for return
+    const distribution = await this.handleRotation(registeredPlayers, effectiveTeamsCount, spotsPerTeam, tieBreaker);
 
     // 5. Assign positions to each team
     const positionAssignments = new Map<number, PositionAssignment[]>();
