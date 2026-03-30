@@ -50,17 +50,20 @@ async function getOrCreateUser(lineUserId: string): Promise<User> {
     // Get the current LINE profile to ensure we have the latest display name
     const lineProfile = await getUserProfile(lineUserId);
     
+    // If LINE profile returns empty display name, use LINE user ID as fallback
+    const displayName = lineProfile.displayName || lineUserId;
+    
     if (!user) {
       // Create new user with LINE profile data
       user = await userService.create({
         lineUserId,
-        displayName: lineProfile.displayName,
+        displayName,
         position1: 'CM', // Default position
       });
-    } else if (user.displayName !== lineProfile.displayName) {
+    } else if (user.displayName !== displayName) {
       // Update display name if it has changed
       await userService.update(user.id, {
-        displayName: lineProfile.displayName
+        displayName
       });
       // Refresh the user object
       user = await userService.findByLineUserId(lineUserId);
@@ -68,10 +71,10 @@ async function getOrCreateUser(lineUserId: string): Promise<User> {
   } catch (error) {
     // If we can't get the LINE profile, use existing user data or create with default
     if (!user) {
-      // If user doesn't exist and we can't get LINE profile, create with default name
+      // If user doesn't exist and we can't get LINE profile, create with LINE ID as fallback name
       user = await userService.create({
         lineUserId,
-        displayName: "", // Empty string instead of 'Unknown User'
+        displayName: lineUserId, // Use LINE user ID as fallback instead of empty string
         position1: 'CM', // Default position
       });
     }
