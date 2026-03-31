@@ -36,18 +36,20 @@ export class GroupService {
           name,
           country,
           defaultGameType,
-          adminUserId,
+          adminUserId, // Can be null for new groups
         },
       });
 
-      // Add admin as a member with admin role
-      await prisma.groupMember.create({
-        data: {
-          groupId: group.id,
-          userId: adminUserId,
-          role: 'admin',
-        },
-      });
+      // Only add admin as member if adminUserId is provided (not null)
+      if (adminUserId) {
+        await prisma.groupMember.create({
+          data: {
+            groupId: group.id,
+            userId: adminUserId,
+            role: 'admin',
+          },
+        });
+      }
 
       return this.mapToGroup(group);
     } catch (error: unknown) {

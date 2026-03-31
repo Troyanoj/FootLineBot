@@ -236,18 +236,19 @@ async function handleJoinEvent(event: LineWebhookEvent): Promise<void> {
         });
       }
 
-      // Create the group with system placeholder as temporary admin
-      // The first admin to use !register will take over
+      // Create the group with NO admin initially
+      // The first admin to use !setup will become the admin
       const newGroup = await groupService.createGroup(
         autoGroupName,
-        systemUser.id,
+        systemUser.id, // Use system user as creator (not admin)
         'Auto-registered',
         '7',
         undefined, // internal id (uuid will be generated)
         groupId    // lineGroupId for push notifications
       );
 
-      console.log(`[INFO] [JoinEvent] Auto-registered group: ${newGroup.id} (${newGroup.name}) with lineGroupId: ${groupId}`);
+      // Don't set admin - leave adminUserId as null so first !setup becomes admin
+      console.log(`[INFO] [JoinEvent] Auto-registered group: ${newGroup.id} (${newGroup.name}) with lineGroupId: ${groupId}, adminUserId: null`);
 
       // Send welcome message to the group using pushMessage
       try {

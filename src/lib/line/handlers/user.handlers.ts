@@ -707,6 +707,8 @@ export async function handleUserCommand(
 export async function handleRegisterGroup(context: HandlerContext): Promise<HandlerResult> {
   try {
     const groupId = context.groupId;
+    console.log(`[DEBUG] handleRegisterGroup called with groupId: ${groupId}, userId: ${context.userId}`);
+    
     if (!groupId) {
       return {
         success: false,
@@ -716,9 +718,11 @@ export async function handleRegisterGroup(context: HandlerContext): Promise<Hand
 
     // Get sender profile to make them admin
     const user = await getOrCreateUser(context.userId);
+    console.log(`[DEBUG] User created/found: ${user.id}, displayName: ${user.displayName}`);
 
     // Check if group already exists (by lineGroupId)
     const existingGroup = await groupService.getGroupById(groupId);
+    console.log(`[DEBUG] Existing group: ${JSON.stringify(existingGroup)}`);
 
     if (existingGroup) {
       // Group exists - check if current user is already admin
