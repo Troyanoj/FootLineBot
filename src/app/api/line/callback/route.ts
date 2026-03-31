@@ -428,19 +428,19 @@ async function handleMessageEvent(event: LineWebhookEvent): Promise<void> {
   // Thai commands
   const thaiCommands = [
     'ลงทะเบียน', 'สมัคร', 'ยกเลิก', 'โปรไฟล์', 'รายชื่อ', 'ไลน์อัพ', 'อีเวนต์', 'ตาราง', 'กลุ่ม', 'เข้าร่วม',
-    'ตำแหน่ง', 'ช่วย', 'help', 'สร้าง', 'ตั้งค่า', 'กลยุทธ์', 'จัดทีม', 'ปิด', 'ลบ', 'kick', 'expulsar',
-    'recurrente', 'recurring', 'เริ่ม', 'start', 'setup', 'iniciar'
+    'ตำแหน่ง', 'ช่วย', 'สร้าง', 'ตั้งค่า', 'กลยุทธ์', 'จัดทีม', 'ปิด', 'ลบ', 'ลบกลุ่ม', 'เริ่มต้น', 'ยกเลิก'
   ];
 
   let lang: 'es' | 'en' | 'th' = 'th'; // Default to Thai
   
-  // Check language based on command
-  if (spanishCommands.includes(command)) {
+  // Check language based on command - ORDER MATTERS: EN first, then ES, then TH
+  // This ensures !setup in English gets English response, not Spanish
+  if (englishCommands.includes(command)) {
+    lang = 'en';
+  } else if (spanishCommands.includes(command)) {
     lang = 'es';
   } else if (thaiCommands.includes(command)) {
     lang = 'th';
-  } else if (englishCommands.includes(command)) {
-    lang = 'en';
   }
 
   // Define admin commands in all languages

@@ -346,7 +346,7 @@ export const lineupGeneratedMessage = (lineup: Lineup, teams: TeamAssignment[]):
     }
     message += '\n';
   }
-
+  
   return message;
 };
 
@@ -710,17 +710,17 @@ export const lineupMessage = (
 ): string => {
   if (!lineups || lineups.length === 0) {
     return `⚽ *รายชื่อทีม*
-
+ 
   📋 รายชื่อสำหรับ ${event.title || 'แมตซ์ฟุตบอล'}:
-
+ 
   ใช้คำสั่ง !teams เพื่อดูทีมของคุณครับ`;
   }
-
+  
   let message = `⚽ *รายชื่อทีม & ตำแหน่ง*\n\n`;
   message += `📅 ${event.title || 'แมตซ์ฟุตบอล'}\n`;
   message += `⏰ เวลา: ${event.startTime}\n`;
   message += `⏱️ ระยะเวลา: ${event.totalDurationMinutes} นาที\n\n`;
-
+  
   // Get player names from teamAssignments, with fallback to userNameMap or generic names
   const getPlayerName = (playerId: string): string => {
     // First try the provided userNameMap
@@ -730,16 +730,16 @@ export const lineupMessage = (
     // Fallback to generic naming
     return `ผู้เล่น${playerId.substring(0, 4)}`; // Use first 4 chars of ID for uniqueness
   };
-
+  
   // Generate message for each team
   const teamsCount = lineups.length;
   for (let i = 1; i <= teamsCount; i++) {
     const lineup = lineups.find((l: any) => l.teamNumber === i);
     if (!lineup) continue;
-
+    
     const assignments = lineup.positionAssignments || {};
     message += `🏟️ *ทีม ${i}:*\n`;
-
+    
     for (const [pos, ids] of Object.entries(assignments)) {
       const posName = getPositionThai(pos);
       // Show actual player names if available, otherwise show count
@@ -753,111 +753,7 @@ export const lineupMessage = (
     }
     message += '\n';
   }
-
-  return message;
-};
-
-  // Generate message for each team
-  const teamsCount = lineups.length;
-  for (let i = 1; i <= teamsCount; i++) {
-    const lineup = lineups.find((l: any) => l.teamNumber === i);
-    if (!lineup) continue;
-
-    const assignments = lineup.positionAssignments || {};
-    message += `🏟️ *ทีม ${i}:*\n`;
-
-    for (const [pos, ids] of Object.entries(assignments)) {
-      const posName = getPositionThai(pos);
-      // Show actual player names if available, otherwise show count
-      if (ids && Array.isArray(ids) && ids.length > 0) {
-        // Show actual player names
-        const playerList = ids.map(id => getPlayerName(id)).join(', ');
-        message += `• ${posName}: ${playerList}\n`;
-      } else {
-        message += `• ${posName}: ไม่มีผู้เล่น\n`;
-      }
-    }
-    message += '\n';
-  }
-
-  return message;
-};
-
-  // Generate message for each team
-  const teamsCount = lineups.length;
-  for (let i = 1; i <= teamsCount; i++) {
-    const lineup = lineups.find((l: any) => l.teamNumber === i);
-    if (!lineup) continue;
-
-    const assignments = lineup.positionAssignments || {};
-    message += `🏟️ *ทีม ${i}:*\n`;
-
-    for (const [pos, ids] of Object.entries(assignments)) {
-      const posName = getPositionThai(pos);
-      // Show actual player names if available, otherwise show count
-      if (ids && Array.isArray(ids) && ids.length > 0) {
-        // Show actual player names
-        const playerList = ids.map(id => getPlayerName(id)).join(', ');
-        message += `• ${posName}: ${playerList}\n`;
-      } else {
-        message += `• ${posName}: ไม่มีผู้เล่น\n`;
-      }
-    }
-    message += '\n';
-  }
-
-  return message;
-};
-
-  // Generate message for each team
-  const teamsCount = lineups.length;
-  for (let i = 1; i <= teamsCount; i++) {
-    const lineup = lineups.find((l: any) => l.teamNumber === i);
-    if (!lineup) continue;
-
-    const assignments = lineup.positionAssignments || {};
-    message += `🏟️ *ทีม ${i}:*\n`;
-
-    for (const [pos, ids] of Object.entries(assignments)) {
-      const posName = getPositionThai(pos);
-      // Show actual player names if available, otherwise show count
-      if (ids && Array.isArray(ids) && ids.length > 0) {
-        // Show actual player names
-        const playerList = ids.map(id => getPlayerName(id)).join(', ');
-        message += `• ${posName}: ${playerList}\n`;
-      } else {
-        message += `• ${posName}: ไม่มีผู้เล่น\n`;
-      }
-    }
-    message += '\n';
-  }
-
-  return message;
-};
-
-  // Generate message for each team
-  const teamsCount = lineups.length;
-  for (let i = 1; i <= teamsCount; i++) {
-    const lineup = lineups.find((l: any) => l.teamNumber === i);
-    if (!lineup) continue;
-
-    const assignments = lineup.positionAssignments || {};
-    message += `🏟️ *ทีม ${i}:*\n`;
-
-    for (const [pos, ids] of Object.entries(assignments)) {
-      const posName = getPositionThai(pos);
-      // Show actual player names if available, otherwise show count
-      if (ids && Array.isArray(ids) && ids.length > 0) {
-        // Show actual player names
-        const playerList = ids.map(id => getPlayerName(id)).join(', ');
-        message += `• ${posName}: ${playerList}\n`;
-      } else {
-        message += `• ${posName}: ไม่มีผู้เล่น\n`;
-      }
-    }
-    message += '\n';
-  }
-
+  
   return message;
 };
 

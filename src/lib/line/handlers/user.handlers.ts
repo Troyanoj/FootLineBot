@@ -50,23 +50,36 @@ async function getOrCreateUser(lineUserId: string): Promise<User> {
     // Get the current LINE profile to ensure we have the latest display name
     const lineProfile = await getUserProfile(lineUserId);
     
-    // If LINE profile returns empty display name, use LINE user ID as fallback
-    const displayName = lineProfile.displayName || lineUserId;
+    // If LINE profile returns empty display name or 'Unknown User', use LINE user ID as fallback
+    const isLineProfileInvalid = !lineProfile.displayName || lineProfile.displayName === "Unknown User";
+    const displayNameFromProfile = isLineProfileInvalid ? lineUserId : lineProfile.displayName;
     
     if (!user) {
       // Create new user with LINE profile data
       user = await userService.create({
         lineUserId,
-        displayName,
+        displayName: displayNameFromProfile,
         position1: 'CM', // Default position
       });
-    } else if (user.displayName !== displayName) {
-      // Update display name if it has changed
-      await userService.update(user.id, {
-        displayName
-      });
-      // Refresh the user object
-      user = await userService.findByLineUserId(lineUserId);
+    } else {
+      // Always update display name if we got a valid profile from LINE (unless it's already correct)
+      // This ensures we fix any corrupted data in the database
+      if (!isLineProfileInvalid && user.displayName !== lineProfile.displayName) {
+        await userService.update(user.id, {
+          displayName: lineProfile.displayName
+        });
+        // Refresh the user object
+        user = await userService.findByLineUserId(lineUserId);
+      } 
+      // If LINE profile is invalid but user has invalid display name, fix it
+      else if (isLineProfileInvalid && (!user.displayName || user.displayName === "Unknown User")) {
+        await userService.update(user.id, {
+          displayName: lineUserId
+        });
+        // Refresh the user object
+        user = await userService.findByLineUserId(lineUserId);
+      }
+      // If LINE profile is invalid and user has valid display name, keep user's display name
     }
   } catch (error) {
     // If we can't get the LINE profile, use existing user data or create with default
@@ -77,8 +90,18 @@ async function getOrCreateUser(lineUserId: string): Promise<User> {
         displayName: lineUserId, // Use LINE user ID as fallback instead of empty string
         position1: 'CM', // Default position
       });
+    } else {
+      // If user exists but we can't get LINE profile, 
+      // update displayName if it's invalid (empty or "Unknown User")
+      if (!user.displayName || user.displayName === "Unknown User") {
+        await userService.update(user.id, {
+          displayName: lineUserId
+        });
+        // Refresh the user object
+        user = await userService.findByLineUserId(lineUserId);
+      }
+      // If displayName is already valid, we keep it as is
     }
-    // If user exists but we can't get LINE profile, we keep the existing data
   }
   
   return user;
