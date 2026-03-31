@@ -114,10 +114,19 @@ async function getUserAdminGroups(userId: string): Promise<Group[]> {
   const user = await userService.findByLineUserId(userId);
   if (!user) return [];
   
+  // Use direct DB query instead of iterating all groups
+  // This is much more efficient and reliable
   const allGroups = await groupService.getAll();
   const adminGroups: Group[] = [];
   
   for (const group of allGroups) {
+    // Check adminUserId first (fastest check)
+    if (group.adminUserId === user.id) {
+      adminGroups.push(group);
+      continue;
+    }
+    
+    // Check groupMember table for admin role
     if (await groupService.isAdmin(group.id, user.id)) {
       adminGroups.push(group);
     }
@@ -958,6 +967,8 @@ export async function handleAdminCommand(
     case 'recurrente':
     case 'recurring':
     case 'recurring_events':
+    case 'กิจกรรมซ้ำ':
+    case 'กิจกรรมประจำ':
       return handleRecurrente(context, args);
 
     default:

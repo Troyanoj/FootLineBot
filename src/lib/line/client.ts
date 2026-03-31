@@ -242,6 +242,9 @@ export async function getUserProfile(userId: string): Promise<{
 }
 
 // Get group member profile (includes role in group)
+// NOTE: LINE API does NOT return admin/member role information
+// It only returns: userId, displayName, pictureUrl
+// Admin status must be tracked in our database
 export async function getGroupMemberProfile(
   groupId: string,
   userId: string
@@ -249,7 +252,6 @@ export async function getGroupMemberProfile(
   displayName: string;
   userId: string;
   pictureUrl?: string;
-  role?: 'member' | 'admin';
 }> {
   try {
     console.log(`[INFO] [getGroupMemberProfile] Fetching profile for userId: ${userId} in group: ${groupId}`);
@@ -276,7 +278,6 @@ export async function getGroupMemberProfile(
         displayName: 'Unknown User',
         userId: userId,
         pictureUrl: undefined,
-        role: undefined,
       };
     }
 
@@ -289,7 +290,6 @@ export async function getGroupMemberProfile(
         displayName: 'Unknown User',
         userId: userId,
         pictureUrl: undefined,
-        role: undefined,
       };
     }
 
@@ -301,7 +301,6 @@ export async function getGroupMemberProfile(
         displayName: 'Unknown User',
         userId: userId,
         pictureUrl: undefined,
-        role: undefined,
       };
     }
 
@@ -314,7 +313,6 @@ export async function getGroupMemberProfile(
         displayName: 'Unknown User',
         userId: userId,
         pictureUrl: undefined,
-        role: undefined,
       };
     }
 
@@ -324,7 +322,6 @@ export async function getGroupMemberProfile(
       displayName: 'Unknown User',
       userId: userId,
       pictureUrl: undefined,
-      role: undefined,
     };
   }
 }

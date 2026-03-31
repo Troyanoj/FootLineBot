@@ -1,7 +1,6 @@
 import prisma from '@/lib/db/prisma';
 import type { CreateGroupInput, UpdateGroupInput, Group, GroupMember, MemberRole, GameType, TacticName } from '@/types';
 import { AppError } from './user.service';
-import { getGroupMemberProfile } from '@/lib/line/client';
 
 export class GroupService {
   // ============================================
@@ -273,10 +272,10 @@ export class GroupService {
   }
 
   /**
-   * Check if user is admin of group (checks both DB and LINE admin status)
+   * Check if user is admin of group (checks DB only - LINE API doesn't expose admin role)
    */
   async isUserAdmin(groupId: string, userId: string): Promise<boolean> {
-    // First check if user is admin in DB
+    // Check if user is admin in DB via groupMember table
     const membership = await prisma.groupMember.findFirst({
       where: {
         groupId,
@@ -289,43 +288,16 @@ export class GroupService {
       return true;
     }
 
-    // If not in DB, check LINE API for group admin status
+    // Also check adminUserId field directly
     const group = await this.getGroupById(groupId);
-    if (group && group.lineGroupId) {
-      try {
-        console.log(`[DEBUG] Checking LINE API for admin status in group: ${group.lineGroupId}`);
-        // Get the user's LINE ID from the database
-        const user = await prisma.user.findUnique({
-          where: { id: userId },
-        });
-        
-        if (!user) {
-          throw new Error('User not found');
-        }
-        
-        const lineProfile = await getGroupMemberProfile(group.lineGroupId, user.lineUserId);
-        
-        if (lineProfile.role === 'admin') {
-          console.log(`[INFO] User IS admin in LINE group: ${group.lineGroupId}`);
-          
-          // Check if user is already a member
-          const isMember = await this.isGroupMember(groupId, userId);
-          if (!isMember) {
-            // Add user as admin member
-            await this.addMemberToGroup(groupId, userId, 'admin');
-            console.log(`[INFO] Added user ${userId} as admin to group ${groupId}`);
-          } else {
-            // Update existing member role to admin
-            await this.updateMemberRole(groupId, userId, 'admin');
-            console.log(`[INFO] Updated user ${userId} to admin in group ${groupId}`);
-          }
-          return true;
-        }
-      } catch (error) {
-        console.error(`[ERROR] Error checking LINE admin status:`, error);
-        // Fall through to return false
-      }
+    if (group && group.adminUserId === userId) {
+      return true;
     }
+
+    // NOTE: LINE API getGroupMemberProfile does NOT return admin/member role information
+    // It only returns: userId, displayName, pictureUrl
+    // Admin status MUST be tracked in our database
+    // If admin status is missing from DB, user should run !setup to claim admin rights
 
     return false;
   }

@@ -758,38 +758,10 @@ export async function handleRegisterGroup(context: HandlerContext): Promise<Hand
         };
       }
 
-      // Group has a different admin - Check if current user is actually a LINE group admin
-      // If they are, we should transfer admin rights to them
-      const { getGroupMemberProfile } = await import('@/lib/line/client');
-      if (context.groupId) {
-        try {
-          const memberProfile = await getGroupMemberProfile(context.groupId, context.userId);
-          if (memberProfile && memberProfile.role === 'admin') {
-            // User is a LINE group admin - transfer admin rights
-            const prisma = (await import('@/lib/db/prisma')).default;
-            await prisma.group.update({
-              where: { id: existingGroup.id },
-              data: { adminUserId: user.id },
-            });
-
-            // Update member role to admin
-            try {
-              await groupService.updateMemberRole(existingGroup.id, user.id, 'admin');
-            } catch (e) {
-              await groupService.addMember(existingGroup.id, user.id, 'admin');
-            }
-
-            return {
-              success: true,
-              message: getMsg(context).groupRegisteredMessage(existingGroup.name, existingGroup.id),
-            };
-          }
-        } catch (apiError) {
-          console.error('[ERROR] Error checking LINE group admin status:', apiError);
-        }
-      }
-
-      // User is not a LINE group admin - reject
+      // Group has a different admin - Since LINE API doesn't expose admin role,
+      // we cannot verify if the current user is actually a LINE group admin.
+      // The safest approach: only allow admin transfer if group has no real admin
+      // (null or placeholder). If there's already a real admin, reject.
       return {
         success: false,
         message: getMsg(context).adminRequiredMessage(),

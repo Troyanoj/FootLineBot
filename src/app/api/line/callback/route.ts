@@ -29,8 +29,11 @@ function parseCommand(text: string): { command: string; args: string[] } | null 
   }
 
   const withoutPrefix = trimmed.replace(commandPrefix, '').trim();
-  // Remove zero-width characters and other invisible formatting characters that can cause comparison issues
-  const cleaned = withoutPrefix.replace(/[\u200B-\u200D\uFEFF]/g, '');
+  // Remove ALL invisible formatting characters including:
+  // - Zero-width characters: \u200B-\u200D, \uFEFF
+  // - Thai formatting marks: \u0E4F (NIKHAHIT), \u0E3A (THANTHAKHAT)
+  // - Other Unicode invisible chars: \u2000-\u200F, \u2028-\u202F, \u205F-\u206F
+  const cleaned = withoutPrefix.replace(/[\u200B-\u200D\uFEFF\u0E4F\u0E3A\u2000-\u200F\u2028-\u202F\u205F-\u206F]/g, '');
   const parts = cleaned.split(/\s+/).filter(part => part.length > 0);
 
   if (parts.length === 0) {
@@ -41,6 +44,24 @@ function parseCommand(text: string): { command: string; args: string[] } | null 
   const args = parts.slice(1);
 
   return { command, args };
+}
+
+/** Check if user is admin of LINE group using LINE API */
+async function isLineGroupAdmin(lineGroupId: string, lineUserId: string): Promise<boolean> {
+  try {
+    console.log(`[DEBUG] Checking LINE group admin via API: groupId=${lineGroupId}, userId=${lineUserId}`);
+    
+    // LINE API doesn't directly expose admin role through getGroupMemberProfile
+    // The only way to check is through LINE Official Account management API
+    // which requires different credentials. For now, we'll use a heuristic:
+    // If the user can be found in the group members list, we'll trust the DB
+    
+    // For now, return false and rely on DB-based admin checking
+    return false;
+  } catch (error) {
+    console.error(`[ERROR] Error checking LINE group admin:`, error);
+    return false;
+  }
 }
 
 /** Check if user is admin */
@@ -420,7 +441,8 @@ async function handleMessageEvent(event: LineWebhookEvent): Promise<void> {
   // Thai commands
   const thaiCommands = [
     'ลงทะเบียน', 'สมัคร', 'ยกเลิก', 'โปรไฟล์', 'รายชื่อ', 'ไลน์อัพ', 'อีเวนต์', 'ตาราง', 'กลุ่ม', 'เข้าร่วม',
-    'ตำแหน่ง', 'ช่วย', 'สร้าง', 'ตั้งค่า', 'กลยุทธ์', 'จัดทีม', 'ปิด', 'ลบ', 'ลบกลุ่ม', 'เริ่มต้น', 'เริ่ม'
+    'ตำแหน่ง', 'ช่วย', 'สร้าง', 'ตั้งค่า', 'กลยุทธ์', 'จัดทีม', 'ปิด', 'ลบ', 'ลบกลุ่ม', 'เริ่มต้น', 'เริ่ม',
+    'เพิ่ม', 'พัก', 'ต่อ', 'ดู'
   ];
 
   let lang: 'es' | 'en' | 'th' = 'th'; // Default to Thai
@@ -444,7 +466,8 @@ async function handleMessageEvent(event: LineWebhookEvent): Promise<void> {
     'create_event', 'config', 'tactics', 'generate', 'close', 'delete_event', 'kick',
     'recurring', 'recurring_events', 'delete_group', 'delete-group',
     // Thai
-    'สร้าง', 'ตั้งค่า', 'กลยุทธ์', 'ปิด', 'ลบ', 'ลบกลุ่ม', 'เริ่มต้น'
+    'สร้าง', 'ตั้งค่า', 'กลยุทธ์', 'จัดทีม', 'ปิด', 'ลบ', 'ลบกลุ่ม', 'เริ่มต้น',
+    'เพิ่ม', 'พัก', 'ต่อ', 'ดู'
   ];
 
   // Group setup commands - These should NOT require admin status because they're used to CLAIM admin rights
