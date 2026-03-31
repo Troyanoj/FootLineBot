@@ -415,20 +415,20 @@ async function handleMessageEvent(event: LineWebhookEvent): Promise<void> {
   const spanishCommands = [
     'apuntar', 'inscribirme', 'baja', 'desinscribirme', 'perfil', 'alineacion', 'horario', 'grupos', 'unirse',
     'posicion', 'ayuda', 'crear_evento', 'configurar', 'tactica', 'generar', 'cerrar', 'borrar_evento', 'expulsar',
-    'recurrente', 'borrar_grupo', 'iniciar', 'setup', 'config_group'
+    'recurrente', 'borrar_grupo', 'iniciar', 'setup', 'config_group', 'start'
   ];
   
   // English commands
   const englishCommands = [
     'register', 'unregister', 'profile', 'lineup', 'schedule', 'groups_list', 'join',
     'position', 'help', 'create_event', 'config', 'tactics', 'generate', 'close', 'delete_event', 'kick',
-    'recurring', 'recurring_events', 'delete_group', 'delete-group', 'setup', 'config_group'
+    'recurring', 'recurring_events', 'delete_group', 'delete-group', 'setup', 'config_group', 'start'
   ];
   
   // Thai commands
   const thaiCommands = [
     'ลงทะเบียน', 'สมัคร', 'ยกเลิก', 'โปรไฟล์', 'รายชื่อ', 'ไลน์อัพ', 'อีเวนต์', 'ตาราง', 'กลุ่ม', 'เข้าร่วม',
-    'ตำแหน่ง', 'ช่วย', 'สร้าง', 'ตั้งค่า', 'กลยุทธ์', 'จัดทีม', 'ปิด', 'ลบ', 'ลบกลุ่ม', 'เริ่มต้น', 'ยกเลิก'
+    'ตำแหน่ง', 'ช่วย', 'สร้าง', 'ตั้งค่า', 'กลยุทธ์', 'จัดทีม', 'ปิด', 'ลบ', 'ลบกลุ่ม', 'เริ่มต้น', 'เริ่ม'
   ];
 
   let lang: 'es' | 'en' | 'th' = 'th'; // Default to Thai
