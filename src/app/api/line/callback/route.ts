@@ -65,28 +65,39 @@ async function isUserAdmin(userId: string, groupId?: string): Promise<boolean> {
     }
 
     // If not admin in DB, check LINE API for group admin status
+    // Only do this if we have a groupId and user is a member of that specific group in DB
     if (groupId) {
-      console.log(`[DEBUG] Checking LINE API for admin status in group: ${groupId}`);
-      const lineProfile = await getGroupMemberProfile(groupId, userId);
-      
-      if (lineProfile.role === 'admin') {
-        console.log(`[INFO] User IS admin in LINE group: ${groupId}`);
-        
-        // Find the group in DB and add user as admin
-        const group = await groupService.getGroupById(groupId);
-        if (group) {
-          // Check if user is already a member
-          const isMember = await groupService.isMember(group.id, user.id);
-          if (!isMember) {
-            // Add user as admin member
-            await groupService.addMember(group.id, user.id, 'admin');
-            console.log(`[INFO] Added user ${userId} as admin to group ${group.id}`);
-          } else {
-            // Update existing member role to admin
-            await groupService.updateMemberRole(group.id, user.id, 'admin');
-            console.log(`[INFO] Updated user ${userId} to admin in group ${group.id}`);
+      // Check if user is a member of this group in DB
+      const group = await groupService.getGroupById(groupId);
+      if (group) {
+        const isMember = await groupService.isMember(group.id, user.id);
+        if (isMember) {
+          // User is a member, check if they should be admin
+          // If adminUserId in DB matches this user, grant admin
+          if (group.adminUserId === user.id) {
+            console.log(`[DEBUG] User IS admin of group (DB adminUserId): ${group.id}`);
+            return true;
           }
-          return true;
+        }
+        
+        // If not admin in DB, try LINE API only if user is a member
+        if (isMember) {
+          console.log(`[DEBUG] Checking LINE API for admin status in group: ${groupId}`);
+          try {
+            const lineProfile = await getGroupMemberProfile(groupId, userId);
+            
+            if (lineProfile.role === 'admin') {
+              console.log(`[INFO] User IS admin in LINE group: ${groupId}`);
+              
+              // Update member role to admin
+              await groupService.updateMemberRole(group.id, user.id, 'admin');
+              console.log(`[INFO] Updated user ${userId} to admin in group ${group.id}`);
+              return true;
+            }
+          } catch (apiError) {
+            console.warn(`[WARN] Could not check LINE API for admin status:`, apiError);
+            // Don't fail - continue with DB check
+          }
         }
       }
     }
