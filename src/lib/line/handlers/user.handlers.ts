@@ -1,7 +1,7 @@
 ﻿// User Command Handlers
 // Handles all user-facing commands for LINE bot
 
-import { replyMessage, pushMessage, getUserProfile } from '@/lib/line/client';
+import { replyMessage, pushMessage, getUserProfile, getGroupMemberProfile } from '@/lib/line/client';
 import { userService } from '@/services/user.service';
 import { groupService } from '@/services/group.service';
 import { eventService } from '@/services/event.service';
@@ -179,7 +179,14 @@ export async function handleApuntar(context: HandlerContext): Promise<HandlerRes
         ? getMsg(context).waitlistSuccessMessage(openEvent)
         : getMsg(context).registrationSuccessMessage(openEvent),
     };
-  } catch (error) {
+  } catch (error: any) {
+    // Handle already registered error gracefully
+    if (error?.code === 'ALREADY_REGISTERED') {
+      return {
+        success: false,
+        message: getMsg(context).alreadyRegisteredMessage(),
+      };
+    }
     console.error('Error in handleApuntar:', error);
     return {
       success: false,
@@ -238,6 +245,10 @@ export async function handleBaja(context: HandlerContext): Promise<HandlerResult
     
     // Cancel registration
     await registrationService.cancel(registration.id);
+    
+    // Delete existing lineups for this event so admin must regenerate with current registrations
+    await prisma.lineup.deleteMany({ where: { eventId: openEvent.id } });
+    await prisma.teamAssignment.deleteMany({ where: { eventId: openEvent.id } });
     
     return {
       success: true,
@@ -322,14 +333,66 @@ export async function handleAlineacion(context: HandlerContext): Promise<Handler
     const teamAssignments = await lineupService.getTeamAssignments(currentEvent.id);
     const lineups = await lineupService.getByEventId(currentEvent.id);
     
+    // Verify user is currently registered for this event (not cancelled)
+    const currentRegistration = await registrationService.getByEventAndUser(currentEvent.id, user.id);
+    if (!currentRegistration || currentRegistration.status !== 'registered') {
+      return {
+        success: false,
+        message: getMsg(context).notRegisteredMessage(),
+      };
+    }
+    
     // Fetch user names for all players in teamAssignments
     const allPlayerIds = Array.from(new Set(
       teamAssignments.flatMap(ta => [...ta.playerIds, ...ta.substitutes])
     ));
+    
+    // Fetch LINE profiles for all players and update their display names if needed
     const users = await userService.getUsersByIds(allPlayerIds);
-    const userNameMap: Record<string, string> = Object.fromEntries(
-      users.map(user => [user.id, user.displayName])
-    );
+    const userNameMap: Record<string, string> = {};
+    
+    // Check if display name is a fallback (lineUserId or invalid)
+    const isDisplayNameInvalid = (name: string | undefined, lineUserId: string): boolean => {
+      return !name || name === "Unknown User" || name === lineUserId;
+    };
+    
+    // Helper to get LINE profile with fallback to group profile
+    const getDisplayName = async (player: typeof users[0], groupId?: string): Promise<string> => {
+      // If current display name is valid, use it
+      if (!isDisplayNameInvalid(player.displayName, player.lineUserId)) {
+        return player.displayName;
+      }
+      
+      // Try to get LINE profile
+      try {
+        const lineProfile = await getUserProfile(player.lineUserId);
+        if (lineProfile.displayName && lineProfile.displayName !== "Unknown User") {
+          return lineProfile.displayName;
+        }
+      } catch (error) {
+        // Continue to try group profile
+      }
+      
+      // Try to get group member profile if we have a groupId
+      if (groupId) {
+        try {
+          const groupProfile = await getGroupMemberProfile(groupId, player.lineUserId);
+          if (groupProfile.displayName && groupProfile.displayName !== "Unknown User") {
+            return groupProfile.displayName;
+          }
+        } catch (error) {
+          // Both methods failed
+        }
+      }
+      
+      // Return original displayName or fallback
+      return player.displayName || `Player ${player.id.substring(0, 6)}`;
+    };
+    
+    for (const player of users) {
+      const displayName = await getDisplayName(player, context.groupId);
+      userNameMap[player.id] = displayName;
+    }
 
     if (teamAssignments.length === 0) {
       return {
@@ -598,6 +661,7 @@ export async function handleUserCommand(
 
     case 'horario':
     case 'schedule':
+    case 'eventos':
     case 'อีเวนต์':
     case 'ตาราง':
       return handleHorario(context);
