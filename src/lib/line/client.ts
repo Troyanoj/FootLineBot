@@ -293,6 +293,18 @@ export async function getGroupMemberProfile(
       };
     }
 
+    // Handle 400 - Bad request (usually group not found or bot not in group)
+    const is400 = error.status === 400 || error.statusCode === 400;
+    if (is400) {
+      console.warn(`[WARN] [getGroupMemberProfile] Bad request (400): groupId=${groupId}, userId=${userId}. Bot may not be in group or group ID is invalid.`);
+      return {
+        displayName: 'Unknown User',
+        userId: userId,
+        pictureUrl: undefined,
+        role: undefined,
+      };
+    }
+
     // Handle 403 - Insufficient permissions
     const is403 = error.status === 403 || error.statusCode === 403;
     if (is403) {
