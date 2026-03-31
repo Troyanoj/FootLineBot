@@ -58,7 +58,7 @@ export class RegistrationService {
         throw new AppError('User not found', 404, 'USER_NOT_FOUND');
       }
 
-      // Check if already registered
+      // Check if already registered (only if active)
       const existingRegistration = await prisma.registration.findUnique({
         where: {
           eventId_userId: {
@@ -68,7 +68,8 @@ export class RegistrationService {
         },
       });
 
-      if (existingRegistration) {
+      // Allow re-registration if previous registration was cancelled or waitlisted
+      if (existingRegistration && existingRegistration.status === 'registered') {
         throw new AppError('User is already registered for this event', 409, 'ALREADY_REGISTERED');
       }
 
